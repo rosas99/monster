@@ -22,8 +22,8 @@ type HistoryM struct {
 	Message           string    `gorm:"column:message" json:"message"`
 	MessageID         string    `gorm:"column:message_id" json:"message_id"`
 	MessageTemplateID int64     `gorm:"column:message_template_id" json:"message_template_id"`
-	CreateAt          time.Time `gorm:"column:create_at" json:"create_at"`
-	UpdateAt          time.Time `gorm:"column:update_at" json:"update_at"`
+	CreatedAt         time.Time `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt         time.Time `gorm:"column:updated_at" json:"updated_at"`
 }
 
 // TableName HistoryM's table name

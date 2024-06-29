@@ -24,7 +24,6 @@ import (
 
 // Config represents the configuration of the service.
 type Config struct {
-	FakeStore     bool
 	GRPCOptions   *genericoptions.GRPCOptions
 	HTTPOptions   *genericoptions.HTTPOptions
 	TLSOptions    *genericoptions.TLSOptions
@@ -33,9 +32,6 @@ type Config struct {
 	KafkaOptions1 *genericoptions.KafkaOptions
 	Address       string
 	Accounts      map[string]string
-
-	// todo
-	EtcdOptions *genericoptions.EtcdOptions
 }
 
 // Complete fills in any fields not set that are required to have valid data. It's mutating the receiver.
@@ -108,10 +104,10 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	//grpcsrv, err := NewGRPCServer(c.GRPCOptions, c.TLSOptions, srv)
-	//if err != nil {
-	//	return nil, err
-	//}
+	grpcsrv, err := NewGRPCServer(c.GRPCOptions, c.TLSOptions, srv)
+	if err != nil {
+		return nil, err
+	}
 	//impl := usercenter.NewFakeServer()
 
 	// gin.Recovery() 中间件，用来捕获任何 panic，并恢复
@@ -123,9 +119,9 @@ func (c completedConfig) New() (*SmsServer, error) {
 	// 添加中间件
 	g.Use(mws...)
 	// Need start grpc server first. http server depends on grpc sever.
-	//go grpcsrv.RunOrDie()
+	go grpcsrv.RunOrDie()
 
-	return &SmsServer{grpcsrv: nil, httpsrv: httpsrv}, nil
+	return &SmsServer{grpcsrv: grpcsrv, httpsrv: httpsrv}, nil
 }
 
 func (s *SmsServer) Run(stopCh <-chan struct{}) error {

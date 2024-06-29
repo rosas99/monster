@@ -27,25 +27,22 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService, accounts map[s
 
 	// 创建 v1 路由分组，并添加认证中间件
 	//v1 := g.Group("/v1", mw.BasicAuth(accounts))
-	tl := template.New(svc)
-	ms := message.New(svc)
 
 	v1 := g.Group("/v1")
 	{
 		// 创建 blocks 路由分组
 		templatev1 := v1.Group("/template")
 		{
-
+			tl := template.New(svc)
 			//templatev1.Use(gin2.Validator())
-
-			templatev1.GET("/t1", tl.Get)
-			templatev1.GET("/t2", tl.List)
-			templatev1.GET("/t3", tl.Create)
-			templatev1.GET("/t4", tl.Update)
-			templatev1.GET("/t5", tl.Delete)
-
+			templatev1.POST("/create", tl.Create)
+			templatev1.GET("/update", tl.Update)
+			templatev1.POST("/getById", tl.Get)
+			templatev1.POST("/getList", tl.List)
+			templatev1.POST("/delete", tl.Delete)
 		}
 
+		ms := message.New(svc)
 		msgv1 := v1.Group("/msg")
 		{
 			msgv1.GET("", ms.Send)

@@ -15,11 +15,15 @@ import (
 func (b *TemplateController) Create(c *gin.Context) {
 	var r v1.CreateTemplateRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
+		// 使用错误码
 		core.WriteResponse(c, err, nil)
+		return
 	}
 
-	order, _ := b.svc.CreateTemplate(c, &r)
-	// todo 增加validate
+	order, err := b.svc.CreateTemplate(c, &r)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+	}
 	core.WriteResponse(c, nil, order)
 
 }

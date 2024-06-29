@@ -28,8 +28,8 @@ type TemplateM struct {
 	Region       string    `gorm:"column:region;comment:国家地区" json:"region"` // 国家地区
 	Providers    string    `gorm:"column:providers" json:"providers"`
 	DemanderIds  string    `gorm:"column:demander_ids" json:"demander_ids"`
-	CreateAt     time.Time `gorm:"column:create_at" json:"create_at"`
-	UpdateAt     time.Time `gorm:"column:update_at" json:"update_at"`
+	CreatedAt    time.Time `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt    time.Time `gorm:"column:updated_at" json:"updated_at"`
 }
 
 // TableName TemplateM's table name

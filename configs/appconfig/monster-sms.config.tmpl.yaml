@@ -8,14 +8,14 @@
 http:
   addr: 127.0.0.1:9093 # HTTP/HTTPS 服务监听地址
 grpc:
-  addr: 127.0.0.1:2379 # gRPC 服务监听地址
+  addr: 127.0.0.1:3379 # gRPC 服务监听地址
 tls:
   use-tls: false # 是否启用 TLS
   cert:  # TLS 证书路径
   key:  # TLS 私钥路径
 mysql:
   host: 127.0.0.1:3306 # 数据库主机地址
-  database: sms # 数据库名称
+  database: monster # 数据库名称
   username: onex # 数据库用户名
   password: onex(#)666 # 数据库密码
   log-level: 1 # 数据库日志级别，1 为最低，4 为最高

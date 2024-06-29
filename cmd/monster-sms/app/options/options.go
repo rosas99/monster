@@ -26,7 +26,7 @@ var _ app.CliOptions = (*Options)(nil)
 
 // Options contains state for master/api server.
 type Options struct {
-	//GRPCOptions  *genericoptions.GRPCOptions    `json:"grpc" mapstructure:"grpc"`
+	GRPCOptions *genericoptions.GRPCOptions `json:"grpc" mapstructure:"grpc"`
 	HTTPOptions *genericoptions.HTTPOptions `json:"http" mapstructure:"http"`
 	//TLSOptions   *genericoptions.TLSOptions     `json:"tls" mapstructure:"tls"`
 	MySQLOptions *genericoptions.MySQLOptions `json:"mysql" mapstructure:"mysql"`
@@ -42,7 +42,7 @@ type Options struct {
 // NewOptions returns initialized Options.
 func NewOptions() *Options {
 	o := &Options{
-		//GRPCOptions:   genericoptions.NewGRPCOptions(),
+		GRPCOptions: genericoptions.NewGRPCOptions(),
 		HTTPOptions: genericoptions.NewHTTPOptions(),
 		//TLSOptions:    genericoptions.NewTLSOptions(),
 		MySQLOptions: genericoptions.NewMySQLOptions(),
@@ -86,7 +86,7 @@ func (o *Options) Complete() error {
 func (o *Options) Validate() error {
 	errs := []error{}
 
-	//errs = append(errs, o.GRPCOptions.Validate()...)
+	errs = append(errs, o.GRPCOptions.Validate()...)
 	errs = append(errs, o.HTTPOptions.Validate()...)
 	//errs = append(errs, o.TLSOptions.Validate()...)
 	errs = append(errs, o.MySQLOptions.Validate()...)
@@ -99,7 +99,7 @@ func (o *Options) Validate() error {
 
 // ApplyTo fills up onex-fakeserver config with options.
 func (o *Options) ApplyTo(c *sms.Config) error {
-	//c.GRPCOptions = o.GRPCOptions
+	c.GRPCOptions = o.GRPCOptions
 	c.HTTPOptions = o.HTTPOptions
 	//c.TLSOptions = o.TLSOptions
 	c.MySQLOptions = o.MySQLOptions

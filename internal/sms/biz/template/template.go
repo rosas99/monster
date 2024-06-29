@@ -35,21 +35,16 @@ func New(ds store.IStore, rds *redis.Client) *templateBiz {
 type MessageConfigurationEnum = string
 
 const (
-	TimeIntervalForMobile         MessageConfigurationEnum = "TIME_INTERVAL_FOR_MOBILE"           // Status used for disabling a secret.
-	MessageCountForMobilePerDay   MessageConfigurationEnum = "MESSAGE_COUNT_FOR_MOBILE_PER_DAY"   // Status used for enabling a secret.
-	MessageCountForTemplatePerDay MessageConfigurationEnum = "MESSAGE_COUNT_FOR_TEMPLATE_PER_DAY" // Status used for enabling a secret.
+	TimeIntervalForMobile         MessageConfigurationEnum = "TIME_INTERVAL_FOR_MOBILE"
+	MessageCountForMobilePerDay   MessageConfigurationEnum = "MESSAGE_COUNT_FOR_MOBILE_PER_DAY"
+	MessageCountForTemplatePerDay MessageConfigurationEnum = "MESSAGE_COUNT_FOR_TEMPLATE_PER_DAY"
 )
 
-// todo 使用事务钩子
 func (t *templateBiz) Create(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
-	// todo 增加场景码 进行台账统计
 
-	// new 空对象
 	var templateM model.TemplateM
-	// 深拷贝请求参数
 	_ = copier.Copy(&templateM, rq)
 	if err := t.ds.Templates().Create(ctx, &templateM); err != nil {
-		// todo 错误码定义
 		return nil, v1.ErrorOrderCreateFailed("create order failed: %v", err)
 	}
 
@@ -69,19 +64,15 @@ func (t *templateBiz) Create(ctx context.Context, rq *v1.CreateTemplateRequest) 
 			ConfigValue:  rq.GetTimeInterval(),
 			TemplateCode: rq.GetTemplateCode(),
 		}}
+
 	if err := t.ds.Configurations().CreateBatch(ctx, configurationsM); err != nil {
-		// todo 错误码定义
 		return nil, v1.ErrorOrderCreateFailed("create order failed: %v", err)
 	}
-
-	//todo 开始写消息
-	//b.writer.WriteMessages()
 
 	return &v1.CreateTemplateResponse{OrderID: templateM.ID}, nil
 }
 
 func (t *templateBiz) Get(ctx context.Context, rq *v1.GetTemplateRequest) (*v1.TemplateReply, error) {
-	// todo 查询config 设置到template
 	templateM, err := t.ds.Templates().Get(ctx, rq.GetId())
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -91,12 +82,10 @@ func (t *templateBiz) Get(ctx context.Context, rq *v1.GetTemplateRequest) (*v1.T
 		return nil, err
 	}
 
-	// model复制到resp 都是指针
 	var template v1.TemplateReply
 	_ = copier.Copy(&template, templateM)
-	// 这里要把time转换成timestamp ？
-	template.CreatedAt = timestamppb.New(templateM.CreateAt)
-	template.UpdatedAt = timestamppb.New(templateM.UpdateAt)
+	template.CreatedAt = timestamppb.New(templateM.CreatedAt)
+	template.UpdatedAt = timestamppb.New(templateM.UpdatedAt)
 
 	_, cfgList, err := t.ds.Configurations().List(ctx, templateM.TemplateCode)
 	for _, m := range cfgList {
@@ -109,7 +98,6 @@ func (t *templateBiz) Get(ctx context.Context, rq *v1.GetTemplateRequest) (*v1.T
 			fallthrough
 		case MessageCountForTemplatePerDay:
 			template.TimeInterval = m.ConfigValue
-
 		}
 	}
 	return &template, nil
@@ -136,8 +124,8 @@ func (t *templateBiz) List(ctx context.Context, rq *v1.ListTemplateRequest) (*v1
 				_ = copier.Copy(&t, template)
 				m.Store(template.ID, &v1.TemplateReply{
 					// 除了时间其他要手动set吗
-					CreatedAt: timestamppb.New(template.CreateAt),
-					UpdatedAt: timestamppb.New(template.UpdateAt),
+					CreatedAt: timestamppb.New(template.CreatedAt),
+					UpdatedAt: timestamppb.New(template.UpdatedAt),
 				})
 				return nil
 			}

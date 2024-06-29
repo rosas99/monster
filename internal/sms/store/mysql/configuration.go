@@ -11,12 +11,15 @@ import (
 	"errors"
 	"github.com/rosas99/monster/internal/pkg/meta"
 	"github.com/rosas99/monster/internal/sms/model"
+	"github.com/rosas99/monster/internal/sms/store"
 	"gorm.io/gorm"
 )
 
 type configurations struct {
 	db *gorm.DB
 }
+
+var _ store.ConfigurationStore = (*configurations)(nil)
 
 func newConfigurations(db *gorm.DB) *configurations {
 	return &configurations{db: db}
@@ -43,12 +46,15 @@ func (t *configurations) Update(ctx context.Context, template *model.Configurati
 }
 func (t *configurations) List(ctx context.Context, templateCode string, opts ...meta.ListOption) (count int64, ret []*model.ConfigurationM, err error) {
 	options := meta.NewListOptions(opts...)
+	if templateCode != "" {
+		options.Filters["template_code"] = templateCode
+	}
 	ans := t.db.
 		Where(options.Filters).
 		Offset(options.Offset).
 		Limit(options.Limit).
 		Order("id desc").
-		Find(ret).
+		Find(&ret).
 		Limit(-1).
 		Count(&count)
 

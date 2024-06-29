@@ -11,12 +11,15 @@ import (
 	"errors"
 	"github.com/rosas99/monster/internal/pkg/meta"
 	"github.com/rosas99/monster/internal/sms/model"
+	"github.com/rosas99/monster/internal/sms/store"
 	"gorm.io/gorm"
 )
 
 type templates struct {
 	db *gorm.DB
 }
+
+var _ store.TemplateStore = (*templates)(nil)
 
 func newTemplates(db *gorm.DB) *templates {
 	return &templates{db: db}
@@ -49,7 +52,7 @@ func (t *templates) List(ctx context.Context, templateCode string, opts ...meta.
 		Offset(options.Offset).
 		Limit(options.Limit).
 		Order("id desc").
-		Find(ret).
+		Find(&ret).
 		Limit(-1).
 		Count(&count)
 

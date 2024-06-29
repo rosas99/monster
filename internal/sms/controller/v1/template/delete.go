@@ -12,7 +12,7 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-func (b *TemplateController) Delete(c *gin.Context) {
+func (b *Controller) Delete(c *gin.Context) {
 	var r v1.DeleteTemplateRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)

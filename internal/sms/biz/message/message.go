@@ -12,7 +12,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
-	"github.com/rosas99/monster/internal/sms/rule"
+	"github.com/rosas99/monster/internal/sms/checker"
 	"github.com/rosas99/monster/internal/sms/store"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 	"github.com/rosas99/monster/pkg/id"
@@ -29,7 +29,7 @@ type messageBiz struct {
 	// todo writer
 	logger *Logger
 	rds    *redis.Client
-	rule   *rule.RuleFactory
+	rule   *checker.RuleFactory
 	idt    *idempotent.Idempotent
 }
 

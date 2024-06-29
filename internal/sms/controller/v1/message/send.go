@@ -12,7 +12,7 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-func (b *MessageController) Send(c *gin.Context) {
+func (b *Controller) Send(c *gin.Context) {
 	var r v1.CreateTemplateRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)

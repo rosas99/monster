@@ -1,4 +1,4 @@
-package rule
+package checker
 
 import (
 	"errors"
@@ -6,22 +6,12 @@ import (
 	"github.com/rosas99/monster/internal/sms/model"
 )
 
-// CheckerRequest 模拟验证请求
-type CheckerRequest struct {
-	// 根据需要添加字段
-}
-
-// CheckerResponse 模拟验证失败的原因
-type CheckerResponse struct {
-	Reason string
-}
-
 // 策略模式
 // todo 参考iam注册方式
 // Rule 接口定义了验证规则需要实现的方法
 type Rule interface {
-	IsValid(*CheckerRequest) bool
-	GetFailReason() *CheckerResponse
+	IsValid(*Request) bool
+	GetFailReason() error
 }
 
 type RuleFactory struct {
@@ -61,11 +51,9 @@ func (rf *RuleFactory) CheckRules(template *model.TemplateM, mobile string, cfgL
 		if err != nil {
 
 		}
-		var c CheckerRequest
+		var c Request
 		if !checker.IsValid(&c) {
-			// 这里fail reason可以使用生成的错误码替换
-			checker.GetFailReason()
-			return errors.New("no configuration")
+			return checker.GetFailReason()
 
 		}
 

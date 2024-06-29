@@ -13,6 +13,7 @@ import (
 	"github.com/rosas99/monster/internal/pkg/middleware/header"
 	"github.com/rosas99/monster/internal/pkg/middleware/trace"
 	"github.com/rosas99/monster/internal/sms/biz"
+	"github.com/rosas99/monster/internal/sms/checker"
 	"github.com/rosas99/monster/internal/sms/middleware/validate"
 	"github.com/rosas99/monster/internal/sms/service"
 	"github.com/rosas99/monster/internal/sms/store"
@@ -72,6 +73,27 @@ func (c completedConfig) New() (*SmsServer, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// 注册rule
+	factory := checker.NewRuleFactory()
+	factory.RegisterRule(
+		checker.MessageCountForTemplatePerDay,
+		&checker.MessageCountForTemplateRule{
+			DS:  ds,
+			RDS: rds,
+		})
+	factory.RegisterRule(
+		checker.MessageCountForMobilePerDay,
+		&checker.MessageCountForMobileRule{
+			DS:  ds,
+			RDS: rds,
+		})
+	factory.RegisterRule(
+		checker.TimeIntervalForMobilePerDay,
+		&checker.TimeIntervalForMobileRule{
+			DS:  ds,
+			RDS: rds,
+		})
 
 	//writer, err := logger.NewLogger(c.KafkaOptions1, ds.Templates())
 	//if err != nil {

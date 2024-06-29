@@ -2,10 +2,10 @@ package template
 
 import "github.com/rosas99/monster/internal/sms/service"
 
-type TemplateController struct {
+type Controller struct {
 	svc *service.SmsServerService
 }
 
-func New(svc *service.SmsServerService) *TemplateController {
-	return &TemplateController{svc: svc}
+func New(svc *service.SmsServerService) *Controller {
+	return &Controller{svc: svc}
 }

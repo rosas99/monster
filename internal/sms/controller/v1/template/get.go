@@ -7,6 +7,7 @@
 package template
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
@@ -16,11 +17,12 @@ type validator interface {
 	Validate() error
 }
 
-func (b *TemplateController) Get(c *gin.Context) {
+func (b *Controller) Get(c *gin.Context) {
 	var r v1.GetTemplateRequest
-	if err := c.ShouldBindJSON(&r); err != nil {
-		core.WriteResponse(c, err, nil)
-	}
+
+	param := c.Param("id")
+	r.Id = param
+	fmt.Print(r.Id)
 
 	if err := r.Validate(); err != nil {
 		core.WriteResponse(c, err, nil)

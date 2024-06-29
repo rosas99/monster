@@ -1,0 +1,74 @@
+# Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
+# Use of this source code is governed by a MIT style
+# license that can be found in the LICENSE file. The original repo for
+# this file is https://"github.com/rosas99/monster.
+#
+
+# onex-sms 服务配置文件
+http:
+  addr: 127.0.0.1:9093 # HTTP/HTTPS 服务监听地址
+grpc:
+  addr: 127.0.0.1:2379 # gRPC 服务监听地址
+tls:
+  use-tls: false # 是否启用 TLS
+  cert:  # TLS 证书路径
+  key:  # TLS 私钥路径
+mysql:
+  host: 127.0.0.1:3306 # 数据库主机地址
+  database: sms # 数据库名称
+  username: onex # 数据库用户名
+  password: onex(#)666 # 数据库密码
+  log-level: 1 # 数据库日志级别，1 为最低，4 为最高
+redis:
+  addr: 127.0.0.1:6379 # Redis 地址
+  database: 0 # Redis 数据库索引
+  password: onex(#)666 # Redis 密码
+
+log: # 使用默认值即可，不需要在 manifests/env.local 中配置
+    level: fatal # 日志级别，优先级从低到高依次为：debug, info, warn, error, dpanic, panic, fatal。
+    format: console # 支持的日志输出格式，目前支持 console 和 json 两种。console 其实就是 text 格式。
+    enable-color: true # 是否开启颜色输出，true: 是，false: 否
+    disable-caller: true # 是否开启 caller，如果开启会在日志中显示调用日志所在的文件、函数和行号
+    disable-stacktrace: false # 是否再 panic 及以上级别禁止打印堆栈信息
+    output-paths: stdout # 多个输出，逗号分开。stdout：标准输出，
+
+# todo 也可以换成 gozero的kq
+# 这里如何兼容多个topic 这里改成配置多个kafka，因为broker可能不一样
+# articleWriter
+
+kafka:
+  brokers: 127.0.0.1:9092
+  topic: audit
+  timeout: 3s
+  # tls:
+  #mechanism:
+  #username:
+  #password:
+  #algorithm:
+  #compressed:
+  writer: # 使用默认值即可，不需要在 manifests/env.local 中配置
+    max-attempts: 10
+    required-acks: 1
+    async: true
+    batch-size: 100
+    batch-timeout: 1s
+    batch-bytes: 1024
+
+#  这里自定义kafka的类型 articleConsumer
+kafka2:
+  brokers: 127.0.0.1:9092
+  topic: audit
+  timeout: 3s
+#  options提供了默认值，如果不修改，这里不用配置
+  reader: # 使用默认值即可，不需要在 manifests/env.local 中配置
+    partition: 0
+    queue-capacity: 100
+    min-bytes: 1
+    max-bytes: 1024
+    max-wait: 10s
+    read-batch-timeout: 10s
+    heartbeat-interval: 3s
+    commit-interval: 0s
+    rebalance-timeout: 30s
+    start-offset: 0
+    max-attempts: 3

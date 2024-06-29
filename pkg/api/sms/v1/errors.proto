@@ -1,0 +1,24 @@
+// Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://"github.com/rosas99/monster.
+//
+
+syntax = "proto3";
+
+package sms.v1;
+
+import "errors/errors.proto";
+
+option go_package = ""github.com/rosas99/monster/pkg/api/sms/v1;v1";
+
+enum ErrorReason {
+
+  // 订单找不到 ，可能是订单不存在或输入的订单标识有误
+  OrderNotFound = 0 [(errors.code) = 401];
+  // 订单已存在，无法创建用户
+  OrderAlreadyExists = 1 [(errors.code) = 409];
+  // 创建订单失败，可能是由于服务器或其他问题导致的创建过程中的错误
+  // todo 这个注释会同步到生成的文件
+  OrderCreateFailed = 2 [(errors.code) = 541];
+}

@@ -18,7 +18,7 @@ import (
 
 	genericoptions "github.com/rosas99/monster/pkg/options"
 	kafkaconnector "github.com/rosas99/monster/pkg/streams/connector/kafka"
-	mongoconnector "github.com/superproj/onex/pkg/streams/connector/mongo"
+	mongoconnector "github.com/rosas99/monster/pkg/streams/connector/mongo"
 )
 
 // Config defines the config for the apiserver.

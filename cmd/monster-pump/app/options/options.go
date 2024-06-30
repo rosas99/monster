@@ -20,7 +20,7 @@ import (
 
 const (
 	// UserAgent is the userAgent name when starting onex-pump server.
-	UserAgent = "smsx-pump"
+	UserAgent = "monster-pump"
 )
 
 var _ app.CliOptions = (*Options)(nil)

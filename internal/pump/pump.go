@@ -1,0 +1,122 @@
+// Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/rosas99/monster.
+//
+
+//go:generate wire .
+package pump
+
+import (
+	"github.com/rosas99/monster/pkg/streams/flow"
+	"time"
+
+	"github.com/segmentio/kafka-go"
+	"k8s.io/apimachinery/pkg/util/wait"
+
+	"go.mongodb.org/mongo-driver/mongo"
+
+	genericoptions "github.com/rosas99/monster/pkg/options"
+	kafkaconnector "github.com/rosas99/monster/pkg/streams/connector/kafka"
+	mongoconnector "github.com/superproj/onex/pkg/streams/connector/mongo"
+)
+
+// Config defines the config for the apiserver.
+type Config struct {
+	KafkaOptions *genericoptions.KafkaOptions
+	MongoOptions *genericoptions.MongoOptions
+	RedisOptions *genericoptions.RedisOptions
+	MySQLOptions *genericoptions.MySQLOptions
+}
+
+// Server contains state for a Kubernetes cluster master/api server.
+type Server struct {
+	kafkaReader kafka.ReaderConfig
+	colName     string
+	db          *mongo.Database
+}
+
+type completedConfig struct {
+	*Config
+}
+
+// 思路1 函数使用依赖注入redi
+// 思路2 函数修改为方法，但是map方法需要使用适配器兼容方法参数
+// addUTC appends a UTC timestamp to the beginning of the message value.
+var addUTC = func(msg kafka.Message) kafka.Message {
+	timestamp := time.Now().Format(time.DateTime)
+
+	// Concatenate the UTC timestamp with msg.Value
+	msg.Value = []byte(timestamp + " " + string(msg.Value))
+	// 这里拿到值后可以写入MySQL MongoDB，做日志记录 不一定是byte类型的
+	return msg
+}
+
+// Complete fills in any fields not set that are required to have valid data. It's mutating the receiver.
+func (cfg *Config) Complete() completedConfig {
+	return completedConfig{cfg}
+}
+
+// New returns a new instance of Server from the given config.
+// Certain config fields will be set to a default value if unset.
+func (c completedConfig) New() (*Server, error) {
+	client, err := c.MongoOptions.NewClient()
+	if err != nil {
+		return nil, err
+	}
+
+	server := &Server{
+		// 这里带有默认值的可以不配置
+		kafkaReader: kafka.ReaderConfig{
+			Brokers:           c.KafkaOptions.Brokers,
+			Topic:             c.KafkaOptions.Topic,
+			GroupID:           c.KafkaOptions.ReaderOptions.GroupID,
+			QueueCapacity:     c.KafkaOptions.ReaderOptions.QueueCapacity,
+			MinBytes:          c.KafkaOptions.ReaderOptions.MinBytes,
+			MaxBytes:          c.KafkaOptions.ReaderOptions.MaxBytes,
+			MaxWait:           c.KafkaOptions.ReaderOptions.MaxWait,
+			ReadBatchTimeout:  c.KafkaOptions.ReaderOptions.ReadBatchTimeout,
+			HeartbeatInterval: c.KafkaOptions.ReaderOptions.HeartbeatInterval,
+			CommitInterval:    c.KafkaOptions.ReaderOptions.CommitInterval,
+			RebalanceTimeout:  c.KafkaOptions.ReaderOptions.RebalanceTimeout,
+			StartOffset:       c.KafkaOptions.ReaderOptions.StartOffset,
+			MaxAttempts:       c.KafkaOptions.ReaderOptions.MaxAttempts,
+		},
+		colName: c.MongoOptions.Collection,
+		db:      client.Database(c.MongoOptions.Database),
+	}
+
+	return server, nil
+}
+
+type PreparedServer struct {
+	*Server
+}
+
+func (s *Server) PrepareRun() PreparedServer {
+	return PreparedServer{s}
+}
+
+func (s PreparedServer) Run(stopCh <-chan struct{}) error {
+
+	ctx := wait.ContextForChannel(stopCh)
+	// todo reader已经提供了默认值
+	source, err := kafkaconnector.NewKafkaSource(ctx, s.kafkaReader)
+	if err != nil {
+		return err
+	}
+	filter := flow.NewMap(addUTC, 1)
+	// 选用mongo的原因，适合高并发写入，数据结构经常变化，适合存储json
+	sink, err := mongoconnector.NewMongoSink(ctx, s.db, mongoconnector.SinkConfig{
+		CollectionName:            s.colName,
+		CollectionCapMaxDocuments: 2000,
+		CollectionCapMaxSizeBytes: 5 * genericoptions.GiB,
+		CollectionCapEnable:       true,
+	})
+	if err != nil {
+		return err
+	}
+	source.Via(filter).To(sink)
+
+	return err
+}

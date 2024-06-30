@@ -15,11 +15,11 @@ package sms.v1; // 告诉编译器此文件使用什么版本的语法
 
 option go_package = "github.com/rosas99/monster/pkg/api/sms/v1";
 
-//service SmsServer {
+service SmsServer {
 //  rpc DeleteOrder(CreateTemplateRequest) returns (google.protobuf.Empty) {
 //    option (google.api.http) = {delete: "/v1/orders"};
 //  }
-//}
+}
 
 
 // string templateName = 1 [(validate.rules).string = {min_len: 1, max_len: 253, pattern: "[^\\s]+"}];; // 模板名称

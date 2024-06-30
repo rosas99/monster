@@ -7,21 +7,13 @@
 package service
 
 import (
-	"context"
 	"github.com/rosas99/monster/internal/sms/biz"
-	pb "github.com/rosas99/monster/pkg/api/sms/v1"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 type SmsServerService struct {
 	biz biz.IBiz
 	v1.UnimplementedSmsServerServer
-}
-
-func (s *SmsServerService) DeleteOrder(ctx context.Context, request *pb.CreateTemplateRequest) (*emptypb.Empty, error) {
-	//TODO implement me
-	panic("implement me")
 }
 
 func (s *SmsServerService) mustEmbedUnimplementedSmsServerServer() {

@@ -26,6 +26,7 @@ import (
 
 type MessageBiz interface {
 	Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
+	CodeVerify(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
 }
 
 // OrderBiz 接口的实现.
@@ -35,6 +36,11 @@ type messageBiz struct {
 	rds    *redis.Client
 	rule   *checker.RuleFactory
 	idt    *idempotent.Idempotent
+}
+
+func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 // 确保 orderBiz 实现了 OrderBiz 接口.

@@ -12,3 +12,8 @@ func (s *SmsServerService) Send(ctx context.Context, rq *v1.CreateTemplateReques
 	log.C(ctx).Infow("CreateOrder function called")
 	return s.biz.Messages().Send(ctx, rq)
 }
+
+func (s *SmsServerService) CodeVerify(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
+	log.C(ctx).Infow("CreateOrder function called")
+	return s.biz.Messages().Send(ctx, rq)
+}

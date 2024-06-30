@@ -22,7 +22,7 @@ var _ Rule = (*MessageCountForTemplateRule)(nil)
 func (m *MessageCountForTemplateRule) IsValid(rq *types.Request) bool {
 
 	start := time.Now().Unix()
-	key := factory.WrapperTemplateCount(rq.mobile, rq.templateCode)
+	key := factory.WrapperTemplateCount(rq.Mobile, rq.TemplateCode)
 	ctx := context.Background()
 	// 查询redis
 	rds := m.RDS
@@ -41,7 +41,7 @@ func (m *MessageCountForTemplateRule) IsValid(rq *types.Request) bool {
 		ttl, _ := rds.TTL(ctx, key).Result()
 		rds.Expire(ctx, key, ttl)
 		log.Infof("TemplateAndMobileChecker-----checker time效验号码模板总时间----: %d", time.Now().Unix()-start)
-		isValid := rq.limitValue > sentCount
+		isValid := rq.LimitValue > sentCount
 		if !isValid {
 			log.Infow(":warning:", "key", key, "sentCount", sentCount, "isValid", isValid)
 		}

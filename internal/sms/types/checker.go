@@ -13,14 +13,14 @@ const (
 
 // Response  模拟验证失败的原因
 type Response struct {
-	resultCode string
-	errorMsg   string
+	ResultCode string
+	ErrorMsg   string
 }
 
 // Request  模拟验证请求
 type Request struct {
-	mobile       string
-	id           int64
-	templateCode string
-	limitValue   int64
+	Mobile       string
+	Id           int64
+	TemplateCode string
+	LimitValue   int64
 }

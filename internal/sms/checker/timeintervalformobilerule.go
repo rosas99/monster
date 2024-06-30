@@ -21,7 +21,7 @@ var _ Rule = (*TimeIntervalForMobileRule)(nil)
 
 func (m *TimeIntervalForMobileRule) IsValid(rq *types.Request) bool {
 	start := time.Now().Unix()
-	key := factory.WrapperTimeInterval(rq.mobile, rq.templateCode)
+	key := factory.WrapperTimeInterval(rq.Mobile, rq.TemplateCode)
 	ctx := context.Background()
 	rds := m.RDS
 	timeStampStr, err := rds.Get(ctx, key).Result()

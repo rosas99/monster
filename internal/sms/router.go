@@ -36,7 +36,7 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService, accounts map[s
 			tl := template.New(svc)
 			//templatev1.Use(gin2.Validator())
 			templatev1.POST("/create", tl.Create)
-			templatev1.GET("/update", tl.Update)
+			templatev1.POST("/update", tl.Update)
 			templatev1.GET("/:id", tl.Get)
 			templatev1.POST("/getList", tl.List)
 			templatev1.POST("/delete", tl.Delete)

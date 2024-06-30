@@ -23,17 +23,17 @@ var _ Rule = (*MessageCountForMobileRule)(nil)
 func (m *MessageCountForMobileRule) IsValid(rq *types.Request) bool {
 
 	start := time.Now().Unix()
-	key := factory.WrapperMobileCount(rq.mobile, rq.templateCode)
+	key := factory.WrapperMobileCount(rq.Mobile, rq.TemplateCode)
 	ctx := context.Background()
 	// 查询redis
 	rds := m.RDS
 	sentCount, err := rds.Get(ctx, key).Result()
 	if err != nil {
 		filter := map[string]any{
-			"mobile": rq.mobile,
+			"mobile": rq.Mobile,
 			"status": "OK",
 		}
-		count, _, err := m.DS.Histories().List(ctx, rq.templateCode, meta.WithFilter(filter))
+		count, _, err := m.DS.Histories().List(ctx, rq.TemplateCode, meta.WithFilter(filter))
 		if err != nil {
 			sentCount = ""
 		} else if strconv.FormatInt(count, 10) == "0" {
@@ -51,7 +51,7 @@ func (m *MessageCountForMobileRule) IsValid(rq *types.Request) bool {
 		ttl, _ := rds.TTL(ctx, key).Result()
 		rds.Expire(ctx, key, ttl)
 		log.Infof("TemplateAndMobileChecker-----checker time效验号码模板总时间----: %d", time.Now().Unix()-start)
-		isValid := rq.limitValue > sentCount
+		isValid := rq.LimitValue > sentCount
 
 		if !isValid {
 			log.Infow(":warning:", "key", key, "sentCount", sentCount, "isValid", isValid)

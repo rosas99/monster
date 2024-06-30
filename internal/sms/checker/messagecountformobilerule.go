@@ -7,6 +7,7 @@ import (
 	"github.com/rosas99/monster/internal/pkg/meta"
 	"github.com/rosas99/monster/internal/sms/store"
 	factory "github.com/rosas99/monster/internal/sms/store/redis"
+	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/log"
 	"strconv"
 	"time"
@@ -19,7 +20,7 @@ type MessageCountForMobileRule struct {
 
 var _ Rule = (*MessageCountForMobileRule)(nil)
 
-func (m *MessageCountForMobileRule) IsValid(rq *Request) bool {
+func (m *MessageCountForMobileRule) IsValid(rq *types.Request) bool {
 
 	start := time.Now().Unix()
 	key := factory.WrapperMobileCount(rq.mobile, rq.templateCode)
@@ -41,7 +42,7 @@ func (m *MessageCountForMobileRule) IsValid(rq *Request) bool {
 	}
 
 	if sentCount == "" {
-		rds.SetNX(ctx, key, 1, LimitLeftTime)
+		rds.SetNX(ctx, key, 1, types.LimitLeftTime)
 		log.Infof("TemplateAndMobileChecker-----checker time效验号码模板总时间----: %d", time.Now().Unix()-start)
 		return true
 	} else {

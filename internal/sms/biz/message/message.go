@@ -17,6 +17,7 @@ import (
 	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/store"
 	factory "github.com/rosas99/monster/internal/sms/store/redis"
+	"github.com/rosas99/monster/internal/sms/types"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 	"github.com/rosas99/monster/pkg/log"
 	"strconv"
@@ -44,19 +45,10 @@ func New(ds store.IStore, logger *logger.Logger, rds *redis.Client, idt *idempot
 	return &messageBiz{ds: ds, logger: logger, rds: rds}
 }
 
-type TemplateMsgRequest struct {
-	Matcher   string     `protobuf:"bytes,1,opt,name=matcher,proto3" json:"matcher,omitempty"`
-	Request   []any      `protobuf:"bytes,2,opt,name=request,proto3" json:"request,omitempty"`
-	Result    bool       `protobuf:"bytes,3,opt,name=result,proto3" json:"result,omitempty"`
-	Explains  [][]string `protobuf:"bytes,4,opt,name=explains,proto3" json:"explains,omitempty"`
-	Timestamp int64      `protobuf:"bytes,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
-	RequestId string     `protobuf:"bytes,6,opt,name=requestId,proto3" json:"requestId,omitempty"`
-}
-
 // todo 生成请求
 // Create 是 OrderBiz 接口中 `Create` 方法的实现.
 func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
-	var templateMsgRequest TemplateMsgRequest
+	var templateMsgRequest types.TemplateMsgRequest
 	templateMsgRequest.RequestId = b.idt.Token(ctx)
 	// todo 先使用redis保存 后续再考虑使用本地缓存
 	// todo 参考cache服务如何实现
@@ -97,8 +89,9 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v
 	key := factory.WrapperCode(rq.TemplateCode, rq.Mobile)
 	b.rds.Set(ctx, key, rq.Code, time.Hour*24)
 
-	log.C(ctx).Infof("test")
+	l.LogMsg(&templateMsgRequest)
 
+	log.C(ctx).Infof("test")
 	l.LogHistory(&m)
 
 	message := map[string]any{

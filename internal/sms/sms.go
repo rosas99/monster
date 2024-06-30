@@ -7,6 +7,7 @@
 package sms
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
@@ -16,12 +17,16 @@ import (
 	"github.com/rosas99/monster/internal/sms/checker"
 	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/middleware/validate"
+	mqs "github.com/rosas99/monster/internal/sms/mqs"
+	providerFactory "github.com/rosas99/monster/internal/sms/provider"
 	"github.com/rosas99/monster/internal/sms/service"
 	"github.com/rosas99/monster/internal/sms/store"
 	"github.com/rosas99/monster/internal/sms/store/mysql"
+	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/db"
 	"github.com/rosas99/monster/pkg/log"
 	genericoptions "github.com/rosas99/monster/pkg/options"
+	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 // Config represents the configuration of the service.
@@ -49,6 +54,7 @@ type completedConfig struct {
 type SmsServer struct {
 	httpsrv Server
 	grpcsrv Server
+	mqsrv   MqServer
 	config  completedConfig
 }
 
@@ -78,23 +84,26 @@ func (c completedConfig) New() (*SmsServer, error) {
 	// 注册rule
 	factory := checker.NewRuleFactory()
 	factory.RegisterRule(
-		checker.MessageCountForTemplatePerDay,
+		types.MessageCountForTemplatePerDay,
 		&checker.MessageCountForTemplateRule{
 			DS:  ds,
 			RDS: rds,
 		})
 	factory.RegisterRule(
-		checker.MessageCountForMobilePerDay,
+		types.MessageCountForMobilePerDay,
 		&checker.MessageCountForMobileRule{
 			DS:  ds,
 			RDS: rds,
 		})
 	factory.RegisterRule(
-		checker.TimeIntervalForMobilePerDay,
+		types.TimeIntervalForMobilePerDay,
 		&checker.TimeIntervalForMobileRule{
 			DS:  ds,
 			RDS: rds,
 		})
+
+	provider := providerFactory.NewProviderFactory()
+	provider.RegisterProvider(types.ProviderTypeWE, providerFactory.NewWEProvider(rds))
 
 	l, err := logger.NewLogger(c.KafkaOptions, ds.Histories())
 	if err != nil {
@@ -106,6 +115,8 @@ func (c completedConfig) New() (*SmsServer, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	logic := mqs.NewHandlerMessageBiz(context.Background(), idt, l)
 
 	biz := biz.NewBiz(ds, rds, idt, l)
 
@@ -141,10 +152,12 @@ func (c completedConfig) New() (*SmsServer, error) {
 		trace.TraceID(), nil, validate.Validation(ds)}
 	// 添加中间件
 	g.Use(mws...)
+
+	mqsrv, _ := NewMqServer(c.KafkaOptions, logic)
+
 	// Need start grpc server first. http server depends on grpc sever.
 	go grpcsrv.RunOrDie()
-
-	return &SmsServer{grpcsrv: grpcsrv, httpsrv: httpsrv}, nil
+	return &SmsServer{grpcsrv: grpcsrv, httpsrv: httpsrv, mqsrv: mqsrv, config: c}, nil
 }
 
 func (s *SmsServer) Run(stopCh <-chan struct{}) error {
@@ -152,6 +165,7 @@ func (s *SmsServer) Run(stopCh <-chan struct{}) error {
 	log.Infof("Successfully start pump server")
 
 	go s.httpsrv.RunOrDie()
+	go s.mqsrv.RunWithContext(wait.ContextForChannel(stopCh))
 
 	<-stopCh
 

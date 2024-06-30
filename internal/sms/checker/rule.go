@@ -4,13 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"github.com/rosas99/monster/internal/sms/model"
+	"github.com/rosas99/monster/internal/sms/types"
 )
 
 // 策略模式
 // todo 参考iam注册方式
 // Rule 接口定义了验证规则需要实现的方法
 type Rule interface {
-	IsValid(*Request) bool
+	IsValid(*types.Request) bool
 	GetFailReason() error
 }
 
@@ -51,7 +52,7 @@ func (rf *RuleFactory) CheckRules(template *model.TemplateM, mobile string, cfgL
 		if err != nil {
 
 		}
-		var c Request
+		var c types.Request
 		if !checker.IsValid(&c) {
 			return checker.GetFailReason()
 

@@ -6,6 +6,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/sms/store"
 	factory "github.com/rosas99/monster/internal/sms/store/redis"
+	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/log"
 	"strconv"
 	"time"
@@ -18,7 +19,7 @@ type TimeIntervalForMobileRule struct {
 
 var _ Rule = (*TimeIntervalForMobileRule)(nil)
 
-func (m *TimeIntervalForMobileRule) IsValid(rq *Request) bool {
+func (m *TimeIntervalForMobileRule) IsValid(rq *types.Request) bool {
 	start := time.Now().Unix()
 	key := factory.WrapperTimeInterval(rq.mobile, rq.templateCode)
 	ctx := context.Background()
@@ -29,7 +30,7 @@ func (m *TimeIntervalForMobileRule) IsValid(rq *Request) bool {
 	}
 
 	if timeStampStr == "" {
-		rds.SetNX(ctx, key, 1, LimitLeftTime)
+		rds.SetNX(ctx, key, 1, types.LimitLeftTime)
 		log.Infof("TemplateAndMobileChecker-----checker time效验号码模板总时间----: %d", time.Now().Unix()-start)
 		return true
 	} else {

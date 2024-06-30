@@ -488,7 +488,7 @@ func (m *TemplateReply) validate(all bool) error {
 	// no validation rules for Region
 
 	if all {
-		switch v := interface{}(m.GetCreatedAt()).(type) {
+		switch v := interface{}(nil).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, TemplateReplyValidationError{
@@ -506,7 +506,7 @@ func (m *TemplateReply) validate(all bool) error {
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(nil).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return TemplateReplyValidationError{
 				field:  "CreatedAt",
@@ -517,7 +517,7 @@ func (m *TemplateReply) validate(all bool) error {
 	}
 
 	if all {
-		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		switch v := interface{}(nil).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, TemplateReplyValidationError{
@@ -535,7 +535,7 @@ func (m *TemplateReply) validate(all bool) error {
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(nil).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return TemplateReplyValidationError{
 				field:  "UpdatedAt",

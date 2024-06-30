@@ -10,7 +10,7 @@ package sms.v1;
 
 import "errors/errors.proto";
 
-option go_package = ""github.com/rosas99/monster/pkg/api/sms/v1;v1";
+option go_package = "github.com/rosas99/monster/pkg/api/sms/v1";
 
 enum ErrorReason {
 

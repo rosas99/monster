@@ -8,24 +8,26 @@ syntax = "proto3";
 
 package sms.v1; // 告诉编译器此文件使用什么版本的语法
 
-import "google/api/annotations.proto";
-import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
-import "validate/validate.proto";
+//import "google/api/annotations.proto";
+//import "google/protobuf/empty.proto";
+//import "google/protobuf/timestamp.proto";
+//import "validate.proto";
 
-option go_package = ""github.com/rosas99/monster/pkg/api/sms/v1;v1";
+option go_package = "github.com/rosas99/monster/pkg/api/sms/v1";
 
-service SmsServer {
-  rpc DeleteOrder(CreateTemplateRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {delete: "/v1/orders"};
-  }
-}
+//service SmsServer {
+//  rpc DeleteOrder(CreateTemplateRequest) returns (google.protobuf.Empty) {
+//    option (google.api.http) = {delete: "/v1/orders"};
+//  }
+//}
 
 
 // string templateName = 1 [(validate.rules).string = {min_len: 1, max_len: 253, pattern: "[^\\s]+"}];; // 模板名称
 message CreateTemplateRequest {
-  string templateName = 1 [(validate.rules).string = {pattern: "[^\\s]+"}];; // 模板名称
-  string content = 2  [(validate.rules).string = {pattern: "[^\\s]+"}]; // 模板内容
+//  string templateName = 1 [(validate.rules).string = {pattern: "[^\\s]+"}];; // 模板名称
+  string templateName = 1 ; // 模板名称
+//  string content = 2  [(validate.rules).string = {pattern: "[^\\s]+"}]; // 模板内容
+  string content = 2  ; // 模板内容
   string templateType = 3; // 模板类型-1验证码-2普通类型
   string brand = 4; // 品牌
   repeated  string providers = 5; // 供应商列表 // 数组使用repeated
@@ -37,16 +39,20 @@ message CreateTemplateRequest {
   string mobileCount = 11;
   string timeInterval = 12;
   string region = 13;
+  string mobile =14;
+ string  code =15;
 }
 
 message CreateTemplateResponse {
-  int64 orderID = 1;
+  int64 orderID = 1                                                                                                                                                             ;
 }
 
 message UpdateTemplateRequest {
   int64 id = 1;
-  string templateName = 2 [(validate.rules).string = {pattern: "[^\\s]+"}];; // 模板名称
-  string content = 3  [(validate.rules).string = {pattern: "[^\\s]+"}]; // 模板内容
+//    string templateName = 2 [(validate.rules).string = {pattern: "[^\\s]+"}]; // 模板名称
+  string templateName = 2 ; // 模板名称
+  //  string content = 2  [(validate.rules).string = {pattern: "[^\\s]+"}]; // 模板内容
+  string content = 3  ; // 模板内容
   string templateType = 4; // 模板类型-1验证码-2普通类型
   string brand = 5; // 品牌
   repeated  string providers = 6; // 供应商列表 // 数组使用repeated
@@ -76,8 +82,8 @@ message TemplateReply {
   string mobileCount = 13;
   string timeInterval = 14;
   string region = 15; // 这里暂时使用string 后面再使用枚举
-  google.protobuf.Timestamp createdAt = 16; // 创建时间
-  google.protobuf.Timestamp updatedAt = 17; // 更新时间
+//  google.protobuf.Timestamp createdAt = 16; // 创建时间
+//  google.protobuf.Timestamp updatedAt = 17; // 更新时间
 }
 
 message ListTemplateRequest {

@@ -4,7 +4,7 @@
 // this file is https://github.com/rosas99/monster.
 //
 
-package message
+package logger
 
 import (
 	"context"
@@ -12,11 +12,9 @@ import (
 	"fmt"
 	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/store"
-	"github.com/segmentio/kafka-go"
-	"time"
-
 	"github.com/rosas99/monster/pkg/log"
 	genericoptions "github.com/rosas99/monster/pkg/options"
+	"github.com/segmentio/kafka-go"
 )
 
 // kafkaLogger is a log.Logger implementation that writes log messages to Kafka.
@@ -50,50 +48,24 @@ func NewLogger(kafkaOpts *genericoptions.KafkaOptions, ds store.HistoryStore) (*
 }
 
 // LogModel writes a log message for the policy model.
-func (l *Logger) LogHistory(test string) string {
-
-	//message := AuditMessage{
-	//	Timestamp: time.Now().Unix(),
-	//}
-
-	// 这里先转成json
-	out, _ := json.Marshal(test)
-	// 因为writer传的都是二进制
-	// 这里json转成二进制数组
-	//fmt.Println(test)
-	//if err := l.writer.WriteMessages(context.Background(), kafka.Message{Value: out}); err != nil {
-	//	log.Errorw(err, "Failed to write kafka messages")
-	//} else {
-	//	fmt.Println(string(out))
-	//}
-
-	err := l.ds.Create(context.Background(), &model.HistoryM{})
+func (l *Logger) LogHistory(history *model.HistoryM) {
+	err := l.ds.Create(context.Background(), history)
 	if err != nil {
-
+		log.Errorw(err, "Failed to write kafka messages")
 	}
-
-	return string(out)
-	// todo 修改成MySQL
 }
 
 // log others
 
 // LogModel writes a log message for the policy model.
-func (l *Logger) LogMessageRequest(test string) string {
+func (l *Logger) LogKpi(messageMap map[string]any) {
 
-	message := TemplateMsgRequest{
-		Timestamp: time.Now().Unix(),
-	}
+	out, _ := json.Marshal(messageMap)
 
-	// 这里先转成json
-	out, _ := json.Marshal(message)
-	// 因为writer传的都是二进制
-	// 这里json转成二进制数组
-	fmt.Println(test)
+	fmt.Println(messageMap)
 	if err := l.writer.WriteMessages(context.Background(), kafka.Message{Value: out}); err != nil {
 		log.Errorw(err, "Failed to write kafka messages")
 	} else {
 		fmt.Println(string(out))
 	}
-	return string(out)
 }

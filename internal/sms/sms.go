@@ -14,6 +14,7 @@ import (
 	"github.com/rosas99/monster/internal/pkg/middleware/trace"
 	"github.com/rosas99/monster/internal/sms/biz"
 	"github.com/rosas99/monster/internal/sms/checker"
+	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/middleware/validate"
 	"github.com/rosas99/monster/internal/sms/service"
 	"github.com/rosas99/monster/internal/sms/store"
@@ -25,14 +26,14 @@ import (
 
 // Config represents the configuration of the service.
 type Config struct {
-	GRPCOptions   *genericoptions.GRPCOptions
-	HTTPOptions   *genericoptions.HTTPOptions
-	TLSOptions    *genericoptions.TLSOptions
-	MySQLOptions  *genericoptions.MySQLOptions
-	RedisOptions  *genericoptions.RedisOptions
-	KafkaOptions1 *genericoptions.KafkaOptions
-	Address       string
-	Accounts      map[string]string
+	GRPCOptions  *genericoptions.GRPCOptions
+	HTTPOptions  *genericoptions.HTTPOptions
+	TLSOptions   *genericoptions.TLSOptions
+	MySQLOptions *genericoptions.MySQLOptions
+	RedisOptions *genericoptions.RedisOptions
+	KafkaOptions *genericoptions.KafkaOptions
+	Address      string
+	Accounts     map[string]string
 }
 
 // Complete fills in any fields not set that are required to have valid data. It's mutating the receiver.
@@ -95,10 +96,10 @@ func (c completedConfig) New() (*SmsServer, error) {
 			RDS: rds,
 		})
 
-	//writer, err := logger.NewLogger(c.KafkaOptions1, ds.Templates())
-	//if err != nil {
-	//	return nil, err
-	//}
+	l, err := logger.NewLogger(c.KafkaOptions, ds.Histories())
+	if err != nil {
+		return nil, err
+	}
 
 	//这里初始化所有writer 然后注入biz
 	idt, err := idempotent.NewIdempotent(rds)
@@ -106,7 +107,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	biz := biz.NewBiz(ds, nil, rds, idt)
+	biz := biz.NewBiz(ds, rds, idt, l)
 
 	srv := service.NewSmsServerService(biz)
 

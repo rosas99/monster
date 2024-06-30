@@ -3,10 +3,11 @@ package redis
 import "fmt"
 
 const (
-	MobileCount   = "MOBILE_COUNT"
-	TemplateCount = "TEMPLATE_COUNT"
-	TimeInterval  = "TIME_INTERVAL"
-	DELIMITER     = ":"
+	MobileCount                  = "MOBILE_COUNT"
+	TemplateCount                = "TEMPLATE_COUNT"
+	TimeInterval                 = "TIME_INTERVAL"
+	TemplateTypeVerificationCode = "TEMPLATE_TYPE_VERIFICATION_CODE"
+	DELIMITER                    = ":"
 )
 
 // WrapperMobileCount  is used to build the key name in Redis.
@@ -22,4 +23,9 @@ func WrapperTemplateCount(templateCode, mobile string) string {
 // WrapperTimeInterval  is used to build the key name in Redis.
 func WrapperTimeInterval(templateCode, mobile string) string {
 	return fmt.Sprintf("%s%s%s%s%s", TimeInterval, DELIMITER, templateCode, DELIMITER, mobile)
+}
+
+// WrapperTimeInterval  is used to build the key name in Redis.
+func WrapperCode(templateCode, mobile string) string {
+	return fmt.Sprintf("%s%s%s%s%s", TemplateTypeVerificationCode, DELIMITER, templateCode, DELIMITER, mobile)
 }

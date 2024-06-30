@@ -12,21 +12,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type HandleMessageBiz struct {
+type MessageConsumer struct {
 	ctx    context.Context
 	idt    *idempotent.Idempotent
 	logger *logger.Logger
 }
 
-func NewHandlerMessageBiz(ctx context.Context, idt *idempotent.Idempotent, logger *logger.Logger) *HandleMessageBiz {
-	return &HandleMessageBiz{
+func NewMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger *logger.Logger) *MessageConsumer {
+	return &MessageConsumer{
 		ctx:    ctx,
 		idt:    idt,
 		logger: logger,
 	}
 }
 
-func (l *HandleMessageBiz) Consume(elem any) error {
+func (l *MessageConsumer) Consume(elem any) error {
 	val := elem.(kafka.Message)
 
 	var msg *types.TemplateMsgRequest
@@ -39,7 +39,7 @@ func (l *HandleMessageBiz) Consume(elem any) error {
 	return l.handleSmsRequest(l.ctx, msg)
 }
 
-func (l *HandleMessageBiz) handleSmsRequest(ctx context.Context, msg *types.TemplateMsgRequest) error {
+func (l *MessageConsumer) handleSmsRequest(ctx context.Context, msg *types.TemplateMsgRequest) error {
 
 	// 消息id
 	ok := l.idt.Check(ctx, msg.RequestId)

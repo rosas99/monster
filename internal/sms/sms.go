@@ -105,6 +105,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 	provider := providerFactory.NewProviderFactory()
 	provider.RegisterProvider(types.ProviderTypeWE, providerFactory.NewWEProvider(rds))
 
+	// todo 其他消费者配置
 	l, err := logger.NewLogger(c.KafkaOptions, ds.Histories())
 	if err != nil {
 		return nil, err
@@ -116,7 +117,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	logic := mqs.NewHandlerMessageBiz(context.Background(), idt, l)
+	logic := mqs.NewMessageConsumer(context.Background(), idt, l)
 
 	biz := biz.NewBiz(ds, rds, idt, l)
 

@@ -41,7 +41,7 @@ type HTTPServer struct {
 type MqServer struct {
 	kafkaReader kafka.ReaderConfig
 
-	logic *mqs.HandleMessageBiz
+	logic *mqs.MessageConsumer
 }
 
 type GRPCServer struct {
@@ -128,7 +128,7 @@ func (s *GRPCServer) GracefulStop() {
 func NewMqServer(
 	KafkaOptions *genericoptions.KafkaOptions,
 
-	logic *mqs.HandleMessageBiz,
+	logic *mqs.MessageConsumer,
 ) (MqServer, error) {
 	r := kafka.ReaderConfig{
 		Brokers:           KafkaOptions.Brokers,

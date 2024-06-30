@@ -4,6 +4,7 @@
     <inspection_tool class="GoDfaErrorMayBeNotNil" enabled="true" level="WARNING" enabled_by_default="true">
       <methods>
         <method importPath="github.com/rosas99/monster/internal/sms/checker" receiver="*RuleFactory" name="CreateChecker" />
+        <method importPath="github.com/rosas99/monster/internal/sms/store" receiver="TemplateStore" name="Get" />
       </methods>
     </inspection_tool>
   </profile>

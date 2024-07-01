@@ -14,7 +14,6 @@ import (
 func (b *Controller) Update(c *gin.Context) {
 	_, _ = b.svc.GetTemplate(c, nil)
 
-	// todo 临时测试用
 	core.WriteResponse(c, nil, "order")
 
 }

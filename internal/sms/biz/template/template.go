@@ -157,7 +157,7 @@ func (t *templateBiz) Update(ctx context.Context, rq *v1.UpdateTemplateRequest) 
 		return err
 	}
 
-	// 不为空才更新，类型Mybatis的动态sql
+	//不为空才更新，类型Mybatis的动态sql
 	//if rq.Customer != nil {
 	//	orderM.Customer = *rq.Customer
 	//}

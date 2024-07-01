@@ -271,6 +271,8 @@ func (m *ChangePasswordRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Username
+
 	// no validation rules for OldPassword
 
 	// no validation rules for NewPassword
@@ -1335,13 +1337,19 @@ func (m *UpdateUserRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Userame
+	// no validation rules for Username
 
-	// no validation rules for Nickname
+	if m.Nickname != nil {
+		// no validation rules for Nickname
+	}
 
-	// no validation rules for Email
+	if m.Email != nil {
+		// no validation rules for Email
+	}
 
-	// no validation rules for Phone
+	if m.Phone != nil {
+		// no validation rules for Phone
+	}
 
 	if len(errors) > 0 {
 		return UpdateUserRequestMultiError(errors)

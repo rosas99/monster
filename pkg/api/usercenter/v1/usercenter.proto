@@ -35,8 +35,9 @@ message LoginResponse {
 }
 
 message ChangePasswordRequest {
-  string oldPassword = 1;
-  string newPassword = 2;
+  string username = 1;
+  string oldPassword = 2;
+  string newPassword = 3;
 }
 
 
@@ -87,8 +88,8 @@ message ListUserResponse {
 }
 
 message UpdateUserRequest {
-  string userame = 1;
-  string nickname = 2;
-  string email = 3;
-  string phone = 4;
+  string username = 1;
+  optional string nickname = 2;
+  optional string email = 3;
+  optional  string phone = 4;
 }

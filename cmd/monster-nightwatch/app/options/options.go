@@ -8,7 +8,7 @@
 package options
 
 import (
-	"github.com/rosas99/monster/internal/sms"
+	"github.com/rosas99/monster/internal/nightwatch"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	cliflag "k8s.io/component-base/cli/flag"
 
@@ -98,19 +98,19 @@ func (o *Options) Validate() error {
 }
 
 // ApplyTo fills up onex-fakeserver config with options.
-func (o *Options) ApplyTo(c *sms.Config) error {
-	c.GRPCOptions = o.GRPCOptions
-	c.HTTPOptions = o.HTTPOptions
+func (o *Options) ApplyTo(c *nightwatch.Config) error {
+	//c.GRPCOptions = o.GRPCOptions
+	//c.HTTPOptions = o.HTTPOptions
 	//c.TLSOptions = o.TLSOptions
 	c.MySQLOptions = o.MySQLOptions
 	c.RedisOptions = o.RedisOptions
-	c.KafkaOptions = o.KafkaOptions
+	//c.KafkaOptions = o.KafkaOptions
 	return nil
 }
 
 // Config return a onex-fakeserver config object.
-func (o *Options) Config() (*sms.Config, error) {
-	c := &sms.Config{}
+func (o *Options) Config() (*nightwatch.Config, error) {
+	c := &nightwatch.Config{}
 
 	if err := o.ApplyTo(c); err != nil {
 		return nil, err

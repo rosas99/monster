@@ -9,5 +9,5 @@ package auth
 import "context"
 
 type AuthProvider interface {
-	Authenticate(ctx context.Context, token string) (userID string, err error)
+	Auth(ctx context.Context, token string) (userID string, err error)
 }

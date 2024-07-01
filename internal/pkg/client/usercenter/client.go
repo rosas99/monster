@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"sync"
 
-	v1 "github.com/rosas99/monster/pkg/api/fakeserver/v1"
+	v1 "github.com/rosas99/monster/pkg/api/usercenter/v1"
 	"google.golang.org/grpc"
 )
 
@@ -26,12 +26,12 @@ type Gender impl
 
 // Interface is an interface that presents a subset of the usercenter API.
 type Interface interface {
-	Auth(ctx context.Context, token string, obj, act string) (string, bool, error)
+	Auth(ctx context.Context, token string) (userID string, err error)
 }
 
 // impl is an implementation of Interface.
 type impl struct {
-	client v1.FakeServerClient
+	client v1.UserCenterClient
 }
 
 type Impl = impl
@@ -42,7 +42,7 @@ var (
 )
 
 // NewUserCenter creates a new client to work with usercenter services.
-func NewFakeServer() *impl {
+func NewUserCenterServer() *impl {
 	flag.Parse()
 	once.Do(func() {
 		conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -51,7 +51,7 @@ func NewFakeServer() *impl {
 		}
 		defer conn.Close()
 
-		rpcclient := v1.NewFakeServerClient(conn)
+		rpcclient := v1.NewUserCenterClient(conn)
 		cli = &impl{rpcclient}
 	})
 
@@ -63,8 +63,8 @@ func GetClient() *impl {
 	return cli
 }
 
-func (i *impl) Authenticate(ctx context.Context, token string) (userID string, err error) {
-	rq := &v1.DeleteOrderRequest{}
+func (i *impl) Auth(ctx context.Context, token string) (userID string, err error) {
+	rq := &v1.LoginRequest{}
 	resp, err := i.client.DeleteOrder(ctx, rq)
 	if err != nil {
 		return "", err

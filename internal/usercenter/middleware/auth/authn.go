@@ -9,7 +9,7 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
-	known "github.com/rosas99/monster/internal/pkg/known/toyblc"
+	"github.com/rosas99/monster/internal/pkg/known"
 	"github.com/rosas99/monster/internal/pkg/middleware/auth"
 	jwtutil "github.com/rosas99/monster/internal/pkg/util/jwt"
 )
@@ -20,7 +20,7 @@ func BasicAuth(a auth.AuthProvider) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		accessToken := jwtutil.TokenFromServerContext(c)
 		// rpc调用usercenter
-		userID, err := a.Authenticate(c.Request.Context(), accessToken)
+		userID, err := a.Auth(c.Request.Context(), accessToken)
 		if err != nil {
 
 			// 返回错误码

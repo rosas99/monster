@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/jinzhu/copier"
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/pkg/meta"
@@ -20,6 +21,7 @@ import (
 )
 
 type UserBiz interface {
+	DeleteOrder(ctx context.Context, rq *v1.LoginRequest) (*v1.LoginResponse, error)
 	ChangePassword(ctx context.Context, r *v1.ChangePasswordRequest) error
 	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)
 	Create(ctx context.Context, rq *v1.CreateUserRequest) (*v1.CreateUserResponse, error)
@@ -35,6 +37,19 @@ type userBiz struct {
 
 func New(ds store.IStore, rds *redis.Client) *userBiz {
 	return &userBiz{ds: ds, rds: rds}
+}
+
+// ChangePassword 是 UserBiz 接口中 `ChangePassword` 方法的实现.
+func (b *userBiz) DeleteOrder(ctx context.Context, rq *v1.LoginRequest) (*v1.LoginResponse, error) {
+	username, err := token.Parse(rq.Username, "config.key")
+	fmt.Print(username)
+	if err != nil {
+		//core.WriteResponse(c, errno.ErrTokenInvalid, nil)
+		//core.WriteResponse(ctx, nil, nil)
+
+		return nil, err
+	}
+	return &v1.LoginResponse{}, nil
 }
 
 // ChangePassword 是 UserBiz 接口中 `ChangePassword` 方法的实现.
@@ -81,11 +96,11 @@ func (b *userBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginRespo
 	return &v1.LoginResponse{Token: t}, nil
 }
 
-func (t *userBiz) Create(ctx context.Context, rq *v1.CreateUserRequest) (*v1.CreateUserResponse, error) {
+func (b *userBiz) Create(ctx context.Context, rq *v1.CreateUserRequest) (*v1.CreateUserResponse, error) {
 
 	var userM model.UserM
 	_ = copier.Copy(&userM, rq)
-	if err := t.ds.Users().Create(ctx, &userM); err != nil {
+	if err := b.ds.Users().Create(ctx, &userM); err != nil {
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key 'username'", err.Error()); match {
 			return nil, errors.New("old password is invalid")
 		}
@@ -95,8 +110,8 @@ func (t *userBiz) Create(ctx context.Context, rq *v1.CreateUserRequest) (*v1.Cre
 	return &v1.CreateUserResponse{UserID: userM.ID}, nil
 }
 
-func (t *userBiz) Get(ctx context.Context, rq *v1.GetUserRequest) (*v1.GetUserResponse, error) {
-	userM, err := t.ds.Users().Get(ctx, rq.GetUserName())
+func (b *userBiz) Get(ctx context.Context, rq *v1.GetUserRequest) (*v1.GetUserResponse, error) {
+	userM, err := b.ds.Users().Get(ctx, rq.GetUserName())
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -113,10 +128,10 @@ func (t *userBiz) Get(ctx context.Context, rq *v1.GetUserRequest) (*v1.GetUserRe
 	return &resp, nil
 }
 
-func (t *userBiz) List(ctx context.Context, rq *v1.ListUserRequest) (*v1.ListUserResponse, error) {
+func (b *userBiz) List(ctx context.Context, rq *v1.ListUserRequest) (*v1.ListUserResponse, error) {
 
 	// todo 查询到template 转换为resp
-	count, list, err := t.ds.Users().List(ctx, meta.WithOffset(rq.Offset), meta.WithLimit(rq.Limit))
+	count, list, err := b.ds.Users().List(ctx, meta.WithOffset(rq.Offset), meta.WithLimit(rq.Limit))
 	if err != nil {
 		log.C(ctx).Errorw(err, "Failed to list orders from storage")
 		return nil, err
@@ -160,8 +175,8 @@ func (t *userBiz) List(ctx context.Context, rq *v1.ListUserRequest) (*v1.ListUse
 	return &v1.ListUserResponse{TotalCount: count, Users: users}, nil
 }
 
-func (t *userBiz) Update(ctx context.Context, rq *v1.UpdateUserRequest) error {
-	userM, err := t.ds.Users().Get(ctx, rq.GetUsername())
+func (b *userBiz) Update(ctx context.Context, rq *v1.UpdateUserRequest) error {
+	userM, err := b.ds.Users().Get(ctx, rq.GetUsername())
 	if err != nil {
 		return err
 	}
@@ -178,14 +193,14 @@ func (t *userBiz) Update(ctx context.Context, rq *v1.UpdateUserRequest) error {
 		userM.Phone = *rq.Phone
 	}
 
-	err = t.ds.Users().Update(ctx, userM)
+	err = b.ds.Users().Update(ctx, userM)
 
 	return err
 }
 
 // Delete 是 OrderBiz 接口中 `Delete` 方法的实现.
-func (t *userBiz) Delete(ctx context.Context, rq *v1.DeleteUserRequest) error {
-	if err := t.ds.Users().Delete(ctx, rq.GetUserID()); err != nil {
+func (b *userBiz) Delete(ctx context.Context, rq *v1.DeleteUserRequest) error {
+	if err := b.ds.Users().Delete(ctx, rq.GetUserID()); err != nil {
 		return err
 	}
 

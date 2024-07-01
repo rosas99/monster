@@ -17,7 +17,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -33,7 +32,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserCenterClient interface {
-	DeleteOrder(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteOrder(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 }
 
 type userCenterClient struct {
@@ -44,8 +43,8 @@ func NewUserCenterClient(cc grpc.ClientConnInterface) UserCenterClient {
 	return &userCenterClient{cc}
 }
 
-func (c *userCenterClient) DeleteOrder(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *userCenterClient) DeleteOrder(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
+	out := new(LoginResponse)
 	err := c.cc.Invoke(ctx, UserCenter_DeleteOrder_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -57,7 +56,7 @@ func (c *userCenterClient) DeleteOrder(ctx context.Context, in *LoginRequest, op
 // All implementations must embed UnimplementedUserCenterServer
 // for forward compatibility
 type UserCenterServer interface {
-	DeleteOrder(context.Context, *LoginRequest) (*emptypb.Empty, error)
+	DeleteOrder(context.Context, *LoginRequest) (*LoginResponse, error)
 	mustEmbedUnimplementedUserCenterServer()
 }
 
@@ -65,7 +64,7 @@ type UserCenterServer interface {
 type UnimplementedUserCenterServer struct {
 }
 
-func (UnimplementedUserCenterServer) DeleteOrder(context.Context, *LoginRequest) (*emptypb.Empty, error) {
+func (UnimplementedUserCenterServer) DeleteOrder(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteOrder not implemented")
 }
 func (UnimplementedUserCenterServer) mustEmbedUnimplementedUserCenterServer() {}

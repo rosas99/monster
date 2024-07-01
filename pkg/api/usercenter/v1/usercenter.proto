@@ -16,7 +16,7 @@ import "validate/validate.proto";
 option go_package = "github.com/rosas99/monster/pkg/api/usercenter/v1";
 
 service UserCenter {
-    rpc DeleteOrder(LoginRequest) returns (google.protobuf.Empty) {
+    rpc DeleteOrder(LoginRequest) returns (LoginResponse) {
 //      option (google.api.http) = {delete: "/v1/orders"};
     }
 }

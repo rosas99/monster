@@ -9,7 +9,7 @@ package trace
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	known "github.com/rosas99/monster/internal/pkg/known/toyblc"
+	"github.com/rosas99/monster/internal/pkg/known"
 	"github.com/rosas99/monster/pkg/log"
 )
 

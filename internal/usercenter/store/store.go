@@ -27,7 +27,7 @@ type UserStore interface {
 	Create(ctx context.Context, order *model.UserM) error
 	Get(ctx context.Context, username string) (*model.UserM, error)
 	Update(ctx context.Context, user *model.UserM) error
-	List(ctx context.Context, opts ...meta.ListOption) (int64, []*model.UserM, error)
+	List(ctx context.Context, opts ...meta.ListOption) (count int64, ret []*model.UserM, err error)
 	Delete(ctx context.Context, id int64) error
 }
 

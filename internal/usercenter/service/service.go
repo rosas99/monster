@@ -7,20 +7,20 @@
 package service
 
 import (
-	"github.com/rosas99/monster/internal/sms/biz"
-	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
+	"github.com/rosas99/monster/internal/usercenter/biz"
+	v1 "github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
-type SmsServerService struct {
+type UserCenterService struct {
 	biz biz.IBiz
-	v1.UnimplementedSmsServerServer
+	v1.UnimplementedUserCenterServerServer
 }
 
-func (s *SmsServerService) mustEmbedUnimplementedSmsServerServer() {
+func (s *UserCenterService) mustEmbedUnimplementedSmsServerServer() {
 	//TODO implement me
 	panic("implement me")
 }
 
-func NewSmsServerService(biz biz.IBiz) *SmsServerService {
-	return &SmsServerService{biz: biz}
+func NewUserCenterService(biz biz.IBiz) *UserCenterService {
+	return &UserCenterService{biz: biz}
 }

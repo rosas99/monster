@@ -10,7 +10,6 @@ package biz
 
 import (
 	"github.com/redis/go-redis/v9"
-	"github.com/rosas99/monster/internal/sms/biz/template"
 	"github.com/rosas99/monster/internal/usercenter/biz/user"
 	"github.com/rosas99/monster/internal/usercenter/store"
 	"github.com/segmentio/kafka-go"
@@ -18,7 +17,7 @@ import (
 
 // IBiz 定义了 Biz 层需要实现的方法.
 type IBiz interface {
-	Templates() template.TemplateBiz
+	Users() user.UserBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -37,6 +36,6 @@ func NewBiz(ds store.IStore, rds *redis.Client) *Biz {
 }
 
 // Orders 返回一个实现了 OrderBiz 接口的实例.
-func (b *Biz) Users() template.TemplateBiz {
+func (b *Biz) Users() user.UserBiz {
 	return user.New(b.ds, b.rds)
 }

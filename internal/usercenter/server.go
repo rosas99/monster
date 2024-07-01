@@ -11,17 +11,13 @@ import (
 	"crypto/tls"
 	"errors"
 	"github.com/gin-gonic/gin"
-	mqs "github.com/rosas99/monster/internal/sms/mqs"
-	kafkaconnector "github.com/rosas99/monster/pkg/streams/connector/kafka"
-	"github.com/rosas99/monster/pkg/streams/flow"
-	"github.com/segmentio/kafka-go"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 	"net"
 	"net/http"
 	"time"
 
-	pb "github.com/rosas99/monster/pkg/api/sms/v1"
+	pb "github.com/rosas99/monster/pkg/api/usercenter/v1"
 	"github.com/rosas99/monster/pkg/log"
 	genericoptions "github.com/rosas99/monster/pkg/options"
 	"google.golang.org/grpc"
@@ -36,12 +32,6 @@ type HTTPServer struct {
 	srv         *http.Server
 	httpOptions *genericoptions.HTTPOptions
 	tlsOptions  *genericoptions.TLSOptions
-}
-
-type MqServer struct {
-	kafkaReader kafka.ReaderConfig
-
-	logic *mqs.MessageConsumer
 }
 
 type GRPCServer struct {
@@ -89,7 +79,7 @@ func (s *HTTPServer) GracefulStop() {
 func NewGRPCServer(
 	grpcOptions *genericoptions.GRPCOptions,
 	tlsOptions *genericoptions.TLSOptions,
-	srv pb.SmsServerServer,
+	srv pb.UserCenterServerServer,
 ) (*GRPCServer, error) {
 	dialOptions := []grpc.ServerOption{}
 	if tlsOptions != nil && tlsOptions.UseTLS {
@@ -102,7 +92,7 @@ func NewGRPCServer(
 	}
 
 	grpcsrv := grpc.NewServer(dialOptions...)
-	pb.RegisterSmsServerServer(grpcsrv, srv)
+	pb.RegisterUserCenterServerServer(grpcsrv, srv)
 	reflection.Register(grpcsrv)
 
 	return &GRPCServer{srv: grpcsrv, opts: grpcOptions}, nil
@@ -123,38 +113,4 @@ func (s *GRPCServer) RunOrDie() {
 func (s *GRPCServer) GracefulStop() {
 	log.Infof("Gracefully stop grpc server")
 	s.srv.GracefulStop()
-}
-
-func NewMqServer(
-	KafkaOptions *genericoptions.KafkaOptions,
-
-	logic *mqs.MessageConsumer,
-) (MqServer, error) {
-	r := kafka.ReaderConfig{
-		Brokers:           KafkaOptions.Brokers,
-		Topic:             KafkaOptions.Topic,
-		GroupID:           KafkaOptions.ReaderOptions.GroupID,
-		QueueCapacity:     KafkaOptions.ReaderOptions.QueueCapacity,
-		MinBytes:          KafkaOptions.ReaderOptions.MinBytes,
-		MaxBytes:          KafkaOptions.ReaderOptions.MaxBytes,
-		MaxWait:           KafkaOptions.ReaderOptions.MaxWait,
-		ReadBatchTimeout:  KafkaOptions.ReaderOptions.ReadBatchTimeout,
-		HeartbeatInterval: KafkaOptions.ReaderOptions.HeartbeatInterval,
-		CommitInterval:    KafkaOptions.ReaderOptions.CommitInterval,
-		RebalanceTimeout:  KafkaOptions.ReaderOptions.RebalanceTimeout,
-		StartOffset:       KafkaOptions.ReaderOptions.StartOffset,
-		MaxAttempts:       KafkaOptions.ReaderOptions.MaxAttempts,
-	}
-	return MqServer{kafkaReader: r, logic: logic}, nil
-}
-
-func (s *MqServer) RunWithContext(ctx context.Context) {
-
-	source2, err := kafkaconnector.NewKafkaSource(ctx, s.kafkaReader)
-	if err != nil {
-		return
-	}
-	articleConsumer := flow.NewConsumer(s.logic, 1)
-	// 这里通过map写入通道，通道是由sink初始化后开始消费
-	source2.Via(articleConsumer)
 }

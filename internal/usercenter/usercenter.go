@@ -76,7 +76,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 
 	biz := biz.NewBiz(ds, rds)
 
-	srv := service.NewSmsServerService(biz)
+	srv := service.NewUserCenterService(biz)
 
 	// 设置 Gin 模式
 	gin.SetMode(gin.ReleaseMode)
@@ -86,7 +86,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 
 	// 并初始化路由
 	// 这里注册不同的路由可以分开，如是否使用人认证中间件，分别在use 认证中间件前后
-	installRouters(g, srv, c.Accounts)
+	installRouters(g, srv)
 	// 考虑在这里install consumer
 
 	httpsrv, err := NewHTTPServer(c.HTTPOptions, c.TLSOptions, g)

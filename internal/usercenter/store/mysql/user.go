@@ -40,12 +40,10 @@ func (t *users) Get(ctx context.Context, templateCode string) (*model.UserM, err
 func (t *users) Update(ctx context.Context, template *model.UserM) error {
 	return t.db.Save(&template).Error
 }
-func (t *users) List(ctx context.Context, templateCode string, opts ...meta.ListOption) (count int64, ret []*model.UserM, err error) {
+func (t *users) List(ctx context.Context, opts ...meta.ListOption) (count int64, ret []*model.UserM, err error) {
 
 	options := meta.NewListOptions(opts...)
-	if templateCode != "" {
-		options.Filters["template_code"] = templateCode
-	}
+
 	// todo 对比 user center
 	ans := t.db.
 		Where(options.Filters).

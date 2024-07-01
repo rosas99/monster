@@ -5,7 +5,7 @@
 package validate
 
 import (
-	"github.com/rosas99/monster/internal/sms/store"
+	"github.com/rosas99/monster/internal/usercenter/store"
 	"regexp"
 
 	"github.com/gin-gonic/gin"

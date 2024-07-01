@@ -34,12 +34,6 @@ func New(ds store.IStore, rds *redis.Client) *userBiz {
 
 type MessageConfigurationEnum = string
 
-const (
-	TimeIntervalForMobile         MessageConfigurationEnum = "TIME_INTERVAL_FOR_MOBILE"
-	MessageCountForMobilePerDay   MessageConfigurationEnum = "MESSAGE_COUNT_FOR_MOBILE_PER_DAY"
-	MessageCountForTemplatePerDay MessageConfigurationEnum = "MESSAGE_COUNT_FOR_TEMPLATE_PER_DAY"
-)
-
 func (t *userBiz) Create(ctx context.Context, rq *v1.CreateUserRequest) (*v1.CreateUserResponse, error) {
 
 	var userM model.UserM
@@ -89,9 +83,8 @@ func (t *userBiz) List(ctx context.Context, rq *v1.ListUserRequest) (*v1.ListUse
 				var t v1.UserInfo
 				_ = copier.Copy(&t, template)
 				m.Store(template.ID, &v1.UserInfo{
-					// 除了时间其他要手动set吗
-					//CreatedAt: timestamppb.New(template.CreatedAt),
-					//UpdatedAt: timestamppb.New(template.UpdatedAt),
+					CreatedAt: timestamppb.New(template.CreatedAt),
+					UpdatedAt: timestamppb.New(template.UpdatedAt),
 				})
 				return nil
 			}

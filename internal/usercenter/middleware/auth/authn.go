@@ -15,7 +15,7 @@ import (
 )
 
 // middleware demo
-
+// todo jwt认证
 func BasicAuth(a auth.AuthProvider) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		accessToken := jwtutil.TokenFromServerContext(c)

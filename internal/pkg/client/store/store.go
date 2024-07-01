@@ -6,50 +6,36 @@
 
 package store
 
-//import (
-//	"sync"
-//
-//	"github.com/google/wire"
-//
-//	gwstore "github.com/rosas99/monster/internal/gateway/store"
-//	ucstore "github.com/rosas99/monster/internal/usercenter/store"
-//	// 这里导入相关包
-//)
+import (
+	ucstore "github.com/rosas99/monster/internal/usercenter/store"
+	"sync"
+)
 
-// ProviderSet is store providers.
-//var ProviderSet = wire.NewSet(NewStore, wire.Bind(new(Interface), new(*datastore)))
-//
-//var (
-//	once sync.Once
-//	S    *datastore
-//)
-//
-//// Interface defines the storage interface.
-//type Interface interface {
-//	Gateway() gwstore.IStore
-//	UserCenter() ucstore.IStore
-//	// 导入了store 以进行查询
-//}
-//
-//type datastore struct {
-//	gw gwstore.IStore
-//	uc ucstore.IStore
-//}
-//
-//var _ Interface = (*datastore)(nil)
-//
-//func (ds *datastore) Gateway() gwstore.IStore {
-//	return ds.gw
-//}
-//
-//func (ds *datastore) UserCenter() ucstore.IStore {
-//	return ds.uc
-//}
-//
-//func NewStore(gw gwstore.IStore, uc ucstore.IStore) *datastore {
-//	once.Do(func() {
-//		S = &datastore{gw: gw, uc: uc}
-//	})
-//
-//	return S
-//}
+var (
+	once sync.Once
+	S    *datastore
+)
+
+// Interface defines the storage interface.
+type Interface interface {
+	UserCenter() ucstore.IStore
+	// 导入了store 以进行查询
+}
+
+type datastore struct {
+	uc ucstore.IStore
+}
+
+var _ Interface = (*datastore)(nil)
+
+func (ds *datastore) UserCenter() ucstore.IStore {
+	return ds.uc
+}
+
+func NewStore(uc ucstore.IStore) *datastore {
+	once.Do(func() {
+		S = &datastore{uc: uc}
+	})
+
+	return S
+}

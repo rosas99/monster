@@ -12,13 +12,8 @@ import (
 )
 
 type UserCenterService struct {
+	v1.UnimplementedUserCenterServer
 	biz biz.IBiz
-	v1.UnimplementedUserCenterServerServer
-}
-
-func (s *UserCenterService) mustEmbedUnimplementedSmsServerServer() {
-	//TODO implement me
-	panic("implement me")
 }
 
 func NewUserCenterService(biz biz.IBiz) *UserCenterService {

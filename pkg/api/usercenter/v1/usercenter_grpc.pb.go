@@ -13,7 +13,11 @@
 package v1
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -21,53 +25,92 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-const ()
+const (
+	UserCenter_DeleteOrder_FullMethodName = "/sms.v1.UserCenter/DeleteOrder"
+)
 
-// UserCenterServerClient is the client API for UserCenterServer service.
+// UserCenterClient is the client API for UserCenter service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UserCenterServerClient interface {
+type UserCenterClient interface {
+	DeleteOrder(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
-type userCenterServerClient struct {
+type userCenterClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUserCenterServerClient(cc grpc.ClientConnInterface) UserCenterServerClient {
-	return &userCenterServerClient{cc}
+func NewUserCenterClient(cc grpc.ClientConnInterface) UserCenterClient {
+	return &userCenterClient{cc}
 }
 
-// UserCenterServerServer is the server API for UserCenterServer service.
-// All implementations must embed UnimplementedUserCenterServerServer
+func (c *userCenterClient) DeleteOrder(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, UserCenter_DeleteOrder_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UserCenterServer is the server API for UserCenter service.
+// All implementations must embed UnimplementedUserCenterServer
 // for forward compatibility
-type UserCenterServerServer interface {
-	mustEmbedUnimplementedUserCenterServerServer()
+type UserCenterServer interface {
+	DeleteOrder(context.Context, *LoginRequest) (*emptypb.Empty, error)
+	mustEmbedUnimplementedUserCenterServer()
 }
 
-// UnimplementedUserCenterServerServer must be embedded to have forward compatible implementations.
-type UnimplementedUserCenterServerServer struct {
+// UnimplementedUserCenterServer must be embedded to have forward compatible implementations.
+type UnimplementedUserCenterServer struct {
 }
 
-func (UnimplementedUserCenterServerServer) mustEmbedUnimplementedUserCenterServerServer() {}
+func (UnimplementedUserCenterServer) DeleteOrder(context.Context, *LoginRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteOrder not implemented")
+}
+func (UnimplementedUserCenterServer) mustEmbedUnimplementedUserCenterServer() {}
 
-// UnsafeUserCenterServerServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UserCenterServerServer will
+// UnsafeUserCenterServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserCenterServer will
 // result in compilation errors.
-type UnsafeUserCenterServerServer interface {
-	mustEmbedUnimplementedUserCenterServerServer()
+type UnsafeUserCenterServer interface {
+	mustEmbedUnimplementedUserCenterServer()
 }
 
-func RegisterUserCenterServerServer(s grpc.ServiceRegistrar, srv UserCenterServerServer) {
-	s.RegisterService(&UserCenterServer_ServiceDesc, srv)
+func RegisterUserCenterServer(s grpc.ServiceRegistrar, srv UserCenterServer) {
+	s.RegisterService(&UserCenter_ServiceDesc, srv)
 }
 
-// UserCenterServer_ServiceDesc is the grpc.ServiceDesc for UserCenterServer service.
+func _UserCenter_DeleteOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserCenterServer).DeleteOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserCenter_DeleteOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserCenterServer).DeleteOrder(ctx, req.(*LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// UserCenter_ServiceDesc is the grpc.ServiceDesc for UserCenter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UserCenterServer_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "sms.v1.UserCenterServer",
-	HandlerType: (*UserCenterServerServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "api/usercenter/v1/usercenter.proto",
+var UserCenter_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "sms.v1.UserCenter",
+	HandlerType: (*UserCenterServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "DeleteOrder",
+			Handler:    _UserCenter_DeleteOrder_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "api/usercenter/v1/usercenter.proto",
 }

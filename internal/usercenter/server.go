@@ -79,7 +79,7 @@ func (s *HTTPServer) GracefulStop() {
 func NewGRPCServer(
 	grpcOptions *genericoptions.GRPCOptions,
 	tlsOptions *genericoptions.TLSOptions,
-	srv pb.UserCenterServerServer,
+	srv pb.UserCenterServer,
 ) (*GRPCServer, error) {
 	dialOptions := []grpc.ServerOption{}
 	if tlsOptions != nil && tlsOptions.UseTLS {
@@ -92,7 +92,7 @@ func NewGRPCServer(
 	}
 
 	grpcsrv := grpc.NewServer(dialOptions...)
-	pb.RegisterUserCenterServerServer(grpcsrv, srv)
+	pb.RegisterUserCenterServer(grpcsrv, srv)
 	reflection.Register(grpcsrv)
 
 	return &GRPCServer{srv: grpcsrv, opts: grpcOptions}, nil

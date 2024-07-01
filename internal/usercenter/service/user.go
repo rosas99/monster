@@ -7,6 +7,8 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
+// todo 开一个认证接口
+
 func (s *UserCenterService) ChangePassword(ctx context.Context, rq *v1.ChangePasswordRequest) error {
 	log.C(ctx).Infow("CreateOrder function called")
 	return s.biz.Users().ChangePassword(ctx, rq)

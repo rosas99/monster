@@ -48,6 +48,18 @@ message CreateUserRequest {
   string phone = 5;
 }
 
+message CreateUserResponse {
+  int64 userID = 1                                                                                                                                                             ;
+}
+
+message DeleteUserRequest{
+  int64 userID = 1                                                                                                                                                             ;
+}
+
+message GetUserRequest {
+  string userName = 1                                                                                                                                                             ;
+
+}
 
 message GetUserResponse {
   UserInfo userInfo = 1;
@@ -75,7 +87,8 @@ message ListUserResponse {
 }
 
 message UpdateUserRequest {
-  string nickname = 1;
-  string email = 2;
-  string phone = 3;
+  string userame = 1;
+  string nickname = 2;
+  string email = 3;
+  string phone = 4;
 }

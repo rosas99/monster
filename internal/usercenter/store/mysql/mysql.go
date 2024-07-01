@@ -11,7 +11,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/rosas99/monster/internal/sms/store"
+	"github.com/rosas99/monster/internal/usercenter/store"
 )
 
 var (
@@ -38,12 +38,8 @@ func NewStore(db *gorm.DB) *Datastore {
 	return s
 }
 
-func (ds *Datastore) Templates() store.TemplateStore {
-	return newTemplates(ds.db)
-}
-
-func (ds *Datastore) Configurations() store.ConfigurationStore {
-	return newConfigurations(ds.db)
+func (ds *Datastore) Users() store.UserStore {
+	return newUsers(ds.db)
 }
 
 // todo history

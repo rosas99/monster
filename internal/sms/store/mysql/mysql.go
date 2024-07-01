@@ -38,7 +38,7 @@ func NewStore(db *gorm.DB) *Datastore {
 	return s
 }
 
-func (ds *Datastore) Templates() store.TemplateStore {
+func (ds *Datastore) Templates() store.UserStore {
 	return newTemplates(ds.db)
 }
 

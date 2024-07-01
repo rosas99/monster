@@ -7,8 +7,6 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-// todo 这里模板和配置关联 限流配置不用单独一个CURD
-
 func (s *SmsServerService) CreateTemplate(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
 	log.C(ctx).Infow("CreateOrder function called")
 	return s.biz.Templates().Create(ctx, rq)

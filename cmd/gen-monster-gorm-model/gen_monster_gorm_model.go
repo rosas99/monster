@@ -34,7 +34,7 @@ var (
 	dbname   = pflag.StringP("db", "d", "smsgateway", "Database name to connect to.")
 
 	// outPath   = pflag.String("outpath", "./store", "generated gorm query code's path.").
-	modelPath = pflag.String("model-pkg-path", "../model", "Generated model code's package name.")
+	modelPath = pflag.String("model-pkg-path", "./model", "Generated model code's package name.")
 	help      = pflag.BoolP("help", "h", false, "Show this help message.")
 
 	usage = func() {
@@ -46,7 +46,7 @@ var (
 func main() {
 	pflag.Usage = usage
 	pflag.Parse()
-
+	fmt.Print(modelPath, "sss")
 	if *help {
 		pflag.Usage()
 		return
@@ -81,7 +81,8 @@ func main() {
 	// if you want to use GenerateModel/GenerateModelAs, UseDB is necessary or it will panic
 	g.UseDB(dbIns)
 
-	g.GenerateModelAs("sms_template", "TemplateM", gen.FieldIgnore("placeholder"))
+	//g.GenerateModelAs("sms_template", "TemplateM", gen.FieldIgnore("placeholder"))
+	g.GenerateModelAs("uc_user", "UserM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("sms_history", "HistoryM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("sms_configuration", "ConfigurationM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("api_minerset", "MinerSetM", gen.FieldIgnore("placeholder"))

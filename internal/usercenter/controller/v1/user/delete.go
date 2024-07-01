@@ -4,7 +4,7 @@
 // this file is https://github.com/rosas99/monster.
 //
 
-package template
+package user
 
 import (
 	"github.com/gin-gonic/gin"
@@ -12,18 +12,16 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-func (b *Controller) Create(c *gin.Context) {
-	var r v1.CreateTemplateRequest
+func (b *Controller) Delete(c *gin.Context) {
+	var r v1.DeleteTemplateRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
-		// 使用错误码
 		core.WriteResponse(c, err, nil)
-		return
 	}
-
-	order, err := b.svc.CreateTemplate(c, &r)
+	template, err := b.svc.DeleteTemplate(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
+
 	}
-	core.WriteResponse(c, nil, order)
+	core.WriteResponse(c, nil, template)
 
 }

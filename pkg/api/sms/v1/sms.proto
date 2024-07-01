@@ -11,7 +11,7 @@ package sms.v1; // 告诉编译器此文件使用什么版本的语法
 //import "google/api/annotations.proto";
 //import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
-import "validate.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/rosas99/monster/pkg/api/sms/v1";
 
@@ -106,4 +106,3 @@ message DeleteTemplateRequest {
   int64 id = 1;
 }
 
-// todo 通过模板获取短信历史列表

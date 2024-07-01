@@ -13,39 +13,21 @@ import (
 	"sync"
 
 	"github.com/rosas99/monster/internal/pkg/meta"
-	"github.com/rosas99/monster/internal/sms/model"
+	"github.com/rosas99/monster/internal/usercenter/model"
 )
 
 // IStore 定义了 Store 层需要实现的方法.
 type IStore interface {
-	Templates() TemplateStore
-	Configurations() ConfigurationStore
+	Users() UserStore
 }
 
 // OrderStore 定义了 order 模块在 store 层所实现的方法.
 
-type TemplateStore interface {
-	Create(ctx context.Context, order *model.TemplateM) error
-	Get(ctx context.Context, templateCode string) (*model.TemplateM, error)
-	Update(ctx context.Context, order *model.TemplateM) error
-	List(ctx context.Context, templateCode string, opts ...meta.ListOption) (int64, []*model.TemplateM, error)
-	Delete(ctx context.Context, id int64) error
-}
-
-type ConfigurationStore interface {
-	Create(ctx context.Context, order *model.ConfigurationM) error
-	CreateBatch(ctx context.Context, orders []*model.ConfigurationM) error
-	Get(ctx context.Context, orderID string) (*model.ConfigurationM, error)
-	Update(ctx context.Context, order *model.ConfigurationM) error
-	List(ctx context.Context, templateCode string, opts ...meta.ListOption) (int64, []*model.ConfigurationM, error)
-	Delete(ctx context.Context, id int64) error
-}
-
-type HistoryStore interface {
-	Create(ctx context.Context, order *model.HistoryM) error
-	Get(ctx context.Context, orderID string) (*model.HistoryM, error)
-	Update(ctx context.Context, order *model.HistoryM) error
-	List(ctx context.Context, templateCode string, opts ...meta.ListOption) (int64, []*model.HistoryM, error)
+type UserStore interface {
+	Create(ctx context.Context, order *model.UserM) error
+	Get(ctx context.Context, username string) (*model.UserM, error)
+	Update(ctx context.Context, user *model.UserM) error
+	List(ctx context.Context, opts ...meta.ListOption) (int64, []*model.UserM, error)
 	Delete(ctx context.Context, id int64) error
 }
 

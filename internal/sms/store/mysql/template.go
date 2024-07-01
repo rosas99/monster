@@ -19,7 +19,7 @@ type templates struct {
 	db *gorm.DB
 }
 
-var _ store.TemplateStore = (*templates)(nil)
+var _ store.UserStore = (*templates)(nil)
 
 func newTemplates(db *gorm.DB) *templates {
 	return &templates{db: db}

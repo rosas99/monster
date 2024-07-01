@@ -1,4 +1,4 @@
-package template
+package user
 
 import "github.com/rosas99/monster/internal/sms/service"
 

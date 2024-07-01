@@ -11,6 +11,7 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 	"github.com/rosas99/monster/pkg/log"
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
 	"sync"
 )
@@ -83,8 +84,8 @@ func (t *templateBiz) Get(ctx context.Context, rq *v1.GetTemplateRequest) (*v1.T
 
 	var template v1.TemplateReply
 	_ = copier.Copy(&template, templateM)
-	//template.CreatedAt = timestamppb.New(templateM.CreatedAt)
-	//template.UpdatedAt = timestamppb.New(templateM.UpdatedAt)
+	template.CreatedAt = timestamppb.New(templateM.CreatedAt)
+	template.UpdatedAt = timestamppb.New(templateM.UpdatedAt)
 
 	_, cfgList, err := t.ds.Configurations().List(ctx, templateM.TemplateCode)
 	for _, m := range cfgList {

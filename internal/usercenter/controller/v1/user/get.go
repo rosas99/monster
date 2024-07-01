@@ -4,7 +4,7 @@
 // this file is https://github.com/rosas99/monster.
 //
 
-package template
+package user
 
 import (
 	"fmt"

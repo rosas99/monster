@@ -1,12 +1,8 @@
 // Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/rosas99/monster.
+// this file is https://github.com/Rosas99/smsx.
 //
 
-package all
-
-//nolint: golint
-import (
-	_ "github.com/rosas99/monster/internal/nightwatch/watcher/secretsclean"
-)
+// Package biz is the place where you can implements more complex business logic.
+package biz // import "github.com/Rosas99/smsx/internal/fakeserver/biz"

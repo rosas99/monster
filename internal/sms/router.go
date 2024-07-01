@@ -26,7 +26,7 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService, accounts map[s
 	pprof.Register(g)
 
 	// 创建 v1 路由分组，并添加认证中间件
-	//v1 := g.Group("/v1", mw.BasicAuth(accounts))
+	//v1 := g.Group("/v1", mw.BasicAuth())
 
 	v1 := g.Group("/v1")
 	{

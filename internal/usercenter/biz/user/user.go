@@ -21,7 +21,7 @@ import (
 
 type UserBiz interface {
 	ChangePassword(ctx context.Context, r *v1.ChangePasswordRequest) error
-
+	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)
 	Create(ctx context.Context, rq *v1.CreateUserRequest) (*v1.CreateUserResponse, error)
 	Get(ctx context.Context, rq *v1.GetUserRequest) (*v1.GetUserResponse, error)
 	List(ctx context.Context, rq *v1.ListUserRequest) (*v1.ListUserResponse, error)

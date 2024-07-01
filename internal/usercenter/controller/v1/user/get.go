@@ -7,25 +7,24 @@
 package user
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
-	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
+	v1 "github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
 func (b *Controller) Get(c *gin.Context) {
-	var r v1.GetTemplateRequest
+	var r v1.GetUserRequest
 
-	param := c.Param("id")
-	r.Id = param
-	fmt.Print(r.Id)
+	//param := c.Param("id")
+	//r.Id = param
+	//fmt.Print(r.Id)
 
 	// todo 可修改为go playground
 	if err := r.Validate(); err != nil {
 		core.WriteResponse(c, err, nil)
 	}
 
-	template, err := b.svc.GetTemplate(c, &r)
+	template, err := b.svc.Get(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

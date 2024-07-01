@@ -12,7 +12,7 @@ import (
 )
 
 func (b *Controller) Update(c *gin.Context) {
-	_, _ = b.svc.GetTemplate(c, nil)
+	_, _ = b.svc.Update(c, nil)
 
 	core.WriteResponse(c, nil, "order")
 

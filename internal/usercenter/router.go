@@ -10,6 +10,7 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
+	mw "github.com/rosas99/monster/internal/pkg/middleware/auth"
 	"github.com/rosas99/monster/internal/usercenter/controller/v1/user"
 	"github.com/rosas99/monster/internal/usercenter/service"
 	v1api "github.com/rosas99/monster/pkg/api/sms/v1"
@@ -29,10 +30,15 @@ func installRouters(g *gin.Engine, svc *service.UserCenterService) {
 
 	v1 := g.Group("/v1")
 	{
-		ms := user.New(svc)
-		msgv1 := v1.Group("/msg")
+		uc := user.New(svc)
+		userv1 := v1.Group("/msg")
 		{
-			msgv1.GET("", ms.Create)
+			userv1.POST("", uc.Create)
+			userv1.PUT(":name/change-password", uc.ChangePassword)
+			userv1.Use(mw.Authn())
+			userv1.POST("", uc.Create)
+			userv1.POST("", uc.Create)
+			userv1.POST("", uc.Create)
 		}
 
 	}

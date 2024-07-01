@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
-	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
+	v1 "github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
 func (b *Controller) List(c *gin.Context) {
@@ -14,12 +14,12 @@ func (b *Controller) List(c *gin.Context) {
 	//	return
 	//}
 
-	var r v1.ListTemplateRequest
+	var r v1.ListUserRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)
 	}
 
-	template, err := b.svc.ListTemplate(c, &r)
+	template, err := b.svc.List(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

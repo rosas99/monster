@@ -9,7 +9,7 @@ package app
 import (
 	genericapiserver "k8s.io/apiserver/pkg/server"
 
-	"github.com/rosas99/monster/cmd/monster-nightwatch/app/options"
+	"github.com/rosas99/monster/cmd/monster-sms/app/options"
 	"github.com/rosas99/monster/internal/sms"
 	"github.com/rosas99/monster/pkg/app"
 )

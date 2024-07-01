@@ -19,7 +19,7 @@ import (
 
 const (
 	// UserAgent is the userAgent name when starting onex-sms server.
-	UserAgent = "monster-nightwatch"
+	UserAgent = "monster-usercenter"
 )
 
 var _ app.CliOptions = (*Options)(nil)

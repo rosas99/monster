@@ -148,7 +148,7 @@ func (nw *nightWatch) addWatchers() error {
 }
 
 // Run keep retrying to acquire lock and then start the Cron job.
-func (nw *nightWatch) Run(stopCh <-chan struct{}) {
+func (nw *nightWatch) Run(stopCh <-chan struct{}) error {
 	ctx := wait.ContextForChannel(stopCh)
 
 	ticker := time.NewTicker(defaultExpiration + (5 * time.Second))
@@ -180,6 +180,7 @@ func (nw *nightWatch) Run(stopCh <-chan struct{}) {
 	<-stopCh
 
 	nw.stop()
+	return nil
 }
 
 // stop used to blocking waits for the job to complete and releases the lock.

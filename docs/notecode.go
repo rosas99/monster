@@ -16,3 +16,13 @@ func main() {
 	id := snowIns.Id(context.Background())
 	fmt.Print("id is :", id)
 }
+
+// option demo
+/*
+type Option func(client *Client)
+
+func WithTimeout(d time.Duration) Option {
+	return func(c *Client) {
+		c.timeout = d
+	}
+}*/

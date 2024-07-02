@@ -15,11 +15,19 @@ import (
 	"gorm.io/gorm"
 )
 
+type TemplateStore interface {
+	Create(ctx context.Context, order *model.TemplateM) error
+	Get(ctx context.Context, templateCode string) (*model.TemplateM, error)
+	Update(ctx context.Context, order *model.TemplateM) error
+	List(ctx context.Context, templateCode string, opts ...meta.ListOption) (int64, []*model.TemplateM, error)
+	Delete(ctx context.Context, id int64) error
+}
+
 type templates struct {
 	db *gorm.DB
 }
 
-var _ store.UserStore = (*templates)(nil)
+var _ store.TemplateStore = (*templates)(nil)
 
 func newTemplates(db *gorm.DB) *templates {
 	return &templates{db: db}

@@ -12,7 +12,7 @@ const TableNameHistoryM = "sms_history"
 
 // HistoryM mapped from table <sms_history>
 type HistoryM struct {
-	ID                int32     `gorm:"column:id;primaryKey" json:"id"`
+	ID                int64     `gorm:"column:id;primaryKey" json:"id"`
 	Mobile            string    `gorm:"column:mobile" json:"mobile"`
 	SendTime          time.Time `gorm:"column:send_time" json:"send_time"`
 	ConsumerID        string    `gorm:"column:consumer_id" json:"consumer_id"`

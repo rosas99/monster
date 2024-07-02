@@ -82,8 +82,8 @@ func main() {
 	g.UseDB(dbIns)
 
 	//g.GenerateModelAs("sms_template", "TemplateM", gen.FieldIgnore("placeholder"))
-	g.GenerateModelAs("uc_user", "UserM", gen.FieldIgnore("placeholder"))
-	//g.GenerateModelAs("sms_history", "HistoryM", gen.FieldIgnore("placeholder"))
+	//g.GenerateModelAs("uc_user", "UserM", gen.FieldIgnore("placeholder"))
+	g.GenerateModelAs("sms_history", "HistoryM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("sms_configuration", "ConfigurationM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("api_minerset", "MinerSetM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("api_miner", "MinerM", gen.FieldIgnore("placeholder"))

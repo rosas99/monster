@@ -12,6 +12,7 @@ import (
 	"github.com/go-redsync/redsync/v4"
 	"github.com/go-redsync/redsync/v4/redis/goredis/v9"
 	"github.com/robfig/cron/v3"
+	"github.com/rosas99/monster/internal/pkg/client/store"
 	"time"
 
 	"github.com/jinzhu/copier"
@@ -23,6 +24,7 @@ import (
 
 	// trigger init functions in `internal/nightwatch/watcher/all`.
 	_ "github.com/rosas99/monster/internal/nightwatch/watcher/all"
+	store3 "github.com/rosas99/monster/internal/sms/store/mysql"
 	genericoptions "github.com/rosas99/monster/pkg/options"
 	stringsutil "github.com/rosas99/monster/pkg/util/strings"
 )
@@ -67,15 +69,17 @@ func (c *Config) Complete() *CompletedConfig {
 func (c *Config) CreateWatcherConfig() (*watcher.Config, error) {
 	var mysqlOptions db.MySQLOptions
 	_ = copier.Copy(&mysqlOptions, c.MySQLOptions)
-	//storeClient, err := wireStoreClient(&mysqlOptions)
-	//if err != nil {
-	//	log.Errorw(err, "Failed to create MySQL client")
-	//	return nil, err
-	//}
+
+	gormDB, err := db.NewMySQL(&mysqlOptions)
+	if err != nil {
+		return nil, err
+	}
+	storeDatastore := store3.NewStore(gormDB)
+
+	storeClient := store.NewStore(storeDatastore)
 
 	return &watcher.Config{
-		//Store: storeClient,
-		//Client:                c.Client,
+		Store:                 storeClient,
 		UserWatcherMaxWorkers: c.UserWatcherMaxWorkers,
 	}, nil
 }

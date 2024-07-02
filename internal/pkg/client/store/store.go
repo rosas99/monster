@@ -7,7 +7,7 @@
 package store
 
 import (
-	ucstore "github.com/rosas99/monster/internal/usercenter/store"
+	smsstore "github.com/rosas99/monster/internal/sms/store"
 	"sync"
 )
 
@@ -18,23 +18,29 @@ var (
 
 // Interface defines the storage interface.
 type Interface interface {
-	UserCenter() ucstore.IStore
+	//UserCenter() ucstore.IStore
+	Sms() smsstore.IStore
 	// 导入了store 以进行查询
 }
 
 type datastore struct {
-	uc ucstore.IStore
+	//uc  ucstore.IStore
+	sms smsstore.IStore
 }
 
 var _ Interface = (*datastore)(nil)
 
-func (ds *datastore) UserCenter() ucstore.IStore {
-	return ds.uc
+//func (ds *datastore) UserCenter() ucstore.IStore {
+//	return ds.uc
+//}
+
+func (ds *datastore) Sms() smsstore.IStore {
+	return ds.sms
 }
 
-func NewStore(uc ucstore.IStore) *datastore {
+func NewStore(sms smsstore.IStore) *datastore {
 	once.Do(func() {
-		S = &datastore{uc: uc}
+		S = &datastore{sms: sms}
 	})
 
 	return S

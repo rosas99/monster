@@ -117,7 +117,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	logic := mqs.NewMessageConsumer(context.Background(), idt, l)
+	logic := mqs.NewMessageConsumer(context.Background(), idt, l, provider)
 
 	biz := biz.NewBiz(ds, rds, idt, l)
 
@@ -131,7 +131,8 @@ func (c completedConfig) New() (*SmsServer, error) {
 
 	// 并初始化路由
 	// 这里注册不同的路由可以分开，如是否使用人认证中间件，分别在use 认证中间件前后
-	installRouters(g, srv, c.Accounts)
+
+	installRouters(g, srv)
 	// 考虑在这里install consumer
 
 	httpsrv, err := NewHTTPServer(c.HTTPOptions, c.TLSOptions, g)
@@ -143,13 +144,11 @@ func (c completedConfig) New() (*SmsServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	//impl := usercenter.NewFakeServer()
 
 	// gin.Recovery() 中间件，用来捕获任何 panic，并恢复
 	mws := []gin.HandlerFunc{gin.Recovery(), header.NoCache, header.Cors, header.Secure,
 		// todo 这里传入rds ds
 		// 注意验证链路的顺序
-		//trace.TraceID(), auth.BasicAuth(impl), validate.Validation(ds)}
 		trace.TraceID(), nil, validate.Validation(ds)}
 	// 添加中间件
 	g.Use(mws...)

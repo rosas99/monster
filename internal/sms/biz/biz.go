@@ -10,7 +10,10 @@ package biz
 
 import (
 	"github.com/redis/go-redis/v9"
+	"github.com/rosas99/monster/internal/pkg/idempotent"
+	"github.com/rosas99/monster/internal/sms/biz/message"
 	"github.com/rosas99/monster/internal/sms/biz/template"
+	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/store"
 	"github.com/segmentio/kafka-go"
 )
@@ -18,12 +21,15 @@ import (
 // IBiz 定义了 Biz 层需要实现的方法.
 type IBiz interface {
 	Templates() template.TemplateBiz
+	Messages() message.MessageBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
 type Biz struct {
 	ds          store.IStore
 	rds         *redis.Client
+	idt         *idempotent.Idempotent
+	logger      *logger.Logger
 	kafkaWriter *kafka.Writer
 }
 
@@ -31,11 +37,15 @@ type Biz struct {
 var _ IBiz = (*Biz)(nil)
 
 // NewBiz 创建一个 IBiz 类型的实例.
-func NewBiz(ds store.IStore, rds *redis.Client) *Biz {
-	return &Biz{ds: ds, rds: rds}
+func NewBiz(ds store.IStore, rds *redis.Client, idt *idempotent.Idempotent, logger *logger.Logger) *Biz {
+	return &Biz{ds: ds, rds: rds, idt: idt, logger: logger}
 }
 
 // Orders 返回一个实现了 OrderBiz 接口的实例.
 func (b *Biz) Templates() template.TemplateBiz {
 	return template.New(b.ds, b.rds)
+}
+
+func (b *Biz) Messages() message.MessageBiz {
+	return message.New(b.ds, b.logger, b.rds, b.idt)
 }

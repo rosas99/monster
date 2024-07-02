@@ -6,23 +6,25 @@ import (
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/model"
-	providerFactory "github.com/rosas99/monster/internal/sms/provider"
+	factory "github.com/rosas99/monster/internal/sms/provider"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/segmentio/kafka-go"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type MessageConsumer struct {
-	ctx    context.Context
-	idt    *idempotent.Idempotent
-	logger *logger.Logger
+	ctx      context.Context
+	idt      *idempotent.Idempotent
+	logger   *logger.Logger
+	provider *factory.ProviderFactory
 }
 
-func NewMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger *logger.Logger) *MessageConsumer {
+func NewMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger *logger.Logger, provider *factory.ProviderFactory) *MessageConsumer {
 	return &MessageConsumer{
-		ctx:    ctx,
-		idt:    idt,
-		logger: logger,
+		ctx:      ctx,
+		idt:      idt,
+		logger:   logger,
+		provider: provider,
 	}
 }
 
@@ -50,8 +52,7 @@ func (l *MessageConsumer) handleSmsRequest(ctx context.Context, msg *types.Templ
 	m := model.TemplateM{}
 	providers := m.Providers
 	for _, provider := range providers {
-		providerFactory := providerFactory.NewProviderFactory()
-		templateProvider, err := providerFactory.GetSMSTemplateProvider(types.ProviderType(provider))
+		templateProvider, err := l.provider.GetSMSTemplateProvider(types.ProviderType(provider))
 		if err != nil {
 			break
 		}

@@ -38,15 +38,14 @@ type HTTPServer struct {
 	tlsOptions  *genericoptions.TLSOptions
 }
 
-type MqServer struct {
-	kafkaReader kafka.ReaderConfig
-
-	logic *mqs.MessageConsumer
-}
-
 type GRPCServer struct {
 	srv  *grpc.Server
 	opts *genericoptions.GRPCOptions
+}
+
+type MqServer struct {
+	kafkaReader kafka.ReaderConfig
+	logic       *mqs.MessageConsumer
 }
 
 func NewHTTPServer(
@@ -91,7 +90,7 @@ func NewGRPCServer(
 	tlsOptions *genericoptions.TLSOptions,
 	srv pb.SmsServerServer,
 ) (*GRPCServer, error) {
-	dialOptions := []grpc.ServerOption{}
+	var dialOptions []grpc.ServerOption
 	if tlsOptions != nil && tlsOptions.UseTLS {
 		tlsConfig, err := tlsOptions.TLSConfig()
 		if err != nil {

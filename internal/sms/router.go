@@ -9,6 +9,7 @@ package sms
 import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
+	"github.com/rosas99/monster/internal/pkg/client/usercenter"
 	"github.com/rosas99/monster/internal/pkg/core"
 	"github.com/rosas99/monster/internal/sms/controller/v1/message"
 	"github.com/rosas99/monster/internal/sms/controller/v1/template"
@@ -17,7 +18,7 @@ import (
 	v1api "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-func installRouters(g *gin.Engine, svc *service.SmsServerService, accounts map[string]string) {
+func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 	// 注册 404 Handler.
 	g.NoRoute(func(c *gin.Context) {
 		core.WriteResponse(c, v1api.ErrorOrderAlreadyExists("route not found"), nil)
@@ -25,9 +26,9 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService, accounts map[s
 
 	// 注册 pprof 路由
 	pprof.Register(g)
-
+	impl := usercenter.NewUserCenterServer()
 	// 创建 v1 路由分组，并添加认证中间件
-	v1 := g.Group("/v1", mw.BasicAuth())
+	v1 := g.Group("/v1", mw.BasicAuth(impl))
 
 	//v1 := g.Group("/v1")
 	{

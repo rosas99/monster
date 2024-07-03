@@ -3,7 +3,7 @@ package docs
 import (
 	"context"
 	"fmt"
-	"github.com/superproj/onex/pkg/id"
+	"github.com/rosas99/monster/pkg/id"
 )
 
 func main() {

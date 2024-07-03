@@ -11,21 +11,21 @@ const (
 )
 
 // WrapperMobileCount  is used to build the key name in Redis.
-func WrapperMobileCount(templateCode, mobile string) string {
+func (s *Store) WrapperMobileCount(templateCode, mobile string) string {
 	return fmt.Sprintf("%s%s%s%s%s", MobileCount, DELIMITER, templateCode, DELIMITER, mobile)
 }
 
 // WrapperTemplateCount  is used to build the key name in Redis.
-func WrapperTemplateCount(templateCode, mobile string) string {
+func (s *Store) WrapperTemplateCount(templateCode, mobile string) string {
 	return fmt.Sprintf("%s%s%s%s%s", TemplateCount, DELIMITER, templateCode, DELIMITER, mobile)
 }
 
 // WrapperTimeInterval  is used to build the key name in Redis.
-func WrapperTimeInterval(templateCode, mobile string) string {
+func (s *Store) WrapperTimeInterval(templateCode, mobile string) string {
 	return fmt.Sprintf("%s%s%s%s%s", TimeInterval, DELIMITER, templateCode, DELIMITER, mobile)
 }
 
 // WrapperTimeInterval  is used to build the key name in Redis.
-func WrapperCode(templateCode, mobile string) string {
+func (s *Store) WrapperCode(templateCode, mobile string) string {
 	return fmt.Sprintf("%s%s%s%s%s", TemplateTypeVerificationCode, DELIMITER, templateCode, DELIMITER, mobile)
 }

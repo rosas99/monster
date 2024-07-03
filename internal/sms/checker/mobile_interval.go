@@ -19,7 +19,7 @@ type TimeIntervalForMobileRule struct {
 
 var _ Rule = (*TimeIntervalForMobileRule)(nil)
 
-func (m *TimeIntervalForMobileRule) IsValid(rq *types.Request) bool {
+func (m *TimeIntervalForMobileRule) isValid(rq *types.Request) bool {
 	start := time.Now().Unix()
 	// todo 修改为store
 	key := factory.WrapperTimeInterval(rq.Mobile, rq.TemplateCode)
@@ -47,6 +47,6 @@ func (m *TimeIntervalForMobileRule) IsValid(rq *types.Request) bool {
 	}
 }
 
-func (m *TimeIntervalForMobileRule) GetFailReason() error {
+func (m *TimeIntervalForMobileRule) getFailReason() error {
 	return errors.New("sent_message_too_frequently")
 }

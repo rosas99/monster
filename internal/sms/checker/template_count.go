@@ -19,7 +19,7 @@ type MessageCountForTemplateRule struct {
 
 var _ Rule = (*MessageCountForTemplateRule)(nil)
 
-func (m *MessageCountForTemplateRule) IsValid(rq *types.Request) bool {
+func (m *MessageCountForTemplateRule) isValid(rq *types.Request) bool {
 
 	start := time.Now().Unix()
 	key := factory.WrapperTemplateCount(rq.Mobile, rq.TemplateCode)
@@ -49,6 +49,6 @@ func (m *MessageCountForTemplateRule) IsValid(rq *types.Request) bool {
 	}
 }
 
-func (m *MessageCountForTemplateRule) GetFailReason() error {
+func (m *MessageCountForTemplateRule) getFailReason() error {
 	return errors.New("exceed_limit_for_this_template")
 }

@@ -11,8 +11,8 @@ import (
 // todo 参考iam注册方式
 // Rule 接口定义了验证规则需要实现的方法
 type Rule interface {
-	IsValid(*types.Request) bool
-	GetFailReason() error
+	isValid(*types.Request) bool
+	getFailReason() error
 }
 
 type RuleFactory struct {
@@ -53,8 +53,8 @@ func (rf *RuleFactory) CheckRules(template *model.TemplateM, mobile string, cfgL
 
 		}
 		var c types.Request
-		if !checker.IsValid(&c) {
-			return checker.GetFailReason()
+		if !checker.isValid(&c) {
+			return checker.getFailReason()
 
 		}
 

@@ -20,7 +20,7 @@ type MessageCountForMobileRule struct {
 
 var _ Rule = (*MessageCountForMobileRule)(nil)
 
-func (m *MessageCountForMobileRule) IsValid(rq *types.Request) bool {
+func (m *MessageCountForMobileRule) isValid(rq *types.Request) bool {
 
 	start := time.Now().Unix()
 	key := factory.WrapperMobileCount(rq.Mobile, rq.TemplateCode)
@@ -60,6 +60,6 @@ func (m *MessageCountForMobileRule) IsValid(rq *types.Request) bool {
 	}
 }
 
-func (m *MessageCountForMobileRule) GetFailReason() error {
+func (m *MessageCountForMobileRule) getFailReason() error {
 	return errors.New("exceed_limit_for_this_phone")
 }

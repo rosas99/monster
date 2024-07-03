@@ -31,6 +31,8 @@ func (p *WEProvider) Send(rq types.TemplateMsgRequest) (TemplateMsgResponse, err
 	url := "http://example.com/api"
 	request := client.NewRequest(url)
 	response, err := request.
+		// 重试3次
+
 		// 这里换成结构体
 		SetBody([]byte(`{"username":"testuser", "password":"testpass"}`)).
 		SetResult(&AuthSuccess{}).

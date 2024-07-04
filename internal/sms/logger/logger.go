@@ -7,13 +7,7 @@
 package logger
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/store"
-	"github.com/rosas99/monster/internal/sms/types"
-	"github.com/rosas99/monster/pkg/log"
 	genericoptions "github.com/rosas99/monster/pkg/options"
 	"github.com/segmentio/kafka-go"
 )
@@ -46,37 +40,4 @@ func NewLogger(kafkaOpts *genericoptions.KafkaOptions, ds store.HistoryStore) (*
 	}
 
 	return &Logger{writer: writer, ds: ds}, nil
-}
-
-// LogModel writes a log message for the policy model.
-func (l *Logger) LogHistory(history *model.HistoryM) {
-	err := l.ds.Create(context.Background(), history)
-	if err != nil {
-		log.Errorw(err, "Failed to write kafka messages")
-	}
-}
-
-// log others
-
-// LogModel writes a log message for the policy model.
-func (l *Logger) LogKpi(messageMap map[string]any) {
-
-	out, _ := json.Marshal(messageMap)
-
-	fmt.Println(messageMap)
-	if err := l.writer.WriteMessages(context.Background(), kafka.Message{Value: out}); err != nil {
-		log.Errorw(err, "Failed to write kafka messages")
-	} else {
-		fmt.Println(string(out))
-	}
-}
-
-func (l *Logger) LogMsg(msg *types.TemplateMsgRequest) {
-	out, _ := json.Marshal(msg)
-	fmt.Println(msg)
-	if err := l.writer.WriteMessages(context.Background(), kafka.Message{Value: out}); err != nil {
-		log.Errorw(err, "Failed to write kafka messages")
-	} else {
-		fmt.Println(string(out))
-	}
 }

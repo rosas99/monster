@@ -18,6 +18,10 @@ type MessageCountForMobileRule struct {
 	RDS *redis.Client
 }
 
+func NewMessageCountForMobileRule(DS store.IStore, RDS *redis.Client) *MessageCountForMobileRule {
+	return &MessageCountForMobileRule{DS: DS, RDS: RDS}
+}
+
 var _ Rule = (*MessageCountForMobileRule)(nil)
 
 func (m *MessageCountForMobileRule) isValid(rq *types.Request) bool {

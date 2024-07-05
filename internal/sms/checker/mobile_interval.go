@@ -17,6 +17,10 @@ type TimeIntervalForMobileRule struct {
 	RDS *redis.Client
 }
 
+func NewTimeIntervalForMobileRule(DS store.IStore, RDS *redis.Client) *TimeIntervalForMobileRule {
+	return &TimeIntervalForMobileRule{DS: DS, RDS: RDS}
+}
+
 var _ Rule = (*TimeIntervalForMobileRule)(nil)
 
 func (m *TimeIntervalForMobileRule) isValid(rq *types.Request) bool {

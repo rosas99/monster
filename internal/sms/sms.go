@@ -82,25 +82,11 @@ func (c completedConfig) New() (*SmsServer, error) {
 	}
 
 	// 注册rule
+	// todo 修改为new
 	factory := checker.NewRuleFactory()
-	factory.RegisterRule(
-		types.MessageCountForTemplatePerDay,
-		&checker.MessageCountForTemplateRule{
-			DS:  ds,
-			RDS: rds,
-		})
-	factory.RegisterRule(
-		types.MessageCountForMobilePerDay,
-		&checker.MessageCountForMobileRule{
-			DS:  ds,
-			RDS: rds,
-		})
-	factory.RegisterRule(
-		types.TimeIntervalForMobilePerDay,
-		&checker.TimeIntervalForMobileRule{
-			DS:  ds,
-			RDS: rds,
-		})
+	factory.RegisterRule(types.MessageCountForTemplatePerDay, checker.NewMessageCountForTemplateRule(ds, rds))
+	factory.RegisterRule(types.MessageCountForMobilePerDay, checker.NewMessageCountForMobileRule(ds, rds))
+	factory.RegisterRule(types.TimeIntervalForMobilePerDay, checker.NewTimeIntervalForMobileRule(ds, rds))
 
 	provider := providerFactory.NewProviderFactory()
 	provider.RegisterProvider(types.ProviderTypeWE, providerFactory.NewWEProvider(rds))

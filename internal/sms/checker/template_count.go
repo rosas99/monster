@@ -17,6 +17,10 @@ type MessageCountForTemplateRule struct {
 	RDS *redis.Client
 }
 
+func NewMessageCountForTemplateRule(DS store.IStore, RDS *redis.Client) *MessageCountForTemplateRule {
+	return &MessageCountForTemplateRule{DS: DS, RDS: RDS}
+}
+
 var _ Rule = (*MessageCountForTemplateRule)(nil)
 
 func (m *MessageCountForTemplateRule) isValid(rq *types.Request) bool {

@@ -10,7 +10,6 @@ import (
 	"context"
 	"github.com/jinzhu/copier"
 	"github.com/redis/go-redis/v9"
-	snow "github.com/rosas99/monster/internal/pkg/id"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/sms/checker"
 	"github.com/rosas99/monster/internal/sms/logger"
@@ -20,7 +19,6 @@ import (
 	"github.com/rosas99/monster/internal/sms/types"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 	"github.com/rosas99/monster/pkg/log"
-	"strconv"
 	"time"
 )
 
@@ -76,7 +74,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v
 
 	// 组装短信
 	_ = copier.Copy(&templateMsgRequest, rq)
-	templateMsgRequest.RequestId = strconv.FormatUint(snow.GenerateId(), 10)
+	//templateMsgRequest.RequestId = strconv.FormatUint(snow.GenerateId(), 10)
 
 	// 从本地缓存获取限流配置 // 忽略count返回
 	_, cfgList, err := b.ds.Configurations().List(ctx, rq.TemplateCode)

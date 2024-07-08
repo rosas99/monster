@@ -1,10 +1,4 @@
-// Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/rosas99/monster.
-//
-
-package message
+package interaction
 
 import (
 	"context"
@@ -22,14 +16,12 @@ import (
 	"time"
 )
 
-type MessageBiz interface {
-	Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
-	CodeVerify(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
-	AiliyunReport(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
+type InteractionBiz interface {
+	AiliyunCallback(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
 }
 
 // OrderBiz 接口的实现.
-type messageBiz struct {
+type interactionBiz struct {
 	ds     store.IStore
 	logger *logger.Logger
 	rds    *redis.Client
@@ -37,27 +29,17 @@ type messageBiz struct {
 	idt    *idempotent.Idempotent
 }
 
-func (b *messageBiz) AiliyunReport(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
 // 确保 orderBiz 实现了 OrderBiz 接口.
-var _ MessageBiz = (*messageBiz)(nil)
+var _ InteractionBiz = (*interactionBiz)(nil)
 
 // New 创建一个实现了 OrderBiz 接口的实例.
-func New(ds store.IStore, logger *logger.Logger, rds *redis.Client, idt *idempotent.Idempotent) *messageBiz {
-	return &messageBiz{ds: ds, logger: logger, rds: rds}
+func New(ds store.IStore, logger *logger.Logger, rds *redis.Client, idt *idempotent.Idempotent) *interactionBiz {
+	return &interactionBiz{ds: ds, logger: logger, rds: rds}
 }
 
 // todo 生成请求
 // Create 是 OrderBiz 接口中 `Create` 方法的实现.
-func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
+func (b *interactionBiz) AiliyunCallback(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
 	var templateMsgRequest types.TemplateMsgRequest
 	templateMsgRequest.RequestId = b.idt.Token(ctx)
 	// todo 先使用redis保存 后续再考虑使用本地缓存

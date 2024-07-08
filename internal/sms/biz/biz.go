@@ -11,6 +11,7 @@ package biz
 import (
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
+	"github.com/rosas99/monster/internal/sms/biz/interaction"
 	"github.com/rosas99/monster/internal/sms/biz/message"
 	"github.com/rosas99/monster/internal/sms/biz/template"
 	"github.com/rosas99/monster/internal/sms/logger"
@@ -22,6 +23,7 @@ import (
 type IBiz interface {
 	Templates() template.TemplateBiz
 	Messages() message.MessageBiz
+	Interaction() interaction.InteractionBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -48,4 +50,8 @@ func (b *Biz) Templates() template.TemplateBiz {
 
 func (b *Biz) Messages() message.MessageBiz {
 	return message.New(b.ds, b.logger, b.rds, b.idt)
+}
+
+func (b *Biz) Interaction() interaction.InteractionBiz {
+	return interaction.New(b.ds, b.logger, b.rds, b.idt)
 }

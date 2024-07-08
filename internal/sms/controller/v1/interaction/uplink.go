@@ -1,4 +1,4 @@
-package message
+package interaction
 
 import (
 	"github.com/gin-gonic/gin"
@@ -8,13 +8,13 @@ import (
 
 // todo 阿里云上行短信
 
-func (b *Controller) AiliCallback(c *gin.Context) {
+func (b *Controller) AiliyunCallback(c *gin.Context) {
 	var r v1.CreateTemplateRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)
 
 	}
-	template, err := b.svc.Send(c, &r)
+	template, err := b.svc.AiliyunCallback(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

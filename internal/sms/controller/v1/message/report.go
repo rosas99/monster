@@ -14,7 +14,7 @@ func (b *Controller) AiliReport(c *gin.Context) {
 		core.WriteResponse(c, err, nil)
 
 	}
-	template, err := b.svc.Send(c, &r)
+	template, err := b.svc.AiliyunReport(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

@@ -1286,3 +1286,471 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = AILIYUNCallbackListRequestValidationError{}
+
+// Validate checks the field values on AILIYUNReport with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AILIYUNReport) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AILIYUNReport with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in AILIYUNReportMultiError, or
+// nil if none found.
+func (m *AILIYUNReport) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AILIYUNReport) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PhoneNumber
+
+	// no validation rules for SendTime
+
+	// no validation rules for ReportTime
+
+	// no validation rules for Success
+
+	// no validation rules for ErrCode
+
+	// no validation rules for ErrMsg
+
+	// no validation rules for SmsSize
+
+	// no validation rules for BizId
+
+	// no validation rules for OutId
+
+	if len(errors) > 0 {
+		return AILIYUNReportMultiError(errors)
+	}
+
+	return nil
+}
+
+// AILIYUNReportMultiError is an error wrapping multiple validation errors
+// returned by AILIYUNReport.ValidateAll() if the designated constraints
+// aren't met.
+type AILIYUNReportMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AILIYUNReportMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AILIYUNReportMultiError) AllErrors() []error { return m }
+
+// AILIYUNReportValidationError is the validation error returned by
+// AILIYUNReport.Validate if the designated constraints aren't met.
+type AILIYUNReportValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AILIYUNReportValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AILIYUNReportValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AILIYUNReportValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AILIYUNReportValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AILIYUNReportValidationError) ErrorName() string { return "AILIYUNReportValidationError" }
+
+// Error satisfies the builtin error interface
+func (e AILIYUNReportValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAILIYUNReport.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AILIYUNReportValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AILIYUNReportValidationError{}
+
+// Validate checks the field values on AILIYUNReportListRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AILIYUNReportListRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AILIYUNReportListRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AILIYUNReportListRequestMultiError, or nil if none found.
+func (m *AILIYUNReportListRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AILIYUNReportListRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetAILIYUNReportList() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AILIYUNReportListRequestValidationError{
+						field:  fmt.Sprintf("AILIYUNReportList[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AILIYUNReportListRequestValidationError{
+						field:  fmt.Sprintf("AILIYUNReportList[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AILIYUNReportListRequestValidationError{
+					field:  fmt.Sprintf("AILIYUNReportList[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return AILIYUNReportListRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AILIYUNReportListRequestMultiError is an error wrapping multiple validation
+// errors returned by AILIYUNReportListRequest.ValidateAll() if the designated
+// constraints aren't met.
+type AILIYUNReportListRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AILIYUNReportListRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AILIYUNReportListRequestMultiError) AllErrors() []error { return m }
+
+// AILIYUNReportListRequestValidationError is the validation error returned by
+// AILIYUNReportListRequest.Validate if the designated constraints aren't met.
+type AILIYUNReportListRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AILIYUNReportListRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AILIYUNReportListRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AILIYUNReportListRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AILIYUNReportListRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AILIYUNReportListRequestValidationError) ErrorName() string {
+	return "AILIYUNReportListRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AILIYUNReportListRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAILIYUNReportListRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AILIYUNReportListRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AILIYUNReportListRequestValidationError{}
+
+// Validate checks the field values on VerifyCodeRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *VerifyCodeRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on VerifyCodeRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// VerifyCodeRequestMultiError, or nil if none found.
+func (m *VerifyCodeRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *VerifyCodeRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TemplateCode
+
+	// no validation rules for Mobile
+
+	// no validation rules for Brand
+
+	// no validation rules for Code
+
+	if len(errors) > 0 {
+		return VerifyCodeRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// VerifyCodeRequestMultiError is an error wrapping multiple validation errors
+// returned by VerifyCodeRequest.ValidateAll() if the designated constraints
+// aren't met.
+type VerifyCodeRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m VerifyCodeRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m VerifyCodeRequestMultiError) AllErrors() []error { return m }
+
+// VerifyCodeRequestValidationError is the validation error returned by
+// VerifyCodeRequest.Validate if the designated constraints aren't met.
+type VerifyCodeRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e VerifyCodeRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e VerifyCodeRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e VerifyCodeRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e VerifyCodeRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e VerifyCodeRequestValidationError) ErrorName() string {
+	return "VerifyCodeRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e VerifyCodeRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sVerifyCodeRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = VerifyCodeRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = VerifyCodeRequestValidationError{}
+
+// Validate checks the field values on CommonResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CommonResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CommonResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CommonResponseMultiError,
+// or nil if none found.
+func (m *CommonResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CommonResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Code
+
+	// no validation rules for Msg
+
+	if len(errors) > 0 {
+		return CommonResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CommonResponseMultiError is an error wrapping multiple validation errors
+// returned by CommonResponse.ValidateAll() if the designated constraints
+// aren't met.
+type CommonResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CommonResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CommonResponseMultiError) AllErrors() []error { return m }
+
+// CommonResponseValidationError is the validation error returned by
+// CommonResponse.Validate if the designated constraints aren't met.
+type CommonResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CommonResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CommonResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CommonResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CommonResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CommonResponseValidationError) ErrorName() string { return "CommonResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CommonResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCommonResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CommonResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CommonResponseValidationError{}

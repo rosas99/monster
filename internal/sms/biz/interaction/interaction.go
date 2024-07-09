@@ -12,7 +12,7 @@ import (
 )
 
 type InteractionBiz interface {
-	AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) (*v1.CreateTemplateResponse, error)
+	AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) (*v1.CommonResponse, error)
 }
 
 // OrderBiz 接口的实现.
@@ -34,7 +34,7 @@ func New(ds store.IStore, logger *logger.Logger, rds *redis.Client, idt *idempot
 
 // todo 生成请求
 // Create 是 OrderBiz 接口中 `Create` 方法的实现.
-func (b *interactionBiz) AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) (*v1.CreateTemplateResponse, error) {
+func (b *interactionBiz) AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) (*v1.CommonResponse, error) {
 	for index, i2 := range rq.AILIYUNCallbackList {
 		fmt.Println(index, i2)
 
@@ -46,5 +46,5 @@ func (b *interactionBiz) AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCall
 	// 根据手机号，内容，接收时间，查询数据库是否存在，存在则不保存，不存在则保存进数据库
 	// 执行处理，如退订、兑换
 	// 判断配置是否允许短信下行，允许的话回复用户并记录交互记录 //暂时不做
-	return &v1.CreateTemplateResponse{OrderID: 1}, nil
+	return &v1.CommonResponse{Code: 0, Msg: "12"}, nil
 }

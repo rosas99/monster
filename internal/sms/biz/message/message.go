@@ -24,8 +24,8 @@ import (
 
 type MessageBiz interface {
 	Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
-	CodeVerify(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
-	AILIYUNReport(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
+	CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (*v1.CommonResponse, error)
+	AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) (*v1.CommonResponse, error)
 }
 
 // OrderBiz 接口的实现.
@@ -35,16 +35,6 @@ type messageBiz struct {
 	rds    *redis.Client
 	rule   *checker.RuleFactory
 	idt    *idempotent.Idempotent
-}
-
-func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
-	//TODO implement me
-	panic("implement me")
 }
 
 // 确保 orderBiz 实现了 OrderBiz 接口.
@@ -111,4 +101,17 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v
 	l.LogKpi(message)
 	// todo log记录短信延时
 	return &v1.CreateTemplateResponse{OrderID: templateM.ID}, nil
+}
+
+func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (*v1.CommonResponse, error) {
+	//TODO implement me
+	// 品牌只用在kpi log
+	panic("implement me")
+}
+
+func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) (*v1.CommonResponse, error) {
+	//TODO 接收阿里云短信回执
+	// 和历史组装到一起
+	//TODO 存储到数据库
+	panic("implement me")
 }

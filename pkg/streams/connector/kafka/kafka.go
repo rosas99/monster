@@ -68,9 +68,9 @@ func (ks *KafkaSource) consume() {
 		}
 		ks.out <- msg
 
-		// 提交偏移量  todo 2 是否需要?
+		// 提交偏移量
 		if err := ks.r.CommitMessages(context.Background(), msg); err != nil {
-			//log.Fatal(err)
+			// todo log.Fatal(err)
 		}
 	}
 }

@@ -17,7 +17,7 @@ import (
 var (
 	once sync.Once
 	// 全局变量，保存已被初始化的 *Datastore 实例.
-	s *Datastore
+	S *Datastore
 )
 
 // Datastore 是 IStore 的一个具体实现.
@@ -32,10 +32,15 @@ var _ store.IStore = (*Datastore)(nil)
 func NewStore(db *gorm.DB) *Datastore {
 	// 确保 s 只被初始化一次
 	once.Do(func() {
-		s = &Datastore{db}
+		S = &Datastore{db}
 	})
 
-	return s
+	return S
+}
+
+// DB 返回存储在 datastore 中的 *gorm.DB.
+func (ds *Datastore) DB() *gorm.DB {
+	return ds.db
 }
 
 func (ds *Datastore) Users() store.UserStore {

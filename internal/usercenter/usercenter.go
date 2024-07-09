@@ -9,11 +9,9 @@ package sms
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
-	"github.com/rosas99/monster/internal/pkg/client/usercenter"
 	"github.com/rosas99/monster/internal/pkg/middleware/header"
 	"github.com/rosas99/monster/internal/pkg/middleware/trace"
 	"github.com/rosas99/monster/internal/usercenter/biz"
-	"github.com/rosas99/monster/internal/usercenter/middleware/auth"
 	"github.com/rosas99/monster/internal/usercenter/middleware/validate"
 
 	//"github.com/rosas99/monster/internal/usercenter/middleware/validate"
@@ -100,12 +98,11 @@ func (c completedConfig) New() (*SmsServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	impl := usercenter.NewUserCenterServer()
 	// gin.Recovery() 中间件，用来捕获任何 panic，并恢复
 	mws := []gin.HandlerFunc{gin.Recovery(), header.NoCache, header.Cors, header.Secure,
 		// todo 这里传入rds ds
 		// 注意验证链路的顺序
-		trace.TraceID(), auth.BasicAuth(impl), validate.Validation(ds)}
+		trace.TraceID(), validate.Validation(ds)}
 	// 添加中间件
 	g.Use(mws...)
 

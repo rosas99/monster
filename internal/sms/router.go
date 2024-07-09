@@ -45,9 +45,11 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 		}
 
 		ms := message.New(svc)
-		msgv1 := v1.Group("/msg")
+		msgv1 := v1.Group("/message")
 		{
-			msgv1.GET("", ms.Send)
+			msgv1.POST("", ms.Send)
+			msgv1.POST("", ms.CodeVerify)
+			msgv1.POST("", ms.AiliReport)
 
 		}
 

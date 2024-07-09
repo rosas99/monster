@@ -6,10 +6,6 @@
 
 package flow
 
-import (
-	"github.com/rosas99/monster/pkg/streams"
-)
-
 type ConsumeHandler interface {
 	Consume(val any) error
 }
@@ -49,32 +45,32 @@ func NewConsumer(handler ConsumeHandler, parallelism uint) *Consumer {
 }
 
 // Via streams data through the given flow.
-func (m *Consumer) Via(flow streams.Flow) streams.Flow {
-	go m.transmit(flow)
-	return flow
-}
-
-// To streams data to the given sink.
-func (m *Consumer) To(sink streams.Sink) {
-	m.transmit(sink)
-}
-
-// Out returns an output channel for sending data.
-func (m *Consumer) Out() <-chan any {
-	return m.out
-}
-
-// In returns an input channel for receiving data.
-func (m *Consumer) In() chan<- any {
-	return m.in
-}
-
-func (m *Consumer) transmit(inlet streams.Inlet) {
-	for element := range m.Out() {
-		inlet.In() <- element
-	}
-	close(inlet.In())
-}
+//func (m *Consumer) Via(flow streams.Flow) streams.Flow {
+//	go m.transmit(flow)
+//	return flow
+//}
+//
+//// To streams data to the given sink.
+//func (m *Consumer) To(sink streams.Sink) {
+//	m.transmit(sink)
+//}
+//
+//// Out returns an output channel for sending data.
+//func (m *Consumer) Out() <-chan any {
+//	return m.out
+//}
+//
+//// In returns an input channel for receiving data.
+//func (m *Consumer) In() chan<- any {
+//	return m.in
+//}
+//
+//func (m *Consumer) transmit(inlet streams.Inlet) {
+//	for element := range m.Out() {
+//		inlet.In() <- element
+//	}
+//	close(inlet.In())
+//}
 
 // 执行函数的方法
 func (m *Consumer) doStream() {

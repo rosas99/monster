@@ -56,14 +56,18 @@ func (l *MessageConsumer) handleSmsRequest(ctx context.Context, msg *types.Templ
 		if err != nil {
 			break
 		}
-		_, err = templateProvider.Send(types.TemplateMsgRequest{})
+		ret, err := templateProvider.Send(types.TemplateMsgRequest{})
 		if err != nil {
 			continue
 		}
+		historyM := model.HistoryM{
+			MessageID: ret.MessageID,
+		}
+		// todo 记录到history
+		// 从响应获取bizid，关联到history
+		l.logger.LogHistory(&historyM)
 		break
 	}
 
-	// todo 记录到history
-	l.logger.LogHistory(&model.HistoryM{})
 	return nil
 }

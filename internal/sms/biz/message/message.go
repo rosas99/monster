@@ -106,6 +106,9 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v
 func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (*v1.CommonResponse, error) {
 	//TODO implement me
 	// 品牌只用在kpi log
+	// 查询
+	// 验证
+	// 验证成功则删除
 	panic("implement me")
 }
 

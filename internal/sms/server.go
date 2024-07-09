@@ -148,12 +148,13 @@ func NewMqServer(
 }
 
 func (s *MqServer) RunWithContext(ctx context.Context) {
+	articleConsumer := flow.NewConsumer(s.logic, 1)
 
-	source2, err := kafkaconnector.NewKafkaSource(ctx, s.kafkaReader)
+	source2, err := kafkaconnector.NewKafkaSource(ctx, s.kafkaReader, s.logic, 1)
 	if err != nil {
 		return
 	}
-	articleConsumer := flow.NewConsumer(s.logic, 1)
+	//articleConsumer := flow.NewConsumer(s.logic, 1)
 	// 这里通过map写入通道，通道是由sink初始化后开始消费
 	source2.Via(articleConsumer)
 }

@@ -19,28 +19,51 @@ import (
 	"github.com/rosas99/monster/pkg/streams/flow"
 )
 
+type ConsumeHandler interface {
+	Consume(val any) error
+}
+
 // KafkaSource represents an Apache Kafka source connector.
 type KafkaSource struct {
-	r         *kafka.Reader
-	out       chan any
-	ctx       context.Context
-	cancelCtx context.CancelFunc
+	r           *kafka.Reader
+	out         chan any
+	ctx         context.Context
+	cancelCtx   context.CancelFunc
+	handler     ConsumeHandler
+	parallelism uint
 }
 
 // NewKafkaSource returns a new KafkaSource instance.
-func NewKafkaSource(ctx context.Context, config kafka.ReaderConfig) (*KafkaSource, error) {
+func NewKafkaSource(ctx context.Context, config kafka.ReaderConfig, handler ConsumeHandler, parallelism uint) (*KafkaSource, error) {
 	out := make(chan any)
 	cctx, cancel := context.WithCancel(ctx)
 
 	sink := &KafkaSource{
-		r:         kafka.NewReader(config),
-		out:       out,
-		ctx:       cctx,
-		cancelCtx: cancel,
+		r:           kafka.NewReader(config),
+		out:         out,
+		ctx:         cctx,
+		cancelCtx:   cancel,
+		handler:     handler,
+		parallelism: parallelism,
 	}
 
 	go sink.init()
 	return sink, nil
+}
+
+func (ks *KafkaSource) Start() {
+	sigchan := make(chan os.Signal, 1)
+	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
+	go ks.consume()
+
+	select {
+	case <-sigchan:
+		ks.cancelCtx()
+	case <-ks.ctx.Done():
+	}
+
+	close(ks.out)
+	ks.r.Close()
 }
 
 // init starts the main loop.
@@ -66,11 +89,14 @@ func (ks *KafkaSource) consume() {
 		if err != nil {
 			klog.ErrorS(err, "Failed to read message")
 		}
+		// 增加一个配置，可自行决定是否在业务逻辑处理失败时提交偏移量
 		ks.out <- msg
-
+		suc := <-ks.doStream()
 		// 提交偏移量
-		if err := ks.r.CommitMessages(context.Background(), msg); err != nil {
-			// todo log.Fatal(err)
+		if suc {
+			if err := ks.r.CommitMessages(context.Background(), msg); err != nil {
+				// todo log.Fatal(err)
+			}
 		}
 	}
 }
@@ -84,6 +110,31 @@ func (ks *KafkaSource) Via(_flow streams.Flow) streams.Flow {
 // Out returns an output channel for sending data.
 func (ks *KafkaSource) Out() <-chan any {
 	return ks.out
+}
+
+func (ks *KafkaSource) doStream() chan bool {
+	suc := make(chan bool)
+	sem := make(chan struct{}, ks.parallelism)
+	for elem := range ks.out {
+		sem <- struct{}{}
+		go func(elem any) {
+			defer func() { <-sem }()
+			if err := ks.handler.Consume(elem); err != nil {
+				// 处理错误
+				// 提交消息等处理
+				suc <- false
+			} else {
+				suc <- true
+			}
+
+			ks.out <- elem
+		}(elem)
+	}
+	for i := 0; i < int(ks.parallelism); i++ {
+		sem <- struct{}{}
+	}
+	close(ks.out)
+	return suc
 }
 
 // KafkaSink represents an Apache Kafka sink connector.

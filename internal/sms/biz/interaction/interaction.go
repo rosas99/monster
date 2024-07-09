@@ -3,10 +3,13 @@ package interaction
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
+	"github.com/rosas99/monster/internal/pkg/meta"
 	"github.com/rosas99/monster/internal/sms/checker"
 	"github.com/rosas99/monster/internal/sms/logger"
+	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/store"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
@@ -35,13 +38,29 @@ func New(ds store.IStore, logger *logger.Logger, rds *redis.Client, idt *idempot
 // todo 生成请求
 // Create 是 OrderBiz 接口中 `Create` 方法的实现.
 func (b *interactionBiz) AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) (*v1.CommonResponse, error) {
-	for index, i2 := range rq.AILIYUNCallbackList {
-		fmt.Println(index, i2)
+	for index, item := range rq.AILIYUNCallbackList {
+		fmt.Println(index, item)
+		filter := make(map[string]any)
+		filter["mobile"] = item.PhoneNumber
+		filter["content"] = item.Content
+		filter["receive_time"] = item.SendTime
+		count, _, _ := b.ds.Interactions().List(ctx, "", meta.WithFilter(filter))
+		if count > 0 {
+			return nil, nil
+		}
 
-		// 直接在这里处理每条信息
-		// todo 在原信息基础上补充接受到的时间和供应商类型
-		// 构建interaction
-		// 交互id使用自生成
+		var interactionM model.InteractionM
+		interactionM.InteractionID = uuid.New().String()
+		interactionM.Mobile = item.PhoneNumber
+		interactionM.Content = item.Content
+		interactionM.Param = item.DestCode
+		interactionM.Provider = "AILIYUN"
+
+		err := b.ds.Interactions().Create(ctx, &interactionM)
+		if err != nil {
+			return nil, err
+		}
+
 	}
 	// 根据手机号，内容，接收时间，查询数据库是否存在，存在则不保存，不存在则保存进数据库
 	// 执行处理，如退订、兑换

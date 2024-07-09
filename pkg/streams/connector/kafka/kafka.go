@@ -8,8 +8,10 @@ package kafka
 
 import (
 	"context"
+	"github.com/zeromicro/go-zero/core/logx"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 
 	"github.com/segmentio/kafka-go"
@@ -113,28 +115,67 @@ func (ks *KafkaSource) Out() <-chan any {
 }
 
 func (ks *KafkaSource) doStream() chan bool {
-	suc := make(chan bool)
+	results := make(chan bool, ks.parallelism)
+	var wg sync.WaitGroup
 	sem := make(chan struct{}, ks.parallelism)
-	for elem := range ks.out {
-		sem <- struct{}{}
-		go func(elem any) {
-			defer func() { <-sem }()
-			if err := ks.handler.Consume(elem); err != nil {
-				// 处理错误
-				// 提交消息等处理
-				suc <- false
-			} else {
-				suc <- true
-			}
 
-			ks.out <- elem
+	processMessage := func(elem any) {
+		defer func() { <-sem }()
+		// 调用处理函数，并发送结果到results channel
+		if err := ks.handler.Consume(elem); err != nil {
+			logx.Errorf("consume error: %v", err)
+			results <- false
+		} else {
+			results <- true
+		}
+	}
+	for elem := range ks.out {
+		select {
+		case sem <- struct{}{}:
+		default:
+			// 如果信号量已满，跳过此次循环迭代
+			continue
+		}
+		wg.Add(1)
+		go func(elem any) {
+			defer wg.Done()
+			processMessage(elem)
 		}(elem)
 	}
+
+	// 等待所有goroutine完成
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	// 不再需要向sem发送数据
 	for i := 0; i < int(ks.parallelism); i++ {
-		sem <- struct{}{}
+		<-sem
 	}
+
+	// 关闭ks.out，确保上面的for循环能够退出
 	close(ks.out)
-	return suc
+
+	//sem := make(chan struct{}, ks.parallelism)
+	//for elem := range ks.out {
+	//	sem <- struct{}{}
+	//	go func(elem any) {
+	//		defer func() { <-sem }()
+	//		if err := ks.handler.Consume(elem); err != nil {
+	//			suc <- false
+	//		} else {
+	//			suc <- true
+	//		}
+	//
+	//		ks.out <- elem
+	//	}(elem)
+	//}
+	//for i := 0; i < int(ks.parallelism); i++ {
+	//	sem <- struct{}{}
+	//}
+	//close(ks.out)
+	return results
 }
 
 // KafkaSink represents an Apache Kafka sink connector.

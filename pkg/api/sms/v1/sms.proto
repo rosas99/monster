@@ -16,17 +16,17 @@ import "validate/validate.proto";
 option go_package = "github.com/rosas99/monster/pkg/api/sms/v1";
 
 service SmsServer {
-//  rpc DeleteOrder(CreateTemplateRequest) returns (google.protobuf.Empty) {
-//    option (google.api.http) = {delete: "/v1/orders"};
-//  }
+  //  rpc DeleteOrder(CreateTemplateRequest) returns (google.protobuf.Empty) {
+  //    option (google.api.http) = {delete: "/v1/orders"};
+  //  }
 }
 
 
 // string templateName = 1 [(validate.rules).string = {min_len: 1, max_len: 253, pattern: "[^\\s]+"}];; // 模板名称
 message CreateTemplateRequest {
-//  string templateName = 1 [(validate.rules).string = {pattern: "[^\\s]+"}];; // 模板名称
+  //  string templateName = 1 [(validate.rules).string = {pattern: "[^\\s]+"}];; // 模板名称
   string templateName = 1 ; // 模板名称
-//  string content = 2  [(validate.rules).string = {pattern: "[^\\s]+"}]; // 模板内容
+  //  string content = 2  [(validate.rules).string = {pattern: "[^\\s]+"}]; // 模板内容
   string content = 2  ; // 模板内容
   string templateType = 3; // 模板类型-1验证码-2普通类型
   string brand = 4; // 品牌
@@ -39,8 +39,8 @@ message CreateTemplateRequest {
   string mobileCount = 11;
   string timeInterval = 12;
   string region = 13;
-  string mobile =14;
- string  code =15;
+  string mobile = 14;
+  string  code = 15;
 }
 
 message CreateTemplateResponse {
@@ -49,7 +49,7 @@ message CreateTemplateResponse {
 
 message UpdateTemplateRequest {
   int64 id = 1;
-//    string templateName = 2 [(validate.rules).string = {pattern: "[^\\s]+"}]; // 模板名称
+  //    string templateName = 2 [(validate.rules).string = {pattern: "[^\\s]+"}]; // 模板名称
   string templateName = 2 ; // 模板名称
   //  string content = 2  [(validate.rules).string = {pattern: "[^\\s]+"}]; // 模板内容
   string content = 3  ; // 模板内容
@@ -106,3 +106,16 @@ message DeleteTemplateRequest {
   int64 id = 1;
 }
 
+
+message AILIYUNCallback {
+  string phoneNumber = 1 ;
+  string sendTime = 2  ;
+  string content = 3;
+  string signName = 4;
+  string destCode = 5;
+  int64 sequenceId = 6;
+}
+message AILIYUNCallbackListRequest {
+  repeated AILIYUNCallback AILIYUNCallbackList = 1;
+
+}

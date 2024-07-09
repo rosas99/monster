@@ -8,13 +8,13 @@ import (
 
 // todo 阿里云上行短信
 
-func (b *Controller) AiliyunCallback(c *gin.Context) {
-	var r v1.CreateTemplateRequest
+func (b *Controller) AILIYUNCallback(c *gin.Context) {
+	var r v1.AILIYUNCallbackListRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)
 
 	}
-	template, err := b.svc.AiliyunCallback(c, &r)
+	template, err := b.svc.AILIYUNInteractionCallback(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

@@ -25,7 +25,7 @@ import (
 type MessageBiz interface {
 	Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
 	CodeVerify(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
-	AiliyunReport(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
+	AILIYUNReport(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
 }
 
 // OrderBiz 接口的实现.
@@ -37,7 +37,7 @@ type messageBiz struct {
 	idt    *idempotent.Idempotent
 }
 
-func (b *messageBiz) AiliyunReport(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
+func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
 	//TODO implement me
 	panic("implement me")
 }

@@ -2,22 +2,17 @@ package interaction
 
 import (
 	"context"
-	"github.com/jinzhu/copier"
+	"fmt"
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/sms/checker"
 	"github.com/rosas99/monster/internal/sms/logger"
-	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/store"
-	factory "github.com/rosas99/monster/internal/sms/store/redis"
-	"github.com/rosas99/monster/internal/sms/types"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
-	"github.com/rosas99/monster/pkg/log"
-	"time"
 )
 
 type InteractionBiz interface {
-	AiliyunCallback(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
+	AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) (*v1.CreateTemplateResponse, error)
 }
 
 // OrderBiz 接口的实现.
@@ -39,58 +34,17 @@ func New(ds store.IStore, logger *logger.Logger, rds *redis.Client, idt *idempot
 
 // todo 生成请求
 // Create 是 OrderBiz 接口中 `Create` 方法的实现.
-func (b *interactionBiz) AiliyunCallback(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
-	var templateMsgRequest types.TemplateMsgRequest
-	templateMsgRequest.RequestId = b.idt.Token(ctx)
-	// todo 先使用redis保存 后续再考虑使用本地缓存
-	// todo 参考cache服务如何实现
-	// 从本地缓存查询模板
-	l := b.logger
-	m := model.HistoryM{}
+func (b *interactionBiz) AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) (*v1.CreateTemplateResponse, error) {
+	for index, i2 := range rq.AILIYUNCallbackList {
+		fmt.Println(index, i2)
 
-	templateM, err := b.ds.Templates().Get(ctx, rq.TemplateCode)
-	if err != nil {
-		l.LogHistory(&m)
+		// 直接在这里处理每条信息
+		// todo 在原信息基础上补充接受到的时间和供应商类型
+		// 构建interaction
+		// 交互id使用自生成
 	}
-
-	// 如果是验证码，缓存验证码
-	if templateM.Type == "VERIFICATION" {
-		// todo 生成6位随机验证码
-		rq.Code = ""
-
-	}
-
-	// 组装短信
-	_ = copier.Copy(&templateMsgRequest, rq)
-	//templateMsgRequest.RequestId = strconv.FormatUint(snow.GenerateId(), 10)
-
-	// 从本地缓存获取限流配置 // 忽略count返回
-	_, cfgList, err := b.ds.Configurations().List(ctx, rq.TemplateCode)
-	if err != nil {
-	}
-
-	// 规则校验
-	err = b.rule.CheckRules(templateM, rq.Mobile, cfgList)
-	// 这里只使用err
-	if err != nil {
-		l.LogHistory(&m)
-	}
-
-	// 根据类型发送短信到对应mq
-	// 异步记录短信历史
-	key := factory.WrapperCode(rq.TemplateCode, rq.Mobile)
-	b.rds.Set(ctx, key, rq.Code, time.Hour*24)
-
-	l.LogMsg(&templateMsgRequest)
-
-	log.C(ctx).Infof("test")
-	l.LogHistory(&m)
-
-	message := map[string]any{
-		"test":  "value1",
-		"other": 123,
-	}
-	l.LogKpi(message)
-	// todo log记录短信延时
-	return &v1.CreateTemplateResponse{OrderID: templateM.ID}, nil
+	// 根据手机号，内容，接收时间，查询数据库是否存在，存在则不保存，不存在则保存进数据库
+	// 执行处理，如退订、兑换
+	// 判断配置是否允许短信下行，允许的话回复用户并记录交互记录 //暂时不做
+	return &v1.CreateTemplateResponse{OrderID: 1}, nil
 }

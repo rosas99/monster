@@ -18,7 +18,7 @@ func (b *Controller) Send(c *gin.Context) {
 		core.WriteResponse(c, err, nil)
 
 	}
-	template, err := b.svc.Send(c, &r)
+	template, err := b.svc.SendMessage(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

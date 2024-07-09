@@ -57,27 +57,9 @@ func (m *CreateTemplateRequest) validate(all bool) error {
 
 	var errors []error
 
-	if !_CreateTemplateRequest_TemplateName_Pattern.MatchString(m.GetTemplateName()) {
-		err := CreateTemplateRequestValidationError{
-			field:  "TemplateName",
-			reason: "value does not match regex pattern \"[^\\\\s]+\"",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for TemplateName
 
-	if !_CreateTemplateRequest_Content_Pattern.MatchString(m.GetContent()) {
-		err := CreateTemplateRequestValidationError{
-			field:  "Content",
-			reason: "value does not match regex pattern \"[^\\\\s]+\"",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Content
 
 	// no validation rules for TemplateType
 
@@ -98,6 +80,10 @@ func (m *CreateTemplateRequest) validate(all bool) error {
 	// no validation rules for TimeInterval
 
 	// no validation rules for Region
+
+	// no validation rules for Mobile
+
+	// no validation rules for Code
 
 	if len(errors) > 0 {
 		return CreateTemplateRequestMultiError(errors)
@@ -178,10 +164,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CreateTemplateRequestValidationError{}
-
-var _CreateTemplateRequest_TemplateName_Pattern = regexp.MustCompile("[^\\s]+")
-
-var _CreateTemplateRequest_Content_Pattern = regexp.MustCompile("[^\\s]+")
 
 // Validate checks the field values on CreateTemplateResponse with the rules
 // defined in the proto definition for this message. If any rules are
@@ -311,27 +293,9 @@ func (m *UpdateTemplateRequest) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if !_UpdateTemplateRequest_TemplateName_Pattern.MatchString(m.GetTemplateName()) {
-		err := UpdateTemplateRequestValidationError{
-			field:  "TemplateName",
-			reason: "value does not match regex pattern \"[^\\\\s]+\"",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for TemplateName
 
-	if !_UpdateTemplateRequest_Content_Pattern.MatchString(m.GetContent()) {
-		err := UpdateTemplateRequestValidationError{
-			field:  "Content",
-			reason: "value does not match regex pattern \"[^\\\\s]+\"",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Content
 
 	// no validation rules for TemplateType
 
@@ -433,10 +397,6 @@ var _ interface {
 	ErrorName() string
 } = UpdateTemplateRequestValidationError{}
 
-var _UpdateTemplateRequest_TemplateName_Pattern = regexp.MustCompile("[^\\s]+")
-
-var _UpdateTemplateRequest_Content_Pattern = regexp.MustCompile("[^\\s]+")
-
 // Validate checks the field values on TemplateReply with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -488,7 +448,7 @@ func (m *TemplateReply) validate(all bool) error {
 	// no validation rules for Region
 
 	if all {
-		switch v := interface{}(nil).(type) {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, TemplateReplyValidationError{
@@ -506,7 +466,7 @@ func (m *TemplateReply) validate(all bool) error {
 				})
 			}
 		}
-	} else if v, ok := interface{}(nil).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return TemplateReplyValidationError{
 				field:  "CreatedAt",
@@ -517,7 +477,7 @@ func (m *TemplateReply) validate(all bool) error {
 	}
 
 	if all {
-		switch v := interface{}(nil).(type) {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, TemplateReplyValidationError{
@@ -535,7 +495,7 @@ func (m *TemplateReply) validate(all bool) error {
 				})
 			}
 		}
-	} else if v, ok := interface{}(nil).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return TemplateReplyValidationError{
 				field:  "UpdatedAt",
@@ -1078,3 +1038,251 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteTemplateRequestValidationError{}
+
+// Validate checks the field values on AILIYUNCallback with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *AILIYUNCallback) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AILIYUNCallback with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AILIYUNCallbackMultiError, or nil if none found.
+func (m *AILIYUNCallback) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AILIYUNCallback) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PhoneNumber
+
+	// no validation rules for SendTime
+
+	// no validation rules for Content
+
+	// no validation rules for SignName
+
+	// no validation rules for DestCode
+
+	// no validation rules for SequenceId
+
+	if len(errors) > 0 {
+		return AILIYUNCallbackMultiError(errors)
+	}
+
+	return nil
+}
+
+// AILIYUNCallbackMultiError is an error wrapping multiple validation errors
+// returned by AILIYUNCallback.ValidateAll() if the designated constraints
+// aren't met.
+type AILIYUNCallbackMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AILIYUNCallbackMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AILIYUNCallbackMultiError) AllErrors() []error { return m }
+
+// AILIYUNCallbackValidationError is the validation error returned by
+// AILIYUNCallback.Validate if the designated constraints aren't met.
+type AILIYUNCallbackValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AILIYUNCallbackValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AILIYUNCallbackValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AILIYUNCallbackValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AILIYUNCallbackValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AILIYUNCallbackValidationError) ErrorName() string { return "AILIYUNCallbackValidationError" }
+
+// Error satisfies the builtin error interface
+func (e AILIYUNCallbackValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAILIYUNCallback.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AILIYUNCallbackValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AILIYUNCallbackValidationError{}
+
+// Validate checks the field values on AILIYUNCallbackListRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AILIYUNCallbackListRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AILIYUNCallbackListRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AILIYUNCallbackListRequestMultiError, or nil if none found.
+func (m *AILIYUNCallbackListRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AILIYUNCallbackListRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetAILIYUNCallbackList() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AILIYUNCallbackListRequestValidationError{
+						field:  fmt.Sprintf("AILIYUNCallbackList[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AILIYUNCallbackListRequestValidationError{
+						field:  fmt.Sprintf("AILIYUNCallbackList[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AILIYUNCallbackListRequestValidationError{
+					field:  fmt.Sprintf("AILIYUNCallbackList[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return AILIYUNCallbackListRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AILIYUNCallbackListRequestMultiError is an error wrapping multiple
+// validation errors returned by AILIYUNCallbackListRequest.ValidateAll() if
+// the designated constraints aren't met.
+type AILIYUNCallbackListRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AILIYUNCallbackListRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AILIYUNCallbackListRequestMultiError) AllErrors() []error { return m }
+
+// AILIYUNCallbackListRequestValidationError is the validation error returned
+// by AILIYUNCallbackListRequest.Validate if the designated constraints aren't met.
+type AILIYUNCallbackListRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AILIYUNCallbackListRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AILIYUNCallbackListRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AILIYUNCallbackListRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AILIYUNCallbackListRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AILIYUNCallbackListRequestValidationError) ErrorName() string {
+	return "AILIYUNCallbackListRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AILIYUNCallbackListRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAILIYUNCallbackListRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AILIYUNCallbackListRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AILIYUNCallbackListRequestValidationError{}

@@ -50,4 +50,6 @@ func (ds *Datastore) Histories() store.HistoryStore {
 	return newHistories(ds.db)
 }
 
-// todo history
+func (ds *Datastore) Interactions() store.InteractionStore {
+	return newInteractions(ds.db)
+}

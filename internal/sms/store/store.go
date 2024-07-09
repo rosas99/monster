@@ -21,6 +21,7 @@ type IStore interface {
 	Templates() TemplateStore
 	Configurations() ConfigurationStore
 	Histories() HistoryStore
+	Interactions() InteractionStore
 }
 
 // OrderStore 定义了 order 模块在 store 层所实现的方法.
@@ -47,6 +48,14 @@ type HistoryStore interface {
 	Get(ctx context.Context, orderID string) (*model.HistoryM, error)
 	Update(ctx context.Context, order *model.HistoryM) error
 	List(ctx context.Context, templateCode string, opts ...meta.ListOption) (int64, []*model.HistoryM, error)
+	Delete(ctx context.Context, id int64) error
+}
+
+type InteractionStore interface {
+	Create(ctx context.Context, order *model.InteractionM) error
+	Get(ctx context.Context, orderID string) (*model.InteractionM, error)
+	Update(ctx context.Context, order *model.InteractionM) error
+	List(ctx context.Context, templateCode string, opts ...meta.ListOption) (int64, []*model.InteractionM, error)
 	Delete(ctx context.Context, id int64) error
 }
 

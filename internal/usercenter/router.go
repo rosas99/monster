@@ -27,9 +27,6 @@ func installRouters(g *gin.Engine, svc *service.UserCenterService) {
 	// 注册 pprof 路由
 	pprof.Register(g)
 
-	// 创建 v1 路由分组，并添加认证中间件
-	//v1 := g.Group("/v1", mw.BasicAuth(accounts))
-
 	authz, err := auth.NewAuthz(mysql.S.DB())
 	if err != nil {
 		return

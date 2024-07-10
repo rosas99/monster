@@ -28,7 +28,7 @@ func (p *AILIYUNProvider) Send(rq types.TemplateMsgRequest) (TemplateMsgResponse
 	// 这里应该是调用微信的API发送短信的逻辑
 	fmt.Printf("Sending message via WEProvider to %s\n", rq.SendTime)
 	// 返回示例响应
-	client, err := ailiyun.CreateSmsClient(tea.String("LTAI5t8Kd2TFFgzNWukJuz3e"), tea.String("TVQ2SkfObARCxw3bmW7eba71HBP2oN"))
+	client, err := ailiyun.CreateSmsClient(tea.String(""), tea.String(""))
 	if err != nil {
 		return TemplateMsgResponse{}, err
 	}

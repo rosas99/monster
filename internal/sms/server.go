@@ -13,7 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	mqs "github.com/rosas99/monster/internal/sms/mqs"
 	kafkaconnector "github.com/rosas99/monster/pkg/streams/connector/kafka"
-	"github.com/rosas99/monster/pkg/streams/flow"
 	"github.com/segmentio/kafka-go"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
@@ -44,8 +43,10 @@ type GRPCServer struct {
 }
 
 type MqServer struct {
-	kafkaReader kafka.ReaderConfig
-	logic       *mqs.MessageConsumer
+	srv *kafkaconnector.Consumer
+	//kafkaReader kafka.ReaderConfig
+	//logic       *mqs.MessageConsumer
+	//forceCommit bool
 }
 
 func NewHTTPServer(
@@ -126,8 +127,8 @@ func (s *GRPCServer) GracefulStop() {
 
 func NewMqServer(
 	KafkaOptions *genericoptions.KafkaOptions,
-
 	logic *mqs.MessageConsumer,
+	forceCommit bool,
 ) (MqServer, error) {
 	r := kafka.ReaderConfig{
 		Brokers:           KafkaOptions.Brokers,
@@ -144,17 +145,20 @@ func NewMqServer(
 		StartOffset:       KafkaOptions.ReaderOptions.StartOffset,
 		MaxAttempts:       KafkaOptions.ReaderOptions.MaxAttempts,
 	}
-	return MqServer{kafkaReader: r, logic: logic}, nil
+
+	consumer, err := kafkaconnector.NewConsumer(context.Background(), r, logic, forceCommit)
+	if err != nil {
+		return MqServer{}, err
+	}
+
+	return MqServer{srv: consumer}, nil
 }
 
-func (s *MqServer) RunWithContext(ctx context.Context) {
-	articleConsumer := flow.NewConsumer(s.logic, 1)
+func (s *MqServer) RunOrDie() {
+	s.srv.Start()
+}
 
-	source2, err := kafkaconnector.NewKafkaSource(ctx, s.kafkaReader, s.logic, 1)
-	if err != nil {
-		return
-	}
-	//articleConsumer := flow.NewConsumer(s.logic, 1)
-	// 这里通过map写入通道，通道是由sink初始化后开始消费
-	source2.Via(articleConsumer)
+func (s *MqServer) GracefulStop() {
+	log.Infof("Gracefully stop grpc server")
+	s.srv.Stop()
 }

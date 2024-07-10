@@ -26,7 +26,6 @@ import (
 	"github.com/rosas99/monster/pkg/db"
 	"github.com/rosas99/monster/pkg/log"
 	genericoptions "github.com/rosas99/monster/pkg/options"
-	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 // Config represents the configuration of the service.
@@ -139,8 +138,12 @@ func (c completedConfig) New() (*SmsServer, error) {
 	// 添加中间件
 	g.Use(mws...)
 
-	mqsrv, _ := NewMqServer(c.KafkaOptions, logic)
+	mqsrv, err := NewMqServer(c.KafkaOptions, logic, true)
+	if err != nil {
+		return nil, err
+	}
 
+	go mqsrv.RunOrDie()
 	// Need start grpc server first. http server depends on grpc sever.
 	go grpcsrv.RunOrDie()
 	return &SmsServer{grpcsrv: grpcsrv, httpsrv: httpsrv, mqsrv: mqsrv, config: c}, nil
@@ -149,9 +152,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 func (s *SmsServer) Run(stopCh <-chan struct{}) error {
 
 	log.Infof("Successfully start pump server")
-
 	go s.httpsrv.RunOrDie()
-	go s.mqsrv.RunWithContext(wait.ContextForChannel(stopCh))
 
 	<-stopCh
 
@@ -159,6 +160,7 @@ func (s *SmsServer) Run(stopCh <-chan struct{}) error {
 	// and then shutdown the depended service.
 	s.httpsrv.GracefulStop()
 	s.grpcsrv.GracefulStop()
+	s.mqsrv.GracefulStop()
 
 	return nil
 }

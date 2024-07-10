@@ -4,9 +4,6 @@ import (
 	"context"
 	"github.com/segmentio/kafka-go"
 	"k8s.io/klog/v2"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 type ConsumeHandler interface {
@@ -38,16 +35,12 @@ func NewConsumer(ctx context.Context, config kafka.ReaderConfig, handler Consume
 }
 
 func (ks *Consumer) Start() {
-	sigchan := make(chan os.Signal, 1)
-	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 	go ks.consume()
 
-	select {
-	case <-sigchan:
-		ks.cancelCtx()
-	case <-ks.ctx.Done():
-	}
+}
 
+func (ks *Consumer) Stop() {
+	ks.cancelCtx()
 	ks.r.Close()
 }
 

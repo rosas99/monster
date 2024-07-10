@@ -94,7 +94,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 	provider := providerFactory.NewProviderFactory()
-	//provider.RegisterProvider(types.ProviderTypeALIYUN, providerFactory.NewAILIYUNProvider(rds, l))
+	provider.RegisterProvider(types.ProviderTypeALIYUN, providerFactory.NewAILIYUNProvider(rds, l))
 
 	//这里初始化所有writer 然后注入biz
 	idt, err := idempotent.NewIdempotent(rds)

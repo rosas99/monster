@@ -40,7 +40,7 @@ func (ks *Consumer) Start() {
 }
 
 func (ks *Consumer) Stop() {
-	ks.cancelCtx()
+	//ks.cancelCtx()
 	ks.r.Close()
 }
 

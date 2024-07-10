@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-// 可生成验证码
 func RandomNumeric(size int) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if size <= 0 {

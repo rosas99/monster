@@ -18,6 +18,7 @@ import (
 	factory "github.com/rosas99/monster/internal/sms/store/redis"
 	"github.com/rosas99/monster/internal/sms/types"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
+	"github.com/rosas99/monster/pkg/id"
 	"github.com/rosas99/monster/pkg/log"
 	"time"
 )
@@ -64,7 +65,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v
 	// 如果是验证码，缓存验证码
 	if templateM.Type == "VERIFICATION" {
 		// todo 生成6位随机验证码
-		rq.Code = ""
+		rq.Code = id.RandomNumeric(6)
 
 	}
 
@@ -89,10 +90,9 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v
 	key := factory.WrapperCode(rq.TemplateCode, rq.Mobile)
 	b.rds.Set(ctx, key, rq.Code, time.Hour*24)
 
-	l.LogMsg(&templateMsgRequest)
+	l.WriteMsg(&templateMsgRequest)
 
 	log.C(ctx).Infof("test")
-	l.LogHistory(&m)
 
 	message := map[string]any{
 		"test":  "value1",
@@ -104,17 +104,32 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v
 }
 
 func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (*v1.CommonResponse, error) {
-	//TODO implement me
-	// 品牌只用在kpi log
-	// 查询
-	// 验证
-	// 验证成功则删除
-	panic("implement me")
+
+	key := factory.WrapperCode(rq.Mobile, rq.TemplateCode)
+	code, err := b.rds.Get(ctx, key).Result()
+	if rq.Code != code {
+		return &v1.CommonResponse{Code: 500, Msg: "fail"}, err
+	}
+	b.rds.Del(ctx, key)
+	message := map[string]any{
+		"test":  "value1",
+		"other": 123,
+	}
+	b.logger.LogKpi(message)
+	return &v1.CommonResponse{Code: 0, Msg: "success"}, nil
+
 }
 
 func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) (*v1.CommonResponse, error) {
 	//TODO 接收阿里云短信回执
 	// 和历史组装到一起
 	//TODO 存储到数据库
+
+	// 短信历史记录发送给供应商是否成功
+	// 短信报告记录发送给用户是否成功
+	// 短信报告把详情关联到短信历史，记录到新的报告中
+	//for index, item := range rq.AILIYUNReportList {
+	//
+	//}
 	panic("implement me")
 }

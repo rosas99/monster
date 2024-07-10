@@ -43,10 +43,8 @@ type GRPCServer struct {
 }
 
 type MqServer struct {
-	srv *kafkaconnector.Consumer
-	//kafkaReader kafka.ReaderConfig
-	//logic       *mqs.MessageConsumer
-	//forceCommit bool
+	srv  *kafkaconnector.Consumer
+	opts *genericoptions.KafkaOptions
 }
 
 func NewHTTPServer(
@@ -148,10 +146,10 @@ func NewMqServer(
 
 	consumer, err := kafkaconnector.NewConsumer(context.Background(), r, logic, forceCommit)
 	if err != nil {
-		return MqServer{}, err
+		return MqServer{opts: KafkaOptions}, err
 	}
 
-	return MqServer{srv: consumer}, nil
+	return MqServer{srv: consumer, opts: KafkaOptions}, nil
 }
 
 func (s *MqServer) RunOrDie() {

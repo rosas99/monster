@@ -9,7 +9,7 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-func (l *Logger) LogMsg(msg *types.TemplateMsgRequest) {
+func (l *Logger) WriteMsg(msg *types.TemplateMsgRequest) {
 	out, _ := json.Marshal(msg)
 	fmt.Println(msg)
 	if err := l.writer.WriteMessages(context.Background(), kafka.Message{Value: out}); err != nil {

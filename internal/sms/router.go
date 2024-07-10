@@ -46,16 +46,19 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 		ms := message.New(svc)
 		msgv1 := v1.Group("/message")
 		{
-			msgv1.POST("", ms.Send)
-			msgv1.POST("", ms.CodeVerify)
-			msgv1.POST("", ms.AiliReport)
+			msgv1.POST("/send", ms.Send)
+			msgv1.POST("/verify", ms.CodeVerify)
+
+			// todo 需要支持公网ip
+			msgv1.POST("/report/ailiyun", ms.AiliReport)
 
 		}
 
 		it := interaction.New(svc)
-		itv1 := v1.Group("/interaction/callback")
+		itv1 := v1.Group("/interaction")
 		{
-			itv1.POST("/aili", it.AILIYUNCallback)
+			// todo 需要支持公网ip
+			itv1.POST("/ailiyun", it.AILIYUNCallback)
 		}
 
 	}

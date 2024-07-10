@@ -40,11 +40,11 @@ func installRouters(g *gin.Engine, svc *service.UserCenterService) {
 			userv1.POST("", uc.Create)
 			userv1.PUT(":name/change-password", uc.ChangePassword)
 			userv1.Use(mw.Authn(), mw.Authz(authz))
-			userv1.POST("", uc.Create)
-			userv1.POST("", uc.Create)
-			userv1.POST("", uc.Create)
+			userv1.POST(":name", uc.Get)
+			userv1.POST(":name", uc.Update)
+			userv1.POST("", uc.List)
+			userv1.POST(":name", uc.Delete)
 		}
-
 	}
 
 }

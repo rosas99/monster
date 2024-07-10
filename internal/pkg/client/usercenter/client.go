@@ -65,7 +65,7 @@ func GetClient() *impl {
 
 func (i *impl) Auth(ctx context.Context, token string) (userID string, err error) {
 	rq := &v1.LoginRequest{}
-	resp, err := i.client.DeleteOrder(ctx, rq)
+	resp, err := i.client.Authorize(ctx, rq)
 	if err != nil {
 		return "", err
 	}

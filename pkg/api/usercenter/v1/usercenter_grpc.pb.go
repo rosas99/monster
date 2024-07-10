@@ -25,14 +25,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserCenter_DeleteOrder_FullMethodName = "/sms.v1.UserCenter/DeleteOrder"
+	UserCenter_Authorize_FullMethodName = "/sms.v1.UserCenter/Authorize"
 )
 
 // UserCenterClient is the client API for UserCenter service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserCenterClient interface {
-	DeleteOrder(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
+	Authorize(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 }
 
 type userCenterClient struct {
@@ -43,9 +43,9 @@ func NewUserCenterClient(cc grpc.ClientConnInterface) UserCenterClient {
 	return &userCenterClient{cc}
 }
 
-func (c *userCenterClient) DeleteOrder(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
+func (c *userCenterClient) Authorize(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
 	out := new(LoginResponse)
-	err := c.cc.Invoke(ctx, UserCenter_DeleteOrder_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, UserCenter_Authorize_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *userCenterClient) DeleteOrder(ctx context.Context, in *LoginRequest, op
 // All implementations must embed UnimplementedUserCenterServer
 // for forward compatibility
 type UserCenterServer interface {
-	DeleteOrder(context.Context, *LoginRequest) (*LoginResponse, error)
+	Authorize(context.Context, *LoginRequest) (*LoginResponse, error)
 	mustEmbedUnimplementedUserCenterServer()
 }
 
@@ -64,8 +64,8 @@ type UserCenterServer interface {
 type UnimplementedUserCenterServer struct {
 }
 
-func (UnimplementedUserCenterServer) DeleteOrder(context.Context, *LoginRequest) (*LoginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteOrder not implemented")
+func (UnimplementedUserCenterServer) Authorize(context.Context, *LoginRequest) (*LoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Authorize not implemented")
 }
 func (UnimplementedUserCenterServer) mustEmbedUnimplementedUserCenterServer() {}
 
@@ -80,20 +80,20 @@ func RegisterUserCenterServer(s grpc.ServiceRegistrar, srv UserCenterServer) {
 	s.RegisterService(&UserCenter_ServiceDesc, srv)
 }
 
-func _UserCenter_DeleteOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UserCenter_Authorize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserCenterServer).DeleteOrder(ctx, in)
+		return srv.(UserCenterServer).Authorize(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserCenter_DeleteOrder_FullMethodName,
+		FullMethod: UserCenter_Authorize_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserCenterServer).DeleteOrder(ctx, req.(*LoginRequest))
+		return srv.(UserCenterServer).Authorize(ctx, req.(*LoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -106,8 +106,8 @@ var UserCenter_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*UserCenterServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "DeleteOrder",
-			Handler:    _UserCenter_DeleteOrder_Handler,
+			MethodName: "Authorize",
+			Handler:    _UserCenter_Authorize_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -21,7 +21,7 @@ import (
 )
 
 type UserBiz interface {
-	DeleteOrder(ctx context.Context, rq *v1.LoginRequest) (*v1.LoginResponse, error)
+	Authorize(ctx context.Context, rq *v1.LoginRequest) (*v1.LoginResponse, error)
 	ChangePassword(ctx context.Context, r *v1.ChangePasswordRequest) error
 	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)
 	Create(ctx context.Context, rq *v1.CreateUserRequest) (*v1.CreateUserResponse, error)
@@ -40,7 +40,8 @@ func New(ds store.IStore, rds *redis.Client) *userBiz {
 }
 
 // ChangePassword 是 UserBiz 接口中 `ChangePassword` 方法的实现.
-func (b *userBiz) DeleteOrder(ctx context.Context, rq *v1.LoginRequest) (*v1.LoginResponse, error) {
+func (b *userBiz) Authorize(ctx context.Context, rq *v1.LoginRequest) (*v1.LoginResponse, error) {
+	// 只需要认证，在修改用户时才需要授权
 	username, err := token.Parse(rq.Username, "config.key")
 	fmt.Print(username)
 	if err != nil {

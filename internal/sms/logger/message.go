@@ -9,10 +9,20 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-func (l *Logger) WriteMsg(msg *types.TemplateMsgRequest) {
+func (l *Logger) WriteSendMessage(ctx context.Context, msg *types.TemplateMsgRequest) {
 	out, _ := json.Marshal(msg)
 	fmt.Println(msg)
-	if err := l.writer.WriteMessages(context.Background(), kafka.Message{Value: out}); err != nil {
+	if err := l.writer.WriteMessages(ctx, kafka.Message{Value: out}); err != nil {
+		log.Errorw(err, "Failed to write kafka messages")
+	} else {
+		fmt.Println(string(out))
+	}
+}
+
+func (l *Logger) WriteUplinkMessage(ctx context.Context, msg *types.UplinkMsgRequest) {
+	out, _ := json.Marshal(msg)
+	fmt.Println(msg)
+	if err := l.writer.WriteMessages(ctx, kafka.Message{Value: out}); err != nil {
 		log.Errorw(err, "Failed to write kafka messages")
 	} else {
 		fmt.Println(string(out))

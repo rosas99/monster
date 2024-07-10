@@ -54,6 +54,7 @@ type SmsServer struct {
 	httpsrv Server
 	grpcsrv Server
 	mqsrv   MqServer
+	mqsrv2  MqServer
 	config  completedConfig
 }
 
@@ -102,8 +103,6 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	logic := mqs.NewMessageConsumer(context.Background(), idt, l, provider)
-
 	biz := biz.NewBiz(ds, rds, idt, l)
 
 	srv := service.NewSmsServerService(biz)
@@ -138,15 +137,25 @@ func (c completedConfig) New() (*SmsServer, error) {
 	// 添加中间件
 	g.Use(mws...)
 
+	logic := mqs.NewMessageConsumer(context.Background(), idt, l, provider)
 	mqsrv, err := NewMqServer(c.KafkaOptions, logic, true)
 	if err != nil {
 		return nil, err
 	}
-
 	go mqsrv.RunOrDie()
+
+	// todo 其他kafka options
+	logic2 := mqs.NewUplinkMessageConsumer(context.Background(), ds, idt, l)
+	mqsrv2, err := NewMqServer(c.KafkaOptions, logic2, true)
+	if err != nil {
+		return nil, err
+	}
+	go mqsrv.RunOrDie()
+	go mqsrv2.RunOrDie()
+
 	// Need start grpc server first. http server depends on grpc sever.
 	go grpcsrv.RunOrDie()
-	return &SmsServer{grpcsrv: grpcsrv, httpsrv: httpsrv, mqsrv: mqsrv, config: c}, nil
+	return &SmsServer{grpcsrv: grpcsrv, httpsrv: httpsrv, mqsrv: mqsrv, mqsrv2: mqsrv2, config: c}, nil
 }
 
 func (s *SmsServer) Run(stopCh <-chan struct{}) error {
@@ -161,6 +170,7 @@ func (s *SmsServer) Run(stopCh <-chan struct{}) error {
 	s.httpsrv.GracefulStop()
 	s.grpcsrv.GracefulStop()
 	s.mqsrv.GracefulStop()
+	s.mqsrv2.GracefulStop()
 
 	return nil
 }

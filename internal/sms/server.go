@@ -11,7 +11,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"github.com/gin-gonic/gin"
-	mqs "github.com/rosas99/monster/internal/sms/mqs"
 	kafkaconnector "github.com/rosas99/monster/pkg/streams/connector/kafka"
 	"github.com/segmentio/kafka-go"
 	"google.golang.org/grpc/credentials"
@@ -125,7 +124,7 @@ func (s *GRPCServer) GracefulStop() {
 
 func NewMqServer(
 	KafkaOptions *genericoptions.KafkaOptions,
-	logic *mqs.MessageConsumer,
+	logic kafkaconnector.ConsumeHandler,
 	forceCommit bool,
 ) (MqServer, error) {
 	r := kafka.ReaderConfig{

@@ -2,15 +2,13 @@ package interaction
 
 import (
 	"context"
-	"fmt"
-	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
-	"github.com/rosas99/monster/internal/pkg/meta"
 	"github.com/rosas99/monster/internal/sms/checker"
 	"github.com/rosas99/monster/internal/sms/logger"
-	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/store"
+	"github.com/rosas99/monster/internal/sms/types"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
@@ -35,35 +33,20 @@ func New(ds store.IStore, logger *logger.Logger, rds *redis.Client, idt *idempot
 	return &interactionBiz{ds: ds, logger: logger, rds: rds}
 }
 
-// todo 生成请求
+// 放到队列比较合适，上行短信比较多可能处理不来
 // Create 是 OrderBiz 接口中 `Create` 方法的实现.
 func (b *interactionBiz) AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) (*v1.CommonResponse, error) {
-	for index, item := range rq.AILIYUNCallbackList {
-		fmt.Println(index, item)
-		filter := make(map[string]any)
-		filter["mobile"] = item.PhoneNumber
-		filter["content"] = item.Content
-		filter["receive_time"] = item.SendTime
-		count, _, _ := b.ds.Interactions().List(ctx, "", meta.WithFilter(filter))
-		if count > 0 {
-			return nil, nil
-		}
+	for _, item := range rq.AILIYUNCallbackList {
 
-		var interactionM model.InteractionM
-		interactionM.InteractionID = uuid.New().String()
-		interactionM.Mobile = item.PhoneNumber
-		interactionM.Content = item.Content
-		interactionM.Param = item.DestCode
-		interactionM.Provider = "AILIYUN"
-
-		err := b.ds.Interactions().Create(ctx, &interactionM)
+		var msgRequest types.UplinkMsgRequest
+		err := copier.Copy(msgRequest, item)
 		if err != nil {
 			return nil, err
 		}
+		b.logger.WriteUplinkMessage(ctx, &msgRequest)
 
 	}
-	// 根据手机号，内容，接收时间，查询数据库是否存在，存在则不保存，不存在则保存进数据库
-	// 执行处理，如退订、兑换
-	// 判断配置是否允许短信下行，允许的话回复用户并记录交互记录 //暂时不做
-	return &v1.CommonResponse{Code: 0, Msg: "12"}, nil
+	// log kpi
+
+	return &v1.CommonResponse{Code: 0, Msg: "success"}, nil
 }

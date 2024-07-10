@@ -8,9 +8,11 @@ package message
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/jinzhu/copier"
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
+	"github.com/rosas99/monster/internal/pkg/meta"
 	"github.com/rosas99/monster/internal/sms/checker"
 	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/model"
@@ -90,7 +92,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v
 	key := factory.WrapperCode(rq.TemplateCode, rq.Mobile)
 	b.rds.Set(ctx, key, rq.Code, time.Hour*24)
 
-	l.WriteMsg(&templateMsgRequest)
+	l.WriteSendMessage(ctx, &templateMsgRequest)
 
 	log.C(ctx).Infof("test")
 
@@ -120,16 +122,17 @@ func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (
 
 }
 
+// 报告可以慢慢接收
 func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) (*v1.CommonResponse, error) {
-	//TODO 接收阿里云短信回执
-	// 和历史组装到一起
-	//TODO 存储到数据库
-
-	// 短信历史记录发送给供应商是否成功
-	// 短信报告记录发送给用户是否成功
-	// 短信报告把详情关联到短信历史，记录到新的报告中
-	//for index, item := range rq.AILIYUNReportList {
-	//
-	//}
-	panic("implement me")
+	for _, item := range rq.AILIYUNReportList {
+		filter := make(map[string]any)
+		filter["message_id"] = item.BizId
+		count, list, _ := b.ds.Histories().List(ctx, "", meta.WithFilter(filter))
+		if count > 0 {
+			history := list[0]
+			marshal, _ := json.Marshal(history)
+			history.Report = string(marshal)
+		}
+	}
+	return &v1.CommonResponse{Code: 0, Msg: "success"}, nil
 }

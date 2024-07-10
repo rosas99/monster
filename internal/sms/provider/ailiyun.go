@@ -8,7 +8,7 @@ import (
 	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/types"
-	"github.com/rosas99/monster/pkg/openapi/ailiyun"
+	"github.com/rosas99/monster/pkg/sdk/ailiyun"
 	"os"
 )
 

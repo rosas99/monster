@@ -32,7 +32,8 @@ func (w *secretsCleanWatcher) Run() {
 	}
 
 	for _, history := range histories {
-		if history.CreatedAt.Unix() < time.Now().AddDate(0, 0, -7).Unix() {
+		// 删除超过一年的历史记录
+		if history.CreatedAt.Unix() < time.Now().AddDate(-1, 0, 0).Unix() {
 			err := w.store.Sms().Histories().Delete(context.TODO(), history.ID)
 			if err != nil {
 				log.Warnw("Failed to delete secret from database", "userID", history.ID, "name", secret.Name)

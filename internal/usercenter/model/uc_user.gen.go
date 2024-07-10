@@ -18,6 +18,7 @@ type UserM struct {
 	Nickname  string    `gorm:"column:nickname;not null" json:"nickname"`
 	Email     string    `gorm:"column:email;not null" json:"email"`
 	Phone     string    `gorm:"column:phone;not null" json:"phone"`
+	Status    string    `gorm:"column:status;comment:用户状态：registered,active,disabled,blacklisted,locked,deleted" json:"status"` // 用户状态：registered,active,disabled,blacklisted,locked,deleted
 	CreatedAt time.Time `gorm:"column:createdAt;not null;default:CURRENT_TIMESTAMP" json:"createdAt"`
 	UpdatedAt time.Time `gorm:"column:updatedAt;not null;default:CURRENT_TIMESTAMP" json:"updatedAt"`
 }

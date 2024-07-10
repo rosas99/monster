@@ -1,0 +1,54 @@
+package provider
+
+import (
+	"fmt"
+	dysmsapi "github.com/alibabacloud-go/dysmsapi-20170525/v2/client"
+	"github.com/alibabacloud-go/tea/tea"
+	"github.com/redis/go-redis/v9"
+	"github.com/rosas99/monster/internal/sms/logger"
+	"github.com/rosas99/monster/internal/sms/model"
+	"github.com/rosas99/monster/internal/sms/types"
+	"github.com/rosas99/monster/pkg/openapi/ailiyun"
+)
+
+// WEProvider 结构体
+type AILIYUNProvider struct {
+	rds    *redis.Client
+	logger *logger.Logger
+}
+
+// todo 依赖注入
+func NewAILIYUNProvider(rds *redis.Client, logger *logger.Logger) *AILIYUNProvider {
+	return &AILIYUNProvider{
+		rds:    rds,
+		logger: logger,
+	}
+}
+func (p *AILIYUNProvider) Send(rq types.TemplateMsgRequest) (TemplateMsgResponse, error) {
+	// 这里应该是调用微信的API发送短信的逻辑
+	fmt.Printf("Sending message via WEProvider to %s\n", rq.SendTime)
+	// 返回示例响应
+	client, err := ailiyun.CreateSmsClient(tea.String("LTAI5t8Kd2TFFgzNWukJuz3e"), tea.String("TVQ2SkfObARCxw3bmW7eba71HBP2oN"))
+	if err != nil {
+		return TemplateMsgResponse{}, err
+	}
+
+	sendReq := &dysmsapi.SendSmsRequest{
+		PhoneNumbers:  tea.String(rq.PhoneNumber),
+		SignName:      tea.String(rq.SignName),
+		TemplateCode:  tea.String(rq.TemplateCode),
+		TemplateParam: tea.String(rq.Content),
+	}
+
+	sendResp, err := client.SendSms(sendReq)
+	if err != nil {
+		return TemplateMsgResponse{}, err
+	}
+	id := *sendResp.Body.BizId
+	fmt.Print(id)
+	var history model.HistoryM
+	history.MessageID = id
+	p.logger.LogHistory(&history)
+
+	return TemplateMsgResponse{MessageID: "123456"}, nil
+}

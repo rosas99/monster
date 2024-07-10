@@ -92,7 +92,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v
 	key := factory.WrapperCode(rq.TemplateCode, rq.Mobile)
 	b.rds.Set(ctx, key, rq.Code, time.Hour*24)
 
-	l.WriteSendMessage(ctx, &templateMsgRequest)
+	l.WriteCommonMessage(ctx, &templateMsgRequest)
 
 	log.C(ctx).Infof("test")
 

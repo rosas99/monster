@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/client/usercenter"
 	"github.com/rosas99/monster/internal/pkg/core"
+	"github.com/rosas99/monster/internal/sms/controller/v1/interaction"
 	"github.com/rosas99/monster/internal/sms/controller/v1/message"
 	"github.com/rosas99/monster/internal/sms/controller/v1/template"
 	mw "github.com/rosas99/monster/internal/sms/middleware/auth"
@@ -29,8 +30,6 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 	impl := usercenter.NewUserCenterServer()
 	// 创建 v1 路由分组，并添加认证中间件
 	v1 := g.Group("/v1", mw.BasicAuth(impl))
-
-	//v1 := g.Group("/v1")
 	{
 		// 创建 blocks 路由分组
 		templatev1 := v1.Group("/template")
@@ -51,6 +50,12 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 			msgv1.POST("", ms.CodeVerify)
 			msgv1.POST("", ms.AiliReport)
 
+		}
+
+		it := interaction.New(svc)
+		itv1 := v1.Group("/interaction/callback")
+		{
+			itv1.POST("/aili", it.AILIYUNCallback)
 		}
 
 	}

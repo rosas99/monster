@@ -25,11 +25,11 @@ type AuthSuccess struct {
 // Send 实现发送短信的方法
 func (p *WEProvider) Send(rq types.TemplateMsgRequest) (TemplateMsgResponse, error) {
 	// 这里应该是调用微信的API发送短信的逻辑
-	fmt.Printf("Sending message via WEProvider to %s\n", rq.Request)
+	fmt.Printf("Sending message via WEProvider to %s\n", rq.SendTime)
 	// 返回示例响应
 
 	url := "http://example.com/api"
-	request := client.NewRequest(url)
+	request := client.NewRequest()
 	response, err := request.
 		// 重试3次
 

@@ -37,9 +37,8 @@ func AddFlags(fs *pflag.FlagSet) {
 		"Request timeout for client.")
 }
 
-func NewRequest(url string) *resty.Request {
+func NewRequest() *resty.Request {
 	return resty.New().
-		SetBaseURL(url).
 		SetRetryCount(RetryCount).
 		SetDebug(Debug).
 		R().
@@ -59,7 +58,7 @@ type AuthSuccess struct {
 
 func main() {
 	url := "http://example.com/api"
-	request := NewRequest(url)
+	request := NewRequest()
 	response, err := request.
 		// 这里换成结构体
 		SetBody([]byte(`{"username":"testuser", "password":"testpass"}`)).

@@ -26,3 +26,24 @@ func WithTimeout(d time.Duration) Option {
 		c.timeout = d
 	}
 }*/
+
+/*
+	//sem := make(chan struct{}, ks.parallelism)
+	//for elem := range ks.out {
+	//	sem <- struct{}{}
+	//	go func(elem any) {
+	//		defer func() { <-sem }()
+	//		if err := ks.handler.Consume(elem); err != nil {
+	//			suc <- false
+	//		} else {
+	//			suc <- true
+	//		}
+	//
+	//		ks.out <- elem
+	//	}(elem)
+	//}
+	//for i := 0; i < int(ks.parallelism); i++ {
+	//	sem <- struct{}{}
+	//}
+	//close(ks.out)
+*/

@@ -7,6 +7,7 @@ import (
 
 // TemplateMsgResponse 定义发送短信的响应结构
 type TemplateMsgResponse struct {
+	// todo 补充response
 	MessageID string
 	Error     error
 }

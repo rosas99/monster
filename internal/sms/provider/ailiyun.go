@@ -52,5 +52,7 @@ func (p *AILIYUNProvider) Send(rq types.TemplateMsgRequest) (TemplateMsgResponse
 	history.MessageID = id
 	p.logger.LogHistory(&history)
 
+	// 组装code和msg
+	// 根据err是否为nil组装状态码，存到history
 	return TemplateMsgResponse{MessageID: "123456"}, nil
 }

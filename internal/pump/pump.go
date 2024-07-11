@@ -2,6 +2,7 @@
 package pump
 
 import (
+	"github.com/rosas99/monster/pkg/log"
 	"github.com/rosas99/monster/pkg/streams/flow"
 	"time"
 
@@ -34,15 +35,12 @@ type completedConfig struct {
 	*Config
 }
 
-// 思路1 函数使用依赖注入redi
-// 思路2 函数修改为方法，但是map方法需要使用适配器兼容方法参数
 // addUTC appends a UTC timestamp to the beginning of the message value.
 var addUTC = func(msg kafka.Message) kafka.Message {
 	timestamp := time.Now().Format(time.DateTime)
 
 	// Concatenate the UTC timestamp with msg.Value
 	msg.Value = []byte(timestamp + " " + string(msg.Value))
-	// 这里拿到值后可以写入MySQL MongoDB，做日志记录 不一定是byte类型的
 	return msg
 }
 
@@ -92,15 +90,15 @@ func (s *Server) PrepareRun() PreparedServer {
 }
 
 func (s PreparedServer) Run(stopCh <-chan struct{}) error {
-
 	ctx := wait.ContextForChannel(stopCh)
-	// todo reader已经提供了默认值
+
 	source, err := kafkaconnector.NewKafkaSource(ctx, s.kafkaReader)
 	if err != nil {
 		return err
 	}
+
 	filter := flow.NewMap(addUTC, 1)
-	// 选用mongo的原因，适合高并发写入，数据结构经常变化，适合存储json
+
 	sink, err := mongoconnector.NewMongoSink(ctx, s.db, mongoconnector.SinkConfig{
 		CollectionName:            s.colName,
 		CollectionCapMaxDocuments: 2000,
@@ -110,6 +108,8 @@ func (s PreparedServer) Run(stopCh <-chan struct{}) error {
 	if err != nil {
 		return err
 	}
+
+	log.Infof("Successfully start pump server")
 	source.Via(filter).To(sink)
 
 	return err

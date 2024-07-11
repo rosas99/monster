@@ -10,15 +10,15 @@ import (
 	"time"
 )
 
-var _ watcher.Watcher = (*secretsCleanWatcher)(nil)
+var _ watcher.Watcher = (*historiesCleanWatcher)(nil)
 
 // watcher implement.
-type secretsCleanWatcher struct {
+type historiesCleanWatcher struct {
 	store store.Interface
 }
 
 // Run runs the watcher.
-func (w *secretsCleanWatcher) Run() {
+func (w *historiesCleanWatcher) Run() {
 	_, histories, err := w.store.Sms().Histories().List(context.Background(), "")
 	if err != nil {
 		log.Errorw(err, "Failed to list secrets")
@@ -26,7 +26,7 @@ func (w *secretsCleanWatcher) Run() {
 	}
 
 	for _, history := range histories {
-		// 删除超过一年的历史记录
+		// deletes all records that are older than one year.
 		if history.CreatedAt.Unix() < time.Now().AddDate(-1, 0, 0).Unix() {
 			err := w.store.Sms().Histories().Delete(context.TODO(), history.ID)
 			if err != nil {
@@ -39,11 +39,11 @@ func (w *secretsCleanWatcher) Run() {
 }
 
 // Init initializes the watcher for later execution.
-func (w *secretsCleanWatcher) Init(ctx context.Context, config *watcher.Config) error {
+func (w *historiesCleanWatcher) Init(ctx context.Context, config *watcher.Config) error {
 	w.store = config.Store
 	return nil
 }
 
 func init() {
-	watcher.Register("secretsclean", &secretsCleanWatcher{})
+	watcher.Register("historyclean", &historiesCleanWatcher{})
 }

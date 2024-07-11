@@ -7,6 +7,7 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 	"github.com/rosas99/monster/pkg/log"
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"sync"
 )
 
@@ -31,9 +32,8 @@ func (t *templateBiz) List(ctx context.Context, rq *v1.ListTemplateRequest) (*v1
 				var t v1.TemplateReply
 				_ = copier.Copy(&t, template)
 				m.Store(template.ID, &v1.TemplateReply{
-					// 除了时间其他要手动set吗
-					//CreatedAt: timestamppb.New(template.CreatedAt),
-					//UpdatedAt: timestamppb.New(template.UpdatedAt),
+					CreatedAt: timestamppb.New(template.CreatedAt),
+					UpdatedAt: timestamppb.New(template.UpdatedAt),
 				})
 				return nil
 			}

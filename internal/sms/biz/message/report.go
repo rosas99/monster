@@ -7,7 +7,7 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-// 报告可以慢慢接收
+// AILIYUNReport receives AILI cloud message reports and link them to their sending history.
 func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) (*v1.CommonResponse, error) {
 	for _, item := range rq.AILIYUNReportList {
 		filter := make(map[string]any)

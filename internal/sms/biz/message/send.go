@@ -12,9 +12,8 @@ import (
 	"time"
 )
 
-// todo 生成请求
-// Create 是 OrderBiz 接口中 `Create` 方法的实现.
-func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
+// Send checks the template configuration and send the message to kafka queue.
+func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.CommonResponse, error) {
 	var templateMsgRequest types.TemplateMsgRequest
 	templateMsgRequest.RequestId = b.idt.Token(ctx)
 	// todo 先使用redis保存 后续再考虑使用本地缓存
@@ -66,5 +65,5 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v
 	}
 	l.LogKpi(message)
 	// todo log记录短信延时
-	return &v1.CreateTemplateResponse{OrderID: templateM.ID}, nil
+	return &v1.CommonResponse{Code: templateM.ID}, nil
 }

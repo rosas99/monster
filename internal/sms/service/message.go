@@ -6,19 +6,23 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 )
 
-// todo 这里模板和配置关联 限流配置不用单独一个CURD
-
+// AILIYUNMessageReport is a method for receive message reports.
+// It takes a AILIYUNReportListRequest as input and returns an CommonResponse or an error.
 func (s *SmsServerService) AILIYUNMessageReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) (*v1.CommonResponse, error) {
 	log.C(ctx).Infow("CreateOrder function called")
 	return s.biz.Messages().AILIYUNReport(ctx, rq)
 }
 
-func (s *SmsServerService) SendMessage(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error) {
+// SendMessage is a method for send a message.
+// It takes a SendMessageRequest as input and returns an CommonResponse or an error.
+func (s *SmsServerService) SendMessage(ctx context.Context, rq *v1.SendMessageRequest) (*v1.CommonResponse, error) {
 	log.C(ctx).Infow("CreateOrder function called")
 	return s.biz.Messages().Send(ctx, rq)
 }
 
-func (s *SmsServerService) MessageCodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (*v1.CommonResponse, error) {
+// CodeVerify is a method for verify a verification code from message.
+// It takes a VerifyCodeRequest as input and returns an CommonResponse or an error.
+func (s *SmsServerService) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (*v1.CommonResponse, error) {
 	log.C(ctx).Infow("CreateOrder function called")
 	return s.biz.Messages().CodeVerify(ctx, rq)
 }

@@ -16,14 +16,14 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-// MessageBiz
+// MessageBiz defines methods used to handle message-related functions.
 type MessageBiz interface {
-	Send(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
+	Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.CommonResponse, error)
 	CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (*v1.CommonResponse, error)
 	AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) (*v1.CommonResponse, error)
 }
 
-// OrderBiz 接口的实现.
+// messageBiz struct implements the MessageBiz interface.
 type messageBiz struct {
 	ds     store.IStore
 	logger *logger.Logger
@@ -32,10 +32,9 @@ type messageBiz struct {
 	idt    *idempotent.Idempotent
 }
 
-// 确保 orderBiz 实现了 OrderBiz 接口.
 var _ MessageBiz = (*messageBiz)(nil)
 
-// New 创建一个实现了 OrderBiz 接口的实例.
+// New returns a new instance of messageBiz.
 func New(ds store.IStore, logger *logger.Logger, rds *redis.Client, idt *idempotent.Idempotent) *messageBiz {
-	return &messageBiz{ds: ds, logger: logger, rds: rds}
+	return &messageBiz{ds: ds, logger: logger, rds: rds, idt: idt}
 }

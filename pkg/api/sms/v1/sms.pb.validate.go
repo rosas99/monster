@@ -1039,6 +1039,116 @@ var _ interface {
 	ErrorName() string
 } = DeleteTemplateRequestValidationError{}
 
+// Validate checks the field values on SendMessageRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SendMessageRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SendMessageRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SendMessageRequestMultiError, or nil if none found.
+func (m *SendMessageRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SendMessageRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TemplateCode
+
+	// no validation rules for Mobile
+
+	// no validation rules for Brand
+
+	// no validation rules for Code
+
+	if len(errors) > 0 {
+		return SendMessageRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SendMessageRequestMultiError is an error wrapping multiple validation errors
+// returned by SendMessageRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SendMessageRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SendMessageRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SendMessageRequestMultiError) AllErrors() []error { return m }
+
+// SendMessageRequestValidationError is the validation error returned by
+// SendMessageRequest.Validate if the designated constraints aren't met.
+type SendMessageRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SendMessageRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SendMessageRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SendMessageRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SendMessageRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SendMessageRequestValidationError) ErrorName() string {
+	return "SendMessageRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SendMessageRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSendMessageRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SendMessageRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SendMessageRequestValidationError{}
+
 // Validate checks the field values on AILIYUNCallback with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.

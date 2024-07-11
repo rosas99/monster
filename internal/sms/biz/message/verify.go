@@ -6,6 +6,7 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
+// CodeVerify verifies a message code and clear cache if success.
 func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (*v1.CommonResponse, error) {
 
 	key := factory.WrapperCode(rq.Mobile, rq.TemplateCode)

@@ -106,6 +106,13 @@ message DeleteTemplateRequest {
   int64 id = 1;
 }
 
+message SendMessageRequest {
+  string templateCode = 1                                                                                                                                                             ;
+  string mobile = 2                                                                                                                                                             ;
+  string brand = 3                                                                                                                                                             ;
+  string code = 4                                                                                                                                                            ;
+}
+
 
 message AILIYUNCallback {
   string phone_number = 1 ;

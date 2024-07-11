@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/jinzhu/copier"
+	"github.com/rosas99/monster/internal/sms/types"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
@@ -28,13 +29,13 @@ func (t *templateBiz) Get(ctx context.Context, rq *v1.GetTemplateRequest) (*v1.T
 	_, cfgList, err := t.ds.Configurations().List(ctx, templateM.TemplateCode)
 	for _, m := range cfgList {
 		switch m.ConfigKey {
-		case TimeIntervalForMobile:
+		case types.TimeIntervalForMobilePerDay:
 			template.MobileCount = m.ConfigValue
 			fallthrough
-		case MessageCountForMobilePerDay:
+		case types.MessageCountForMobilePerDay:
 			template.TemplateCount = m.ConfigValue
 			fallthrough
-		case MessageCountForTemplatePerDay:
+		case types.MessageCountForTemplatePerDay:
 			template.TimeInterval = m.ConfigValue
 		}
 	}

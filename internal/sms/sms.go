@@ -1,9 +1,3 @@
-// Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/rosas99/monster.
-//
-
 package sms
 
 import (
@@ -58,7 +52,7 @@ type SmsServer struct {
 	config  completedConfig
 }
 
-// New returns a new instance of Server from the given config.
+// New returns a new instance of SmsServer from the given config.
 func (c completedConfig) New() (*SmsServer, error) {
 	var ds store.IStore
 
@@ -69,8 +63,6 @@ func (c completedConfig) New() (*SmsServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	// todo 这里需要指定model
-	//ins.AutoMigrate(&model.OrderM{})
 	ds = mysql.NewStore(ins)
 
 	var redisOptions db.RedisOptions
@@ -157,15 +149,18 @@ func (c completedConfig) New() (*SmsServer, error) {
 	return &SmsServer{grpcsrv: grpcsrv, httpsrv: httpsrv, mqsrv: mqsrv, mqsrv2: mqsrv2, config: c}, nil
 }
 
+// Run is a method of the SmsServer struct that starts the server.
 func (s *SmsServer) Run(stopCh <-chan struct{}) error {
 
-	log.Infof("Successfully start pump server")
+	log.Infof("Successfully start sms server")
 	go s.httpsrv.RunOrDie()
 
 	<-stopCh
 
-	// The most gracefully way is to shutdown the dependent service first,
-	// and then shutdown the depended service.
+	log.Infof("Gracefully shutting down sms server ...")
+
+	// The most gracefully way is to shut down the dependent service first,
+	// and then shutdown the depended on service.
 	s.httpsrv.GracefulStop()
 	s.grpcsrv.GracefulStop()
 	s.mqsrv.GracefulStop()

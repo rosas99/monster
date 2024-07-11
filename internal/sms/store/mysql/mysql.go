@@ -1,9 +1,3 @@
-// Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/rosas99/monster.
-//
-
 package mysql
 
 import (
@@ -14,42 +8,46 @@ import (
 	"github.com/rosas99/monster/internal/sms/store"
 )
 
+// Singleton instance variables.
 var (
 	once sync.Once
-	// 全局变量，保存已被初始化的 *Datastore 实例.
-	s *Datastore
+	s    *Datastore
 )
 
-// Datastore 是 IStore 的一个具体实现.
+// Datastore is an implementation of IStore that provides methods
+// to perform operations on a database using gorm library.
 type Datastore struct {
 	db *gorm.DB
 }
 
-// 确保 Datastore 实现了 store.IStore 接口.
+// Ensure datastore implements IStore.
 var _ store.IStore = (*Datastore)(nil)
 
-// NewStore 创建一个 store.IStore 类型的实例.
+// NewStore initializes a new datastore instance using the provided DB gorm instance.
+// It also creates a singleton instance for the datastore.
 func NewStore(db *gorm.DB) *Datastore {
-	// 确保 s 只被初始化一次
 	once.Do(func() {
 		s = &Datastore{db}
 	})
-
 	return s
 }
 
+// Templates returns an initialized instance of TemplateStore.
 func (ds *Datastore) Templates() store.TemplateStore {
 	return newTemplates(ds.db)
 }
 
+// Configurations returns an initialized instance of ConfigurationStore.
 func (ds *Datastore) Configurations() store.ConfigurationStore {
 	return newConfigurations(ds.db)
 }
 
+// Histories returns an initialized instance of HistoryStore.
 func (ds *Datastore) Histories() store.HistoryStore {
 	return newHistories(ds.db)
 }
 
+// Interactions returns an initialized instance of InteractionStore.
 func (ds *Datastore) Interactions() store.InteractionStore {
 	return newInteractions(ds.db)
 }

@@ -6,9 +6,8 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-// todo 阿里云上行短信
-
-func (b *Controller) AILIYUNCallback(c *gin.Context) {
+// AILIYUNCallback is a controller for receive uplink messages from Alibaba Cloud.
+func (b *InteractionController) AILIYUNCallback(c *gin.Context) {
 	var r v1.AILIYUNCallbackListRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)

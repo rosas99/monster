@@ -3,18 +3,8 @@ package template
 import (
 	"context"
 	"github.com/rosas99/monster/internal/sms/model"
+	"github.com/rosas99/monster/internal/sms/types"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
-)
-
-// MessageConfigurationEnum defines an enumerated type for different message configuration.
-type MessageConfigurationEnum = string
-
-// defines a group of constants for message configuration.
-
-const (
-	TimeIntervalForMobile         MessageConfigurationEnum = "TIME_INTERVAL_FOR_MOBILE"
-	MessageCountForMobilePerDay   MessageConfigurationEnum = "MESSAGE_COUNT_FOR_MOBILE_PER_DAY"
-	MessageCountForTemplatePerDay MessageConfigurationEnum = "MESSAGE_COUNT_FOR_TEMPLATE_PER_DAY"
 )
 
 // Update updates a template's information in the database.
@@ -41,17 +31,17 @@ func (t *templateBiz) Update(ctx context.Context, rq *v1.UpdateTemplateRequest) 
 
 	configurationsM := []*model.ConfigurationM{
 		{
-			ConfigKey:    MessageCountForMobilePerDay,
+			ConfigKey:    types.MessageCountForMobilePerDay,
 			ConfigValue:  rq.GetMobileCount(),
 			TemplateCode: rq.GetTemplateCode(),
 		},
 		{
-			ConfigKey:    MessageCountForTemplatePerDay,
+			ConfigKey:    types.MessageCountForTemplatePerDay,
 			ConfigValue:  rq.GetTemplateCount(),
 			TemplateCode: rq.GetTemplateCode(),
 		},
 		{
-			ConfigKey:    TimeIntervalForMobile,
+			ConfigKey:    types.TimeIntervalForMobilePerDay,
 			ConfigValue:  rq.GetTimeInterval(),
 			TemplateCode: rq.GetTemplateCode(),
 		}}

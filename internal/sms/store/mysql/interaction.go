@@ -1,9 +1,3 @@
-// Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/rosas99/monster.
-//
-
 package mysql
 
 import (
@@ -15,25 +9,40 @@ import (
 	"gorm.io/gorm"
 )
 
-type interactions struct {
+// interactionStore is an implementation of the InteractionStore interface
+// that manages the interaction model in a datastore.
+type interactionStore struct {
 	db *gorm.DB
 }
 
-var _ store.InteractionStore = (*interactions)(nil)
+var _ store.InteractionStore = (*interactionStore)(nil)
 
-func newInteractions(db *gorm.DB) *interactions {
-	return &interactions{db: db}
+// newInteractions initializes a new interactionStore instance using the provided datastore.
+func newInteractions(db *gorm.DB) *interactionStore {
+	return &interactionStore{db: db}
 }
 
-func (t *interactions) Create(ctx context.Context, template *model.InteractionM) error {
+// Create adds a new interaction record in the datastore.
+func (t *interactionStore) Create(ctx context.Context, template *model.InteractionM) error {
 	return t.db.Create(&template).Error
 }
 
-func (t *interactions) CreateBatch(ctx context.Context, templates []*model.InteractionM) error {
+// CreateBatch adds interaction records in the datastore.
+func (t *interactionStore) CreateBatch(ctx context.Context, templates []*model.InteractionM) error {
 	return t.db.Create(&templates).Error
 }
 
-func (t *interactions) Get(ctx context.Context, id string) (*model.InteractionM, error) {
+// Delete removes an interaction record from the datastore.
+func (t *interactionStore) Delete(ctx context.Context, id int64) error {
+	err := t.db.Where("id = ?", id).Delete(&model.InteractionM{}).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+	return nil
+}
+
+// Get retrieves an interaction record from the datastore.
+func (t *interactionStore) Get(ctx context.Context, id string) (*model.InteractionM, error) {
 	var template model.InteractionM
 	if err := t.db.Where("id = ?", id).First(&template).Error; err != nil {
 		return nil, err
@@ -41,10 +50,15 @@ func (t *interactions) Get(ctx context.Context, id string) (*model.InteractionM,
 	return &template, nil
 }
 
-func (t *interactions) Update(ctx context.Context, template *model.InteractionM) error {
+// Update modifies an existing interaction record in the datastore.
+func (t *interactionStore) Update(ctx context.Context, template *model.InteractionM) error {
 	return t.db.Save(&template).Error
 }
-func (t *interactions) List(ctx context.Context, templateCode string, opts ...meta.ListOption) (count int64, ret []*model.InteractionM, err error) {
+
+// List returns a list of interaction records that match the specified query conditions.
+// It returns the total count of records and a slice of interaction records.
+// The query dynamically applies filters, offset, limit, and order, based on provided list options.
+func (t *interactionStore) List(ctx context.Context, templateCode string, opts ...meta.ListOption) (count int64, ret []*model.InteractionM, err error) {
 	options := meta.NewListOptions(opts...)
 	if templateCode != "" {
 		options.Filters["template_code"] = templateCode
@@ -59,11 +73,4 @@ func (t *interactions) List(ctx context.Context, templateCode string, opts ...me
 		Count(&count)
 
 	return count, ret, ans.Error
-}
-func (t *interactions) Delete(ctx context.Context, id int64) error {
-	err := t.db.Where("id = ?", id).Delete(&model.InteractionM{}).Error
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
-	}
-	return nil
 }

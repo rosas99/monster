@@ -1,9 +1,3 @@
-// Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/rosas99/monster.
-//
-
 package mysql
 
 import (
@@ -15,29 +9,35 @@ import (
 	"gorm.io/gorm"
 )
 
-type TemplateStore interface {
-	Create(ctx context.Context, order *model.TemplateM) error
-	Get(ctx context.Context, templateCode string) (*model.TemplateM, error)
-	Update(ctx context.Context, order *model.TemplateM) error
-	List(ctx context.Context, templateCode string, opts ...meta.ListOption) (int64, []*model.TemplateM, error)
-	Delete(ctx context.Context, id int64) error
-}
-
-type templates struct {
+// templateStore is an implementation of the TemplateStore interface
+// that manages the template model in a datastore.
+type templateStore struct {
 	db *gorm.DB
 }
 
-var _ store.TemplateStore = (*templates)(nil)
+var _ store.TemplateStore = (*templateStore)(nil)
 
-func newTemplates(db *gorm.DB) *templates {
-	return &templates{db: db}
+// newTemplates initializes a new templateStore instance using the provided datastore.
+func newTemplates(db *gorm.DB) *templateStore {
+	return &templateStore{db: db}
 }
 
-func (t *templates) Create(ctx context.Context, template *model.TemplateM) error {
+// Create adds a new template record in the datastore.
+func (t *templateStore) Create(ctx context.Context, template *model.TemplateM) error {
 	return t.db.Create(&template).Error
 }
 
-func (t *templates) Get(ctx context.Context, templateCode string) (*model.TemplateM, error) {
+// Delete removes a template record from the datastore.
+func (t *templateStore) Delete(ctx context.Context, id int64) error {
+	err := t.db.Where("id = ?", id).Delete(&model.TemplateM{}).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+	return nil
+}
+
+// Get retrieves a template record from the datastore.
+func (t *templateStore) Get(ctx context.Context, templateCode string) (*model.TemplateM, error) {
 	var template model.TemplateM
 	if err := t.db.Where("template_code = ?", templateCode).First(&template).Error; err != nil {
 		return nil, err
@@ -45,10 +45,15 @@ func (t *templates) Get(ctx context.Context, templateCode string) (*model.Templa
 	return &template, nil
 }
 
-func (t *templates) Update(ctx context.Context, template *model.TemplateM) error {
+// Update modifies an existing template record in the datastore.
+func (t *templateStore) Update(ctx context.Context, template *model.TemplateM) error {
 	return t.db.Save(&template).Error
 }
-func (t *templates) List(ctx context.Context, templateCode string, opts ...meta.ListOption) (count int64, ret []*model.TemplateM, err error) {
+
+// List returns a list of template records that match the specified query conditions.
+// It returns the total count of records and a slice of template records.
+// The query dynamically applies filters, offset, limit, and order, based on provided list options.
+func (t *templateStore) List(ctx context.Context, templateCode string, opts ...meta.ListOption) (count int64, ret []*model.TemplateM, err error) {
 
 	options := meta.NewListOptions(opts...)
 	if templateCode != "" {
@@ -65,11 +70,4 @@ func (t *templates) List(ctx context.Context, templateCode string, opts ...meta.
 		Count(&count)
 
 	return count, ret, ans.Error
-}
-func (t *templates) Delete(ctx context.Context, id int64) error {
-	err := t.db.Where("id = ?", id).Delete(&model.TemplateM{}).Error
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
-	}
-	return nil
 }

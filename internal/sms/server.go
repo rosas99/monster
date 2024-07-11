@@ -1,9 +1,3 @@
-// Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/rosas99/monster.
-//
-
 package sms
 
 import (
@@ -52,7 +46,6 @@ func NewHTTPServer(
 	g *gin.Engine,
 ) (*HTTPServer, error) {
 
-	// 创建 HTTP Server 实例
 	httpsrv := &http.Server{Addr: httpOptions.Addr, Handler: g}
 	var tlsConfig *tls.Config
 	var err error
@@ -74,7 +67,8 @@ func (s *HTTPServer) RunOrDie() {
 }
 
 func (s *HTTPServer) GracefulStop() {
-	// 创建 ctx 用于通知服务器 goroutine, 它有 10 秒时间完成当前正在处理的请求
+	// creates a context (ctx) for notifying the server goroutine,
+	//which has 10 seconds to complete the current request being processed.
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 

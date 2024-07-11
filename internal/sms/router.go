@@ -1,9 +1,3 @@
-// Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/rosas99/monster.
-//
-
 package sms
 
 import (
@@ -20,22 +14,23 @@ import (
 )
 
 func installRouters(g *gin.Engine, svc *service.SmsServerService) {
-	// 注册 404 Handler.
+	// register 404 Handler.
 	g.NoRoute(func(c *gin.Context) {
 		core.WriteResponse(c, v1api.ErrorOrderAlreadyExists("route not found"), nil)
 	})
 
-	// 注册 pprof 路由
+	// register pprof handler
 	pprof.Register(g)
+
+	// creates a user center client by GRPC
 	impl := usercenter.NewUserCenterServer()
-	// 创建 v1 路由分组，并添加认证中间件
+	// creates a v1 router group and adds an auth middleware.
 	v1 := g.Group("/v1", mw.BasicAuth(impl))
 	{
-		// 创建 blocks 路由分组
+		// create template router group
 		templatev1 := v1.Group("/template")
 		{
 			tl := template.New(svc)
-			//templatev1.Use(gin2.Validator())
 			templatev1.POST("/create", tl.Create)
 			templatev1.POST("/update", tl.Update)
 			templatev1.GET("/:id", tl.Get)
@@ -43,9 +38,10 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 			templatev1.POST("/delete", tl.Delete)
 		}
 
-		ms := message.New(svc)
+		// creates message router group
 		msgv1 := v1.Group("/message")
 		{
+			ms := message.New(svc)
 			msgv1.POST("/send", ms.Send)
 			msgv1.POST("/verify", ms.CodeVerify)
 
@@ -54,9 +50,10 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 
 		}
 
-		it := interaction.New(svc)
+		// creates interaction router group
 		itv1 := v1.Group("/interaction")
 		{
+			it := interaction.New(svc)
 			// todo 需要支持公网ip
 			itv1.POST("/ailiyun", it.AILIYUNCallback)
 		}

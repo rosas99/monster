@@ -6,10 +6,10 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 )
 
-// LogModel writes a log message for the policy model.
+// LogHistory adds a new secret record in the datastore.
 func (l *Logger) LogHistory(history *model.HistoryM) {
 	err := l.ds.Create(context.Background(), history)
 	if err != nil {
-		log.Errorw(err, "Failed to write kafka messages")
+		log.Errorw(err, "Failed to create history messages")
 	}
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-// kafkaLogger is a log.Logger implementation that writes log messages to Kafka.
+// Logger is a log.Logger implementation that writes log messages to Kafka.
 type Logger struct {
 	// enabled is an atomic boolean indicating whether the logger is enabled.
 	enabled int32
@@ -14,16 +14,6 @@ type Logger struct {
 
 	writer *kafka.Writer
 	ds     store.HistoryStore
-}
-
-// todo 这里改成短信发送历史
-// AuditMessage is the message structure for log messages.
-type AuditMessage struct {
-	Matcher   string     `protobuf:"bytes,1,opt,name=matcher,proto3" json:"matcher,omitempty"`
-	Request   []any      `protobuf:"bytes,2,opt,name=request,proto3" json:"request,omitempty"`
-	Result    bool       `protobuf:"bytes,3,opt,name=result,proto3" json:"result,omitempty"`
-	Explains  [][]string `protobuf:"bytes,4,opt,name=explains,proto3" json:"explains,omitempty"`
-	Timestamp int64      `protobuf:"bytes,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 }
 
 // NewLogger creates a new kafkaLogger instance.

@@ -58,7 +58,6 @@ func (c completedConfig) New() (*SmsServer, error) {
 
 	var dbOptions db.MySQLOptions
 	_ = copier.Copy(&dbOptions, c.MySQLOptions)
-
 	ins, err := db.NewMySQL(&dbOptions)
 	if err != nil {
 		return nil, err
@@ -73,42 +72,42 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	// 注册rule
-	// todo 修改为new
+	// registers message check rules
 	factory := checker.NewRuleFactory()
 	factory.RegisterRule(types.MessageCountForTemplatePerDay, checker.NewMessageCountForTemplateRule(ds, rds))
 	factory.RegisterRule(types.MessageCountForMobilePerDay, checker.NewMessageCountForMobileRule(ds, rds))
 	factory.RegisterRule(types.TimeIntervalForMobilePerDay, checker.NewTimeIntervalForMobileRule(ds, rds))
 
-	// todo 其他消费者配置
+	// creates  a logger instance
 	l, err := logger.NewLogger(c.KafkaOptions, ds.Histories())
 	if err != nil {
 		return nil, err
 	}
+
+	// registers sms providers
 	provider := providerFactory.NewProviderFactory()
 	provider.RegisterProvider(types.ProviderTypeALIYUN, providerFactory.NewAILIYUNProvider(rds, l))
 
-	//这里初始化所有writer 然后注入biz
+	// creates an idempotent instance
 	idt, err := idempotent.NewIdempotent(rds)
 	if err != nil {
 		return nil, err
 	}
 
 	biz := biz.NewBiz(ds, rds, idt, l)
-
 	srv := service.NewSmsServerService(biz)
 
-	// 设置 Gin 模式
+	// Sets the running mode for the Gin
 	gin.SetMode(gin.ReleaseMode)
-
-	// 创建 Gin 引擎
+	// create a gin engine
 	g := gin.New()
-
-	// 并初始化路由
-	// 这里注册不同的路由可以分开，如是否使用人认证中间件，分别在use 认证中间件前后
-
 	installRouters(g, srv)
-	// 考虑在这里install consumer
+	mws := []gin.HandlerFunc{
+		gin.Recovery(), header.NoCache, header.Cors, header.Secure,
+		trace.TraceID(), nil, validate.Validation(ds),
+	}
+	// 添加中间件
+	g.Use(mws...)
 
 	httpsrv, err := NewHTTPServer(c.HTTPOptions, c.TLSOptions, g)
 	if err != nil {
@@ -119,14 +118,6 @@ func (c completedConfig) New() (*SmsServer, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// gin.Recovery() 中间件，用来捕获任何 panic，并恢复
-	mws := []gin.HandlerFunc{gin.Recovery(), header.NoCache, header.Cors, header.Secure,
-		// todo 这里传入rds ds
-		// 注意验证链路的顺序
-		trace.TraceID(), nil, validate.Validation(ds)}
-	// 添加中间件
-	g.Use(mws...)
 
 	logic := mqs.NewMessageConsumer(context.Background(), idt, l, provider)
 	mqsrv, err := NewMqServer(c.KafkaOptions, logic, true)

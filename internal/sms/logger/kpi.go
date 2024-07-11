@@ -8,7 +8,7 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-// LogModel writes a log message for the policy model.
+// LogKpi writes a log message for the api request.
 func (l *Logger) LogKpi(messageMap map[string]any) {
 
 	out, _ := json.Marshal(messageMap)

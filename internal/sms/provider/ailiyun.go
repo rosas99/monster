@@ -12,19 +12,21 @@ import (
 	"os"
 )
 
-// WEProvider 结构体
+// AILIYUNProvider is a struct represents a sms provider.
 type AILIYUNProvider struct {
 	rds    *redis.Client
 	logger *logger.Logger
 }
 
-// todo 依赖注入
+// NewAILIYUNProvider returns a new provider for aili cloud sms.
 func NewAILIYUNProvider(rds *redis.Client, logger *logger.Logger) *AILIYUNProvider {
 	return &AILIYUNProvider{
 		rds:    rds,
 		logger: logger,
 	}
 }
+
+// Send creates a sms client and sends sms by aili cloud.
 func (p *AILIYUNProvider) Send(rq types.TemplateMsgRequest) (TemplateMsgResponse, error) {
 	// 这里应该是调用微信的API发送短信的逻辑
 	fmt.Printf("Sending message via WEProvider to %s\n", rq.SendTime)

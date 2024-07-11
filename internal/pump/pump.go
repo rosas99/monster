@@ -58,7 +58,6 @@ func (c completedConfig) New() (*Server, error) {
 	}
 
 	server := &Server{
-		// 这里带有默认值的可以不配置
 		kafkaReader: kafka.ReaderConfig{
 			Brokers:           c.KafkaOptions.Brokers,
 			Topic:             c.KafkaOptions.Topic,

@@ -25,7 +25,6 @@ var _ Rule = (*TimeIntervalForMobileRule)(nil)
 
 func (m *TimeIntervalForMobileRule) isValid(rq *types.Request) bool {
 	start := time.Now().Unix()
-	// todo 修改为store
 	key := factory.WrapperTimeInterval(rq.Mobile, rq.TemplateCode)
 	ctx := context.Background()
 	rds := m.RDS

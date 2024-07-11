@@ -20,6 +20,4 @@ func (b *InteractionController) AILIYUNCallback(c *gin.Context) {
 	}
 	core.WriteResponse(c, nil, template)
 
-	// todo log kpi
-
 }

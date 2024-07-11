@@ -34,11 +34,6 @@ func (rf *RuleFactory) RegisterRule(key string, rule Rule) {
 	rf.rules[key] = rule
 }
 
-func init() {
-	factory := NewRuleFactory()
-	factory.RegisterRule("MESSAGE_COUNT_FOR_TEMPLATE_PER_DAY", &MessageCountForTemplateRule{})
-}
-
 func (rf *RuleFactory) CheckRules(template *model.TemplateM, mobile string, cfgList []*model.ConfigurationM) error {
 	if len(cfgList) == 0 {
 		return errors.New("no configuration")

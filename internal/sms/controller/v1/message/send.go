@@ -7,7 +7,7 @@ import (
 )
 
 func (b *MessageController) Send(c *gin.Context) {
-	var r v1.CreateTemplateRequest
+	var r v1.SendMessageRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)
 

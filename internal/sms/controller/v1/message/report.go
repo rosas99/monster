@@ -6,8 +6,7 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-// todo 阿里云短信回执报告
-
+// AiliReport handles the request for aili cloud message reports.
 func (b *MessageController) AiliReport(c *gin.Context) {
 	var r v1.AILIYUNReportListRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
@@ -20,7 +19,5 @@ func (b *MessageController) AiliReport(c *gin.Context) {
 
 	}
 	core.WriteResponse(c, nil, template)
-
-	// todo log kpi
 
 }

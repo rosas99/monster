@@ -7,18 +7,16 @@ import (
 )
 
 func (b *MessageController) CodeVerify(c *gin.Context) {
-	var r v1.CreateTemplateRequest
+	var r v1.VerifyCodeRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)
 
 	}
-	template, err := b.svc.SendMessage(c, &r)
+	template, err := b.svc.CodeVerify(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
 	}
 	core.WriteResponse(c, nil, template)
-
-	// todo log kpi
 
 }

@@ -94,8 +94,8 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	biz := biz.NewBiz(ds, rds, idt, l)
-	srv := service.NewSmsServerService(biz)
+	bizIns := biz.NewBiz(ds, rds, idt, l)
+	srv := service.NewSmsServerService(bizIns)
 
 	// Sets the running mode for the Gin
 	gin.SetMode(gin.ReleaseMode)

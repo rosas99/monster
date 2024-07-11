@@ -2,6 +2,7 @@ package message
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/jinzhu/copier"
 	"github.com/rosas99/monster/internal/sms/model"
 	factory "github.com/rosas99/monster/internal/sms/store/redis"
@@ -19,19 +20,33 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	// todo 先使用redis保存 后续再考虑使用本地缓存
 	// todo 参考cache服务如何实现
 	// 从本地缓存查询模板
-	l := b.logger
-	m := model.HistoryM{}
-
-	templateM, err := b.ds.Templates().Get(ctx, rq.TemplateCode)
+	result, err := b.rds.Get(ctx, factory.WrapperTemplateM(rq.TemplateCode)).Result()
 	if err != nil {
-		l.LogHistory(&m)
+
+	}
+	m := model.TemplateM{}
+	if result != "" {
+		templateM := model.TemplateM{}
+		err = json.Unmarshal([]byte(result), &templateM)
+		if err != nil {
+
+		}
+		m = templateM
+	} else {
+		templateM, err := b.ds.Templates().Get(ctx, rq.TemplateCode)
+		if err != nil {
+			b.logger.LogHistory(&model.HistoryM{})
+		}
+		cache, err := json.Marshal(templateM)
+		if err != nil {
+			return nil, err
+		}
+		b.rds.Set(ctx, factory.WrapperTemplateM(templateM.TemplateCode), cache, time.Hour*24)
+		m = *templateM
 	}
 
-	// 如果是验证码，缓存验证码
-	if templateM.Type == "VERIFICATION" {
-		// todo 生成6位随机验证码
+	if m.Type == "VERIFICATION" {
 		rq.Code = id.RandomNumeric(6)
-
 	}
 
 	// 组装短信
@@ -44,10 +59,11 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	}
 
 	// 规则校验
-	err = b.rule.CheckRules(templateM, rq.Mobile, cfgList)
+	err = b.rule.CheckRules(&m, rq.Mobile, cfgList)
 	// 这里只使用err
 	if err != nil {
-		l.LogHistory(&m)
+		historyM := model.HistoryM{}
+		b.logger.LogHistory(&historyM)
 	}
 
 	// 根据类型发送短信到对应mq
@@ -55,7 +71,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	key := factory.WrapperCode(rq.TemplateCode, rq.Mobile)
 	b.rds.Set(ctx, key, rq.Code, time.Hour*24)
 
-	l.WriteCommonMessage(ctx, &templateMsgRequest)
+	b.logger.WriteCommonMessage(ctx, &templateMsgRequest)
 
 	log.C(ctx).Infof("test")
 
@@ -63,7 +79,10 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 		"test":  "value1",
 		"other": 123,
 	}
-	l.LogKpi(message)
+
+	b.logger.LogKpi(message)
+
 	// todo log记录短信延时
-	return &v1.CommonResponse{Code: templateM.ID}, nil
+
+	return &v1.CommonResponse{Code: m.ID}, nil
 }

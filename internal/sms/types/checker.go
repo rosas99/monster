@@ -14,6 +14,11 @@ const (
 	TimeIntervalForMobilePerDay   = "TIME_INTERVAL_FOR_MOBILE_PER_DAY"
 )
 
+const (
+	CommonMessage       = "COMMON_MESSAGE"
+	VerificationMessage = "VERIFICATION_MESSAGE"
+)
+
 // Request  模拟验证请求
 type Request struct {
 	Mobile       string

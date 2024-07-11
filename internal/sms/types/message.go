@@ -1,5 +1,6 @@
 package types
 
+// TemplateMsgRequest defines a template message request for kafka queue.
 type TemplateMsgRequest struct {
 	PhoneNumber  string `protobuf:"bytes,1,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
 	SendTime     string `protobuf:"bytes,2,opt,name=send_time,json=sendTime,proto3" json:"send_time,omitempty"`
@@ -11,6 +12,7 @@ type TemplateMsgRequest struct {
 	TemplateCode string `gorm:"column:template_code;not null" json:"template_code"`
 }
 
+// UplinkMsgRequest defines an uplink message request for kafka queue.
 type UplinkMsgRequest struct {
 	PhoneNumber string `protobuf:"bytes,1,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
 	SendTime    string `protobuf:"bytes,2,opt,name=send_time,json=sendTime,proto3" json:"send_time,omitempty"`

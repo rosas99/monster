@@ -40,19 +40,21 @@ func (ks *Consumer) Start() {
 
 func (ks *Consumer) Stop() {
 	// 会取消关联的所有context的协程
+	// 关闭读取操作
 	ks.cancelCtx()
+	// 关闭资源
 	ks.r.Close()
 }
 
 func (ks *Consumer) consume() {
 	for {
-
 		// the `ReadMessage` method blocks until we receive the next event
 		msg, err := ks.r.ReadMessage(ks.ctx)
 		if err != nil {
 			klog.ErrorS(err, "Failed to read message")
 		}
 
+		// 读取操作关闭后，执行完剩下的消费
 		if err := ks.handler.Consume(msg); err != nil {
 			// log error
 			if !ks.forceCommit {

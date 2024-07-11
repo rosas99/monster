@@ -1,12 +1,10 @@
 package types
 
-// 定义ProviderType作为枚举
+// ProviderType defines an enumerated type for different cloud service providers.
 type ProviderType int
 
-// 定义具体的提供者类型
+// defines a group of constants for cloud service providers.
+
 const (
-	ProviderTypeWE ProviderType = iota + 1
-	ProviderTypeXSXX
-	ProviderTypeDUMMY
-	ProviderTypeALIYUN
+	ProviderTypeALIYUN ProviderType = iota + 1
 )

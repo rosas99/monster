@@ -79,7 +79,8 @@ func (c completedConfig) New() (*SmsServer, error) {
 	factory.RegisterRule(types.TimeIntervalForMobilePerDay, checker.NewTimeIntervalForMobileRule(ds, rds))
 
 	// creates  a logger instance
-	l, err := logger.NewLogger(c.KafkaOptions, ds.Histories())
+	// todo 其他options
+	l, err := logger.NewLogger(c.KafkaOptions, c.KafkaOptions, ds.Histories())
 	if err != nil {
 		return nil, err
 	}

@@ -37,6 +37,7 @@ type Options struct {
 	// Kafka options for configuring Kafka related options.
 	//KafkaOptions2 *genericoptions.KafkaOptions `json:"kafka2" mapstructure:"kafka2"`
 	Log *log.Options `json:"log" mapstructure:"log"`
+	// todo 在这里加入配置的值
 }
 
 // NewOptions returns initialized Options.
@@ -50,6 +51,7 @@ func NewOptions() *Options {
 		KafkaOptions: genericoptions.NewKafkaOptions(),
 		//KafkaOptions2: genericoptions.NewKafkaOptions(),
 		Log: log.NewOptions(),
+		// 这里加入默认的配置
 	}
 
 	return o

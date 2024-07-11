@@ -12,16 +12,22 @@ type Logger struct {
 	enabled int32
 	// writer is the Kafka writer used to write log messages.
 
-	writer *kafka.Writer
-	ds     store.HistoryStore
+	// 不同的队列使用不同的writer
+	writer  *kafka.Writer
+	writer2 *kafka.Writer
+	ds      store.HistoryStore
 }
 
 // NewLogger creates a new kafkaLogger instance.
-func NewLogger(kafkaOpts *genericoptions.KafkaOptions, ds store.HistoryStore) (*Logger, error) {
+func NewLogger(kafkaOpts *genericoptions.KafkaOptions, kafkaOpts2 *genericoptions.KafkaOptions, ds store.HistoryStore) (*Logger, error) {
 	writer, err := kafkaOpts.Writer()
 	if err != nil {
 		return nil, err
 	}
+	writer2, err := kafkaOpts2.Writer()
+	if err != nil {
+		return nil, err
+	}
 
-	return &Logger{writer: writer, ds: ds}, nil
+	return &Logger{writer: writer, writer2: writer2, ds: ds}, nil
 }

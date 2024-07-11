@@ -56,8 +56,6 @@ func (c completedConfig) New() (*SmsServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	// todo 这里需要指定model
-	//ins.AutoMigrate(&model.OrderM{})
 	ds = mysql.NewStore(ins)
 
 	var redisOptions db.RedisOptions

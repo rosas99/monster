@@ -62,6 +62,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	key := factory.WrapperCode(rq.TemplateCode, rq.Mobile)
 	b.rds.Set(ctx, key, rq.Code, time.Hour*24)
 
+	// todo 分类型
 	b.logger.WriteCommonMessage(ctx, &templateMsgRequest)
 
 	log.C(ctx).Infof("test")

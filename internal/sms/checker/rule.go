@@ -12,7 +12,7 @@ import (
 // todo 参考iam注册方式
 // Rule 接口定义了验证规则需要实现的方法
 type Rule interface {
-	isValid(*types.Request) bool
+	isValid(ctx context.Context, rq *types.Request) bool
 	getFailReason() error
 }
 
@@ -49,7 +49,7 @@ func (rf *RuleFactory) CheckRules(ctx context.Context, template *model.TemplateM
 
 		}
 		var c types.Request
-		if !checker.isValid(&c) {
+		if !checker.isValid(ctx, &c) {
 			return checker.getFailReason()
 
 		}

@@ -8,7 +8,6 @@ import (
 	factory "github.com/rosas99/monster/internal/sms/store/redis"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/log"
-	"strconv"
 	"time"
 )
 
@@ -23,36 +22,31 @@ func NewMessageCountForTemplateRule(DS store.IStore, RDS *redis.Client) *Message
 
 var _ Rule = (*MessageCountForTemplateRule)(nil)
 
-func (m *MessageCountForTemplateRule) isValid(rq *types.Request) bool {
+func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *types.Request) bool {
 
 	start := time.Now().Unix()
 	key := factory.WrapperTemplateCount(rq.Mobile, rq.TemplateCode)
-	ctx := context.Background()
-	// 查询redis
-	rds := m.RDS
-	sentCount, err := rds.Get(ctx, key).Result()
+	sentCount, err := m.RDS.Incr(ctx, key).Result()
 	if err != nil {
-		sentCount = ""
+		log.Errorf("Failed to increment count for key: %s, error: %v", key, err)
+		return false
 	}
 
-	if sentCount == "" {
-		rds.Set(ctx, key, time.Now().Unix(), types.LimitLeftTime)
-		log.Infof("TemplateAndMobileChecker-----checker time效验号码模板总时间----: %d", time.Now().Unix()-start)
-		return true
-	} else {
-		sentCount, _ := strconv.ParseInt(sentCount, 10, 64)
-		sentCount += 1
-		ttl, _ := rds.TTL(ctx, key).Result()
-		rds.Expire(ctx, key, ttl)
-		log.Infof("TemplateAndMobileChecker-----checker time效验号码模板总时间----: %d", time.Now().Unix()-start)
-		isValid := rq.LimitValue > sentCount
-		if !isValid {
-			log.Infow(":warning:", "key", key, "sentCount", sentCount, "isValid", isValid)
+	if sentCount == 1 {
+		if err := m.RDS.SetNX(ctx, key, 1, types.LimitLeftTime*time.Second).Err(); err != nil {
+			log.Errorf("Failed to set key with expiration for key: %s, error: %v", key, err)
+			return false
 		}
-		return isValid
 	}
+	log.Infof("TemplateAndMobileChecker-----checker time效验号码模板总时间----: %d", time.Now().Unix()-start)
+	isValid := sentCount <= rq.LimitValue
+	if !isValid {
+		log.Infow(":warning:", "key", key, "sentCount", sentCount, "isValid", isValid)
+	}
+	return isValid
 }
 
 func (m *MessageCountForTemplateRule) getFailReason() error {
+	// todo  locales
 	return errors.New("exceed_limit_for_this_template")
 }

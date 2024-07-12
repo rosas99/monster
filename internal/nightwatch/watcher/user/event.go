@@ -9,7 +9,7 @@ import (
 
 	"github.com/rosas99/monster/internal/pkg/client/store"
 	"github.com/rosas99/monster/internal/pkg/onexx"
-	"github.com/superproj/onex/pkg/log"
+	"github.com/rosas99/monster/pkg/log"
 )
 
 const (

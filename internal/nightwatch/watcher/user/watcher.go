@@ -12,8 +12,8 @@ import (
 	known "github.com/rosas99/monster/internal/pkg/known/usercenter"
 	"github.com/rosas99/monster/internal/pkg/onexx"
 	"github.com/rosas99/monster/internal/usercenter/model"
-	"github.com/superproj/onex/pkg/log"
-	stringsutil "github.com/superproj/onex/pkg/util/strings"
+	"github.com/rosas99/monster/pkg/log"
+	stringsutil "github.com/rosas99/monster/pkg/util/strings"
 )
 
 var _ watcher.Watcher = (*userWatcher)(nil)

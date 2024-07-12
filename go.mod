@@ -3,14 +3,9 @@ module github.com/rosas99/monster
 go 1.22.0
 
 require (
-	github.com/alibabacloud-go/darabonba-env v1.0.0
 	github.com/alibabacloud-go/darabonba-openapi v0.2.1
-	github.com/alibabacloud-go/darabonba-string v1.0.2
-	github.com/alibabacloud-go/darabonba-time v1.0.0
 	github.com/alibabacloud-go/dysmsapi-20170525/v2 v2.0.18
 	github.com/alibabacloud-go/tea v1.2.1
-	github.com/alibabacloud-go/tea-console v1.0.0
-	github.com/alibabacloud-go/tea-utils v1.4.5
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
 	github.com/casbin/casbin/v2 v2.66.1
 	github.com/casbin/gorm-adapter/v3 v3.13.0
@@ -26,6 +21,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/gorilla/mux v1.8.1
 	github.com/gorilla/websocket v1.5.0
+	github.com/gosuri/uitable v0.0.4
 	github.com/jinzhu/copier v0.3.5
 	github.com/looplab/fsm v1.0.2
 	github.com/redis/go-redis/extra/rediscensus/v9 v9.0.5
@@ -37,7 +33,6 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.9.0
-	github.com/superproj/onex v0.2.0
 	github.com/zeromicro/go-zero v1.6.6
 	go.mongodb.org/mongo-driver v1.13.1
 	go.opentelemetry.io/otel v1.19.0
@@ -74,6 +69,7 @@ require (
 	github.com/alibabacloud-go/debug v0.0.0-20190504072949-9472017b5c68 // indirect
 	github.com/alibabacloud-go/endpoint-util v1.1.0 // indirect
 	github.com/alibabacloud-go/openapi-util v0.1.0 // indirect
+	github.com/alibabacloud-go/tea-utils v1.4.5 // indirect
 	github.com/alibabacloud-go/tea-xml v1.1.3 // indirect
 	github.com/aliyun/credentials-go v1.3.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
@@ -100,7 +96,6 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/cel-go v0.17.8 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
-	github.com/gosuri/uitable v0.0.4 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect

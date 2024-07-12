@@ -47,7 +47,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	}
 
 	// todo 增加context
-	err = b.rule.CheckRules(ctx, m, rq.Mobile, cfgList)
+	err = b.rule.CheckRules(ctx, cfgList)
 	if err != nil {
 		historyM := model.HistoryM{}
 		b.logger.LogHistory(&historyM)

@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/types"
+	"github.com/rosas99/monster/pkg/log"
+	"sort"
 )
 
 // 策略模式
@@ -18,8 +20,6 @@ type Rule interface {
 
 type RuleFactory struct {
 	rules map[string]Rule
-	// todo  redis
-
 }
 
 // NewRuleFactory 构造函数，初始化 RuleFactory 实例
@@ -35,36 +35,36 @@ func (rf *RuleFactory) RegisterRule(key string, rule Rule) {
 	rf.rules[key] = rule
 }
 
-func (rf *RuleFactory) CheckRules(ctx context.Context, template *model.TemplateM, mobile string, cfgList []*model.ConfigurationM) error {
+func (rf *RuleFactory) CheckRules(ctx context.Context, cfgList []*model.ConfigurationM) error {
 	if len(cfgList) == 0 {
 		return errors.New("no configuration")
 	}
 
-	// todo 排序 枚举设置了值
-	// 或者cfg初始化时定义序号
+	// 升序排序
+	sort.SliceStable(cfgList, func(i, j int) bool {
+		return cfgList[i].Order < cfgList[j].Order
+	})
+
 	for _, cfg := range cfgList {
-		// 创建checker
 		checker, err := rf.CreateChecker(cfg)
 		if err != nil {
+			// todo  log
+			log.C(ctx).Errorw(err, "Failed to list orders from storage")
 
 		}
 		var c types.Request
 		if !checker.isValid(ctx, &c) {
 			return checker.getFailReason()
-
 		}
-
 	}
+
 	return nil
 
 }
 
 // CreateChecker 根据 CheckerRequest 创建对应的 Rule
 func (rf *RuleFactory) CreateChecker(cfg *model.ConfigurationM) (Rule, error) {
-	// 假设 CheckerRequest 中有一个字段用于确定使用哪个 Rule
-	// 这里只是一个示例，您需要根据实际情况实现具体的逻辑
 	checkType := cfg.ConfigKey
-	// todo 对应实现也要引入redis
 	rule, exists := rf.rules[checkType]
 	if !exists {
 		return nil, fmt.Errorf("invalid check type: %s", checkType)

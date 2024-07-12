@@ -10,7 +10,7 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/superproj/onex/tools/protoc-gen-go-errors-code/errors"
+	"github.com/rosas99/monster/tools/protoc-gen-go-errors-code/errors"
 )
 
 var enCases = cases.Title(language.AmericanEnglish, cases.NoLower)

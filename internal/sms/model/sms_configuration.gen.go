@@ -16,8 +16,9 @@ type ConfigurationM struct {
 	ConfigKey    string    `gorm:"column:config_key;not null" json:"config_key"`
 	ConfigValue  string    `gorm:"column:config_value;not null" json:"config_value"`
 	TemplateCode string    `gorm:"column:template_code;not null" json:"template_code"`
-	CreatedAt    time.Time `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt    time.Time `gorm:"column:updated_at" json:"updated_at"`
+	Order        int32     `gorm:"column:order" json:"order"`
+	CreateAt     time.Time `gorm:"column:create_at" json:"create_at"`
+	UpdateAt     time.Time `gorm:"column:update_at" json:"update_at"`
 }
 
 // TableName ConfigurationM's table name

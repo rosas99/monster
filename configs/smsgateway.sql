@@ -193,6 +193,7 @@ CREATE TABLE `sms_configuration`  (
   `config_key` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `config_value` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `template_code` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `order` tinyint(1) DEFAULT NULL,
   `create_at` datetime NULL DEFAULT NULL,
   `update_at` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE

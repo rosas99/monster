@@ -56,8 +56,6 @@ func (w *userWatcher) Run() {
 
 		wp.Submit(func() {
 			ctx := onexx.NewUserM(context.Background(), user)
-
-			// todo 新增status字段
 			u := &User{UserM: user, FSM: NewFSM(user.Nickname, w)}
 			if err := u.Event(ctx, user.Status); err != nil {
 				log.Errorw(err, "Failed to event user", "username", user.Username, "status", user.Nickname)

@@ -1,4 +1,4 @@
-// Package secretsclean is a watcher implement used to delete expired keys from the database.
+// Package historyclean is a watcher implement used to delete expired record from the database.
 package historyclean
 
 import (

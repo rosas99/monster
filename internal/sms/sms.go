@@ -20,19 +20,21 @@ import (
 	"github.com/rosas99/monster/pkg/db"
 	"github.com/rosas99/monster/pkg/log"
 	genericoptions "github.com/rosas99/monster/pkg/options"
+	ailiyunoptions "github.com/rosas99/monster/pkg/sdk/ailiyun"
 )
 
 // Config represents the configuration of the service.
 type Config struct {
-	GRPCOptions  *genericoptions.GRPCOptions
-	HTTPOptions  *genericoptions.HTTPOptions
-	TLSOptions   *genericoptions.TLSOptions
-	MySQLOptions *genericoptions.MySQLOptions
-	RedisOptions *genericoptions.RedisOptions
-	KafkaOptions *genericoptions.KafkaOptions
-	Address      string
-	Accounts     map[string]string
-	AiliyunUrl   string
+	GRPCOptions       *genericoptions.GRPCOptions
+	HTTPOptions       *genericoptions.HTTPOptions
+	TLSOptions        *genericoptions.TLSOptions
+	MySQLOptions      *genericoptions.MySQLOptions
+	RedisOptions      *genericoptions.RedisOptions
+	KafkaOptions      *genericoptions.KafkaOptions
+	Address           string
+	Accounts          map[string]string
+	AiliyunUrl        string
+	AiliyunSmsOptions *ailiyunoptions.SmsOptions
 }
 
 // Complete fills in any fields not set that are required to have valid data. It's mutating the receiver.
@@ -88,7 +90,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 
 	// registers sms providers
 	provider := providerFactory.NewProviderFactory()
-	provider.RegisterProvider(types.ProviderTypeALIYUN, providerFactory.NewAILIYUNProvider(rds, l, c.AiliyunUrl))
+	provider.RegisterProvider(types.ProviderTypeALIYUN, providerFactory.NewAILIYUNProvider(rds, l, c.AiliyunSmsOptions))
 
 	// creates an idempotent instance
 	idt, err := idempotent.NewIdempotent(rds)

@@ -9,23 +9,22 @@ import (
 	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/types"
-	"github.com/rosas99/monster/pkg/sdk/ailiyun"
-	"os"
+	ailiyunoptions "github.com/rosas99/monster/pkg/sdk/ailiyun"
 )
 
 // AILIYUNProvider is a struct represents a sms provider.
 type AILIYUNProvider struct {
-	rds    *redis.Client
-	logger *logger.Logger
-	url    string
+	rds               *redis.Client
+	logger            *logger.Logger
+	ailiyunSmsOptions *ailiyunoptions.SmsOptions
 }
 
 // NewAILIYUNProvider returns a new provider for aili cloud sms.
-func NewAILIYUNProvider(rds *redis.Client, logger *logger.Logger, url string) *AILIYUNProvider {
+func NewAILIYUNProvider(rds *redis.Client, logger *logger.Logger, ailiyunSmsOptions *ailiyunoptions.SmsOptions) *AILIYUNProvider {
 	return &AILIYUNProvider{
-		rds:    rds,
-		logger: logger,
-		url:    url,
+		rds:               rds,
+		logger:            logger,
+		ailiyunSmsOptions: ailiyunSmsOptions,
 	}
 }
 
@@ -35,8 +34,7 @@ func (p *AILIYUNProvider) Send(ctx context.Context, rq types.TemplateMsgRequest)
 	fmt.Printf("Sending message via WEProvider to %s\n", rq.SendTime)
 	// 返回示例响应
 	// todo 从配置获取
-	fmt.Print("test config", p.url)
-	client, err := ailiyun.CreateSmsClient(tea.String(os.Getenv("")), tea.String(os.Getenv("")))
+	client, err := p.ailiyunSmsOptions.NewSmsClient()
 	if err != nil {
 		return TemplateMsgResponse{}, err
 	}

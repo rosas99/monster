@@ -31,8 +31,8 @@ type Options struct {
 	KafkaOptions *genericoptions.KafkaOptions `json:"kafka1" mapstructure:"kafka"`
 	// Kafka options for configuring Kafka related options.
 	//KafkaOptions2 *genericoptions.KafkaOptions `json:"kafka2" mapstructure:"kafka2"`
-	Log    *log.Options     `json:"log" mapstructure:"log"`
-	Aliyun *ailiyun.Options `json:"ailiyun" mapstructure:"ailiyun"`
+	Log              *log.Options        `json:"log" mapstructure:"log"`
+	AliyunSmsOptions *ailiyun.SmsOptions `json:"ailiyun" mapstructure:"ailiyun"`
 }
 
 // NewOptions returns initialized Options.
@@ -45,8 +45,8 @@ func NewOptions() *Options {
 		RedisOptions: genericoptions.NewRedisOptions(),
 		KafkaOptions: genericoptions.NewKafkaOptions(),
 		//KafkaOptions2: genericoptions.NewKafkaOptions(),
-		Log:    log.NewOptions(),
-		Aliyun: ailiyun.NewOptions(),
+		Log:              log.NewOptions(),
+		AliyunSmsOptions: ailiyun.NewSmsOptions(),
 	}
 
 	return o
@@ -102,7 +102,7 @@ func (o *Options) ApplyTo(c *sms.Config) error {
 	c.MySQLOptions = o.MySQLOptions
 	c.RedisOptions = o.RedisOptions
 	c.KafkaOptions = o.KafkaOptions
-	c.AiliyunUrl = o.Aliyun.Url
+	c.AiliyunSmsOptions = o.AliyunSmsOptions
 	return nil
 }
 

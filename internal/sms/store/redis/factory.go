@@ -10,6 +10,8 @@ const (
 	TimeInterval                 = "TIME_INTERVAL"
 	TemplateTypeVerificationCode = "TEMPLATE_TYPE_VERIFICATION_CODE"
 	DELIMITER                    = ":"
+
+	TemplateM = "TEMPLATE_M"
 )
 
 // WrapperMobileCount  is used to build the key name in Redis.
@@ -27,14 +29,10 @@ func WrapperTimeInterval(templateCode, mobile string) string {
 	return fmt.Sprintf("%s%s%s%s%s", TimeInterval, DELIMITER, templateCode, DELIMITER, mobile)
 }
 
-// WrapperTimeInterval  is used to build the key name in Redis.
+// WrapperCode  is used to build the key name in Redis.
 func WrapperCode(templateCode, mobile string) string {
 	return fmt.Sprintf("%s%s%s%s%s", TemplateTypeVerificationCode, DELIMITER, templateCode, DELIMITER, mobile)
 }
-
-const (
-	TemplateM = "TEMPLATE_M"
-)
 
 // WrapperTemplateM  is used to build the key name in Redis.
 func WrapperTemplateM(templateCode string) string {

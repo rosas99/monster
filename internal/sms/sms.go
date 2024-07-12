@@ -32,6 +32,7 @@ type Config struct {
 	KafkaOptions *genericoptions.KafkaOptions
 	Address      string
 	Accounts     map[string]string
+	AiliyunUrl   string
 }
 
 // Complete fills in any fields not set that are required to have valid data. It's mutating the receiver.
@@ -87,7 +88,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 
 	// registers sms providers
 	provider := providerFactory.NewProviderFactory()
-	provider.RegisterProvider(types.ProviderTypeALIYUN, providerFactory.NewAILIYUNProvider(rds, l))
+	provider.RegisterProvider(types.ProviderTypeALIYUN, providerFactory.NewAILIYUNProvider(rds, l, c.AiliyunUrl))
 
 	// creates an idempotent instance
 	idt, err := idempotent.NewIdempotent(rds)
@@ -107,7 +108,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 		gin.Recovery(), header.NoCache, header.Cors, header.Secure,
 		trace.TraceID(), nil, validate.Validation(ds),
 	}
-	// 添加中间件
+	// add gin middlewares
 	g.Use(mws...)
 
 	httpsrv, err := NewHTTPServer(c.HTTPOptions, c.TLSOptions, g)

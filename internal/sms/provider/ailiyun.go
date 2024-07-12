@@ -16,13 +16,15 @@ import (
 type AILIYUNProvider struct {
 	rds    *redis.Client
 	logger *logger.Logger
+	url    string
 }
 
 // NewAILIYUNProvider returns a new provider for aili cloud sms.
-func NewAILIYUNProvider(rds *redis.Client, logger *logger.Logger) *AILIYUNProvider {
+func NewAILIYUNProvider(rds *redis.Client, logger *logger.Logger, url string) *AILIYUNProvider {
 	return &AILIYUNProvider{
 		rds:    rds,
 		logger: logger,
+		url:    url,
 	}
 }
 
@@ -32,6 +34,7 @@ func (p *AILIYUNProvider) Send(rq types.TemplateMsgRequest) (TemplateMsgResponse
 	fmt.Printf("Sending message via WEProvider to %s\n", rq.SendTime)
 	// 返回示例响应
 	// todo 从配置获取
+	fmt.Print("test config", p.url)
 	client, err := ailiyun.CreateSmsClient(tea.String(os.Getenv("")), tea.String(os.Getenv("")))
 	if err != nil {
 		return TemplateMsgResponse{}, err

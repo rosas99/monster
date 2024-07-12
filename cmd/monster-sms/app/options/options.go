@@ -1,14 +1,9 @@
-// Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file. The original repo for
-// this file is https://"github.com/rosas99/monster.
-//
-
 // Package options contains flags and options for initializing an apiserver
 package options
 
 import (
 	"github.com/rosas99/monster/internal/sms"
+	"github.com/rosas99/monster/pkg/sdk/ailiyun"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	cliflag "k8s.io/component-base/cli/flag"
 
@@ -36,8 +31,8 @@ type Options struct {
 	KafkaOptions *genericoptions.KafkaOptions `json:"kafka1" mapstructure:"kafka"`
 	// Kafka options for configuring Kafka related options.
 	//KafkaOptions2 *genericoptions.KafkaOptions `json:"kafka2" mapstructure:"kafka2"`
-	Log *log.Options `json:"log" mapstructure:"log"`
-	// todo 在这里加入配置的值
+	Log    *log.Options     `json:"log" mapstructure:"log"`
+	Aliyun *ailiyun.Options `json:"ailiyun" mapstructure:"ailiyun"`
 }
 
 // NewOptions returns initialized Options.
@@ -50,8 +45,8 @@ func NewOptions() *Options {
 		RedisOptions: genericoptions.NewRedisOptions(),
 		KafkaOptions: genericoptions.NewKafkaOptions(),
 		//KafkaOptions2: genericoptions.NewKafkaOptions(),
-		Log: log.NewOptions(),
-		// 这里加入默认的配置
+		Log:    log.NewOptions(),
+		Aliyun: ailiyun.NewOptions(),
 	}
 
 	return o
@@ -107,10 +102,11 @@ func (o *Options) ApplyTo(c *sms.Config) error {
 	c.MySQLOptions = o.MySQLOptions
 	c.RedisOptions = o.RedisOptions
 	c.KafkaOptions = o.KafkaOptions
+	c.AiliyunUrl = o.Aliyun.Url
 	return nil
 }
 
-// Config return a onex-fakeserver config object.
+// Config return an onex-fakeserver config object.
 func (o *Options) Config() (*sms.Config, error) {
 	c := &sms.Config{}
 

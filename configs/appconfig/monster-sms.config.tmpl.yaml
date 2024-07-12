@@ -1,8 +1,4 @@
-# Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
-# Use of this source code is governed by a MIT style
-# license that can be found in the LICENSE file. The original repo for
-# this file is https://"github.com/rosas99/monster.
-#
+
 
 # onex-sms 服务配置文件
 http:
@@ -32,9 +28,8 @@ log: # 使用默认值即可，不需要在 manifests/env.local 中配置
     disable-stacktrace: false # 是否再 panic 及以上级别禁止打印堆栈信息
     output-paths: stdout # 多个输出，逗号分开。stdout：标准输出，
 
-# todo 也可以换成 gozero的kq
-# 这里如何兼容多个topic 这里改成配置多个kafka，因为broker可能不一样
-# articleWriter
+ailiyun:
+  url: https://sms.aliyuncs.com
 
 kafka:
   brokers: 127.0.0.1:9092

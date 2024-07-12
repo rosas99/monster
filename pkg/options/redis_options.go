@@ -7,7 +7,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/spf13/pflag"
 
-	"github.com/superproj/onex/pkg/db"
+	"github.com/rosas99/monster/pkg/db"
 )
 
 var _ IOptions = (*RedisOptions)(nil)

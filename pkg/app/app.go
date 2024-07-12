@@ -13,9 +13,9 @@ import (
 	cliflag "k8s.io/component-base/cli/flag"
 	"k8s.io/component-base/term"
 
-	"github.com/superproj/onex/pkg/log"
-	genericoptions "github.com/superproj/onex/pkg/options"
-	"github.com/superproj/onex/pkg/version"
+	"github.com/rosas99/monster/pkg/log"
+	genericoptions "github.com/rosas99/monster/pkg/options"
+	"github.com/rosas99/monster/pkg/version"
 )
 
 // App is the main structure of a cli application.

@@ -27,7 +27,7 @@ func (fi frequencyInfoSlice) Less(i, j int) bool {
 	return fi[j].frequency > fi[i].frequency
 }
 
-// Creates an slice of slice values not included in the other given slice.
+// Diff Creates a slice of slice values not included in the other given slice.
 func Diff(base, exclude []string) (result []string) {
 	excludeMap := make(map[string]bool)
 	for _, s := range exclude {
@@ -42,7 +42,7 @@ func Diff(base, exclude []string) (result []string) {
 	return result
 }
 
-// Creates an slice of slice values included in the other given slice.
+// Include Creates a slice of slice values included in the other given slice.
 func Include(base, include []string) (result []string) {
 	baseMap := make(map[string]bool)
 	for _, s := range base {

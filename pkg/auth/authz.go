@@ -3,7 +3,7 @@ package auth
 import (
 	"time"
 
-	casbin "github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	adapter "github.com/casbin/gorm-adapter/v3"
 	"gorm.io/gorm"

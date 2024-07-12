@@ -1,1 +1,1 @@
-package app // import "github.com/superproj/onex/pkg/app"
+package app // import "github.com/rosas99/monster/pkg/app"

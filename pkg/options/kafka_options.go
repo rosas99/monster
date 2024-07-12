@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/pflag"
 	"k8s.io/klog/v2"
 
-	stringsutil "github.com/superproj/onex/pkg/util/strings"
+	stringsutil "github.com/rosas99/monster/pkg/util/strings"
 )
 
 var _ IOptions = (*KafkaOptions)(nil)

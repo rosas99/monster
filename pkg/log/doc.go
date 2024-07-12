@@ -1,1 +1,1 @@
-package log // import "github.com/superproj/onex/internal/pkg/log"
+package log // Package log import "github.com/rosas99/monster/internal/pkg/log"

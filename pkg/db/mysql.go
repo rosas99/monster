@@ -41,7 +41,6 @@ func NewMySQL(opts *MySQLOptions) (*gorm.DB, error) {
 	db, err := gorm.Open(mysql.Open(opts.DSN()), &gorm.Config{
 		// PrepareStmt executes the given query in cached statement.
 		// This can improve performance.
-		// todo 开启预编译sql
 		PrepareStmt: true,
 		Logger:      opts.Logger,
 	})
@@ -64,7 +63,6 @@ func NewMySQL(opts *MySQLOptions) (*gorm.DB, error) {
 	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
 	sqlDB.SetMaxIdleConns(opts.MaxIdleConnections)
 
-	// todo 这里如果是依赖注入，为了auto migrate，可以在这里调用
 	//db.AutoMigrate()
 	return db, nil
 }

@@ -12,7 +12,7 @@ import (
 	"k8s.io/client-go/util/homedir"
 	cliflag "k8s.io/component-base/cli/flag"
 
-	"github.com/superproj/onex/pkg/log"
+	"github.com/rosas99/monster/pkg/log"
 )
 
 const configFlagName = "config"

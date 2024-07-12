@@ -18,7 +18,7 @@ func NewOptions() *Options {
 
 // Validate verifies flags passed to LogsOptions.
 func (o *Options) Validate() []error {
-	errs := []error{}
+	var errs []error
 
 	return errs
 }

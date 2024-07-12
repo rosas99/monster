@@ -7,8 +7,8 @@ import (
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 
-	"github.com/superproj/onex/pkg/db"
-	"github.com/superproj/onex/pkg/log"
+	"github.com/rosas99/monster/pkg/db"
+	"github.com/rosas99/monster/pkg/log"
 )
 
 var _ IOptions = (*MySQLOptions)(nil)

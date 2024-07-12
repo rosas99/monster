@@ -1,1 +1,1 @@
-package strings // import "github.com/superproj/onex/internal/pkg/util/strings"
+package strings // Package strings import "github.com/rosas99/monster/internal/pkg/util/strings"

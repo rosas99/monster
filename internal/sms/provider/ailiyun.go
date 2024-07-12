@@ -33,7 +33,6 @@ func (p *AILIYUNProvider) Send(ctx context.Context, rq types.TemplateMsgRequest)
 	// 这里应该是调用微信的API发送短信的逻辑
 	fmt.Printf("Sending message via WEProvider to %s\n", rq.SendTime)
 	// 返回示例响应
-	// todo 从配置获取
 	client, err := p.ailiyunSmsOptions.NewSmsClient()
 	if err != nil {
 		return TemplateMsgResponse{}, err

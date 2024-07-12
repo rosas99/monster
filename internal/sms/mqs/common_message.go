@@ -56,7 +56,7 @@ func (l *MessageConsumer) handleSmsRequest(ctx context.Context, msg *types.Templ
 		if err != nil {
 			break
 		}
-		ret, err := templateProvider.Send(types.TemplateMsgRequest{})
+		ret, err := templateProvider.Send(ctx, types.TemplateMsgRequest{})
 		if err != nil {
 			continue
 		}

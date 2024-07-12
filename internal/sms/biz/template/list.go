@@ -14,7 +14,6 @@ import (
 // List retrieves a list of all templates from the database.
 func (t *templateBiz) List(ctx context.Context, rq *v1.ListTemplateRequest) (*v1.ListTemplateResponse, error) {
 
-	// todo 查询到template 转换为resp
 	count, list, err := t.ds.Templates().List(ctx, rq.TemplateCode, meta.WithOffset(rq.Offset), meta.WithLimit(rq.Limit))
 	if err != nil {
 		log.C(ctx).Errorw(err, "Failed to list orders from storage")

@@ -1,6 +1,7 @@
 package checker
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/rosas99/monster/internal/sms/model"
@@ -34,7 +35,7 @@ func (rf *RuleFactory) RegisterRule(key string, rule Rule) {
 	rf.rules[key] = rule
 }
 
-func (rf *RuleFactory) CheckRules(template *model.TemplateM, mobile string, cfgList []*model.ConfigurationM) error {
+func (rf *RuleFactory) CheckRules(ctx context.Context, template *model.TemplateM, mobile string, cfgList []*model.ConfigurationM) error {
 	if len(cfgList) == 0 {
 		return errors.New("no configuration")
 	}

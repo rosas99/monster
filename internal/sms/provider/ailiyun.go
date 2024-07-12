@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	dysmsapi "github.com/alibabacloud-go/dysmsapi-20170525/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
@@ -29,7 +30,7 @@ func NewAILIYUNProvider(rds *redis.Client, logger *logger.Logger, url string) *A
 }
 
 // Send creates a sms client and sends sms by aili cloud.
-func (p *AILIYUNProvider) Send(rq types.TemplateMsgRequest) (TemplateMsgResponse, error) {
+func (p *AILIYUNProvider) Send(ctx context.Context, rq types.TemplateMsgRequest) (TemplateMsgResponse, error) {
 	// 这里应该是调用微信的API发送短信的逻辑
 	fmt.Printf("Sending message via WEProvider to %s\n", rq.SendTime)
 	// 返回示例响应

@@ -34,7 +34,7 @@ func WrapperCode(templateCode, mobile string) string {
 	return fmt.Sprintf("%s%s%s%s%s", TemplateTypeVerificationCode, DELIMITER, templateCode, DELIMITER, mobile)
 }
 
-// WrapperTemplateM  is used to build the key name in Redis.
-func WrapperTemplateM(templateCode string) string {
+// WrapperTemplate  is used to build the key name in Redis.
+func WrapperTemplate(templateCode string) string {
 	return fmt.Sprintf("%s%s%s", TemplateM, DELIMITER, templateCode)
 }

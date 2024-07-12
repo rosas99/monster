@@ -19,14 +19,11 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	templateMsgRequest.RequestId = b.idt.Token(ctx)
 
 	// todo 参考cache服务如何实现
-	result, _ := b.rds.Get(ctx, factory.WrapperTemplateM(rq.TemplateCode)).Result()
+	result, _ := b.rds.Get(ctx, factory.WrapperTemplate(rq.TemplateCode)).Result()
 	m := &model.TemplateM{}
 	if result != "" {
 		templateM := &model.TemplateM{}
-		err := json.Unmarshal([]byte(result), &templateM)
-		if err != nil {
-			return nil, err
-		}
+		json.Unmarshal([]byte(result), &templateM)
 
 		m = templateM
 	} else {
@@ -34,11 +31,8 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 		if err != nil {
 			b.logger.LogHistory(&model.HistoryM{})
 		}
-		cache, err := json.Marshal(templateM)
-		if err != nil {
-			return nil, err
-		}
-		b.rds.Set(ctx, factory.WrapperTemplateM(templateM.TemplateCode), cache, time.Hour*24)
+		jsonDataBytes, _ := json.Marshal(templateM)
+		b.rds.Set(ctx, factory.WrapperTemplate(templateM.TemplateCode), jsonDataBytes, time.Hour*24)
 		m = templateM
 	}
 
@@ -53,7 +47,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	}
 
 	// todo 增加context
-	err = b.rule.CheckRules(m, rq.Mobile, cfgList)
+	err = b.rule.CheckRules(ctx, m, rq.Mobile, cfgList)
 	if err != nil {
 		historyM := model.HistoryM{}
 		b.logger.LogHistory(&historyM)

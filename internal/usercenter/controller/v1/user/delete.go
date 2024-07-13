@@ -11,17 +11,18 @@ func (b *Controller) Delete(c *gin.Context) {
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)
 	}
-	template, err := b.svc.Delete(c, &r)
+	_, err := b.svc.Delete(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
 	}
 
-	//if _, err := ctrl.a.RemoveNamedPolicy("p", username, "", ""); err != nil {
-	//	core.WriteResponse(c, err, nil)
-	//
-	//	return
-	//}
-	core.WriteResponse(c, nil, template)
+	_, err = b.svc.Auth.RemoveNamedPolicy("p", r.Username, "", "")
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+		return
+	}
+
+	core.WriteResponse(c, nil, nil)
 
 }

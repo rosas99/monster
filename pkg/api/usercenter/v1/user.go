@@ -35,7 +35,7 @@ type GetUserRequest struct {
 }
 
 type DeleteUserRequest struct {
-	UserId int64 `json:"userId"`
+	Username int64 `json:"username"`
 }
 
 // ChangePasswordRequest 指定了 `POST /v1/users/{name}/change-password` 接口的请求参数.

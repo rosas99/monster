@@ -4,7 +4,6 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
-	"github.com/rosas99/monster/internal/sms/controller/v1/interaction"
 	"github.com/rosas99/monster/internal/sms/controller/v1/message"
 	"github.com/rosas99/monster/internal/sms/controller/v1/template"
 	"github.com/rosas99/monster/internal/sms/service"
@@ -45,15 +44,8 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 
 			// todo 需要支持公网ip
 			msgv1.POST("/report/ailiyun", ms.AiliReport)
+			msgv1.POST("/interaction/ailiyun", ms.AILIYUNCallback)
 
-		}
-
-		// creates interaction router group
-		itv1 := v1.Group("/interaction")
-		{
-			it := interaction.New(svc)
-			// todo 需要支持公网ip
-			itv1.POST("/ailiyun", it.AILIYUNCallback)
 		}
 
 	}

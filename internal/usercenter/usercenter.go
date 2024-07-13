@@ -7,6 +7,7 @@ import (
 	"github.com/rosas99/monster/internal/pkg/middleware/trace"
 	"github.com/rosas99/monster/internal/usercenter/biz"
 	"github.com/rosas99/monster/internal/usercenter/middleware/validate"
+	"github.com/rosas99/monster/pkg/auth"
 
 	//"github.com/rosas99/monster/internal/usercenter/middleware/validate"
 	"github.com/rosas99/monster/internal/usercenter/service"
@@ -67,8 +68,8 @@ func (c completedConfig) New() (*SmsServer, error) {
 	}
 
 	biz := biz.NewBiz(ds, rds)
-
-	srv := service.NewUserCenterService(biz)
+	authz, err := auth.NewAuthz(ins)
+	srv := service.NewUserCenterService(biz, authz)
 
 	// 设置 Gin 模式
 	gin.SetMode(gin.ReleaseMode)

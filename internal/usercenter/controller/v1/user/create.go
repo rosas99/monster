@@ -9,6 +9,8 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 )
 
+const defaultMethods = "(GET)|(POST)|(PUT)|(DELETE)"
+
 func (b *Controller) Create(c *gin.Context) {
 	log.C(c).Infow("Create user function called")
 
@@ -29,11 +31,11 @@ func (b *Controller) Create(c *gin.Context) {
 		core.WriteResponse(c, err, nil)
 	}
 
-	//if _, err := b.svc.AddNamedPolicy("p", r.Username, "/v1/users/"+r.Username, defaultMethods); err != nil {
-	//	core.WriteResponse(c, err, nil)
-	//
-	//	return
-	//}
+	if _, err := b.svc.Auth.AddNamedPolicy("p", r.Username, "/v1/users/"+r.Username, defaultMethods); err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
 
 	core.WriteResponse(c, nil, order)
 

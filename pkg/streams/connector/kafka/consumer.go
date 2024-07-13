@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"fmt"
 	"github.com/segmentio/kafka-go"
 	"k8s.io/klog/v2"
 )
@@ -63,9 +64,12 @@ func (ks *Consumer) consume() {
 		}
 
 		// 增加一个配置，可自行决定是否在业务逻辑处理失败时提交偏移量
-		if err := ks.r.CommitMessages(context.Background(), msg); err != nil {
+		err = ks.r.CommitMessages(context.Background(), msg)
+		if err != nil {
 			// log commit error
+			fmt.Println("commit messages fail")
 		}
+		fmt.Println("commit messages suc")
 
 	}
 }

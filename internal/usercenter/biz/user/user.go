@@ -8,7 +8,7 @@ import (
 )
 
 type UserBiz interface {
-	Authorize(ctx context.Context, rq *v1.LoginRequest) (*v1.LoginResponse, error)
+	Authorize(ctx context.Context, rq *v1.LoginRequest2) (*v1.LoginResponse2, error)
 	ChangePassword(ctx context.Context, r *v1.ChangePasswordRequest) error
 	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)
 	Create(ctx context.Context, rq *v1.CreateUserRequest) (*v1.CreateUserResponse, error)

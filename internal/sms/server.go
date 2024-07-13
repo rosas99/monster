@@ -136,6 +136,7 @@ func NewMqServer(
 		StartOffset:       KafkaOptions.ReaderOptions.StartOffset,
 		MaxAttempts:       KafkaOptions.ReaderOptions.MaxAttempts,
 	}
+	r.Topic = "audit"
 
 	consumer, err := kafkaconnector.NewConsumer(context.Background(), r, logic, forceCommit)
 	if err != nil {

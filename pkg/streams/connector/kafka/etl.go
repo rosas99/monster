@@ -57,6 +57,8 @@ func (ks *KafkaSource) consume() {
 	for {
 		// the `ReadMessage` method blocks until we receive the next event
 		msg, err := ks.r.ReadMessage(ks.ctx)
+		klog.ErrorS(err, "consume to read message")
+
 		if err != nil {
 			klog.ErrorS(err, "Failed to read message")
 		}

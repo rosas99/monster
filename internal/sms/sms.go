@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
-	"github.com/rosas99/monster/internal/pkg/client/usercenter"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/pkg/middleware/header"
 	"github.com/rosas99/monster/internal/pkg/middleware/trace"
@@ -107,7 +106,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 	// create a gin engine
 	g := gin.New()
 
-	usercenter.NewUserCenterServer()
+	//usercenter.NewUserCenterServer()
 
 	installRouters(g, srv)
 	mws := []gin.HandlerFunc{
@@ -132,7 +131,6 @@ func (c completedConfig) New() (*SmsServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	go mqsrv.RunOrDie()
 
 	// todo 其他kafka options
 	logic2 := mqs.NewUplinkMessageConsumer(context.Background(), ds, idt, l)
@@ -141,7 +139,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 	go mqsrv.RunOrDie()
-	go mqsrv2.RunOrDie()
+	//go mqsrv2.RunOrDie()
 
 	// Need start grpc server first. http server depends on grpc sever.
 	go grpcsrv.RunOrDie()

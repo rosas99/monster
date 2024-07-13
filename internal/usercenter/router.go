@@ -5,8 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
 	"github.com/rosas99/monster/internal/usercenter/controller/v1/user"
+	mwauth "github.com/rosas99/monster/internal/usercenter/middleware/auth"
 	"github.com/rosas99/monster/internal/usercenter/service"
+	"github.com/rosas99/monster/internal/usercenter/store/mysql"
 	v1api "github.com/rosas99/monster/pkg/api/sms/v1"
+	"github.com/rosas99/monster/pkg/auth"
 )
 
 func installRouters(g *gin.Engine, svc *service.UserCenterService) {
@@ -18,20 +21,22 @@ func installRouters(g *gin.Engine, svc *service.UserCenterService) {
 	// 注册 pprof 路由
 	pprof.Register(g)
 
-	//authz, err := auth.NewAuthz(mysql.S.DB())
-	//if err != nil {
-	//	return
-	//}
+	authz, err := auth.NewAuthz(mysql.S.DB())
+	if err != nil {
+		return
+	}
+
+	uc := user.New(svc)
+	g.POST("/login", uc.Login)
 
 	v1 := g.Group("/v1")
 	{
-		uc := user.New(svc)
 		userv1 := v1.Group("/users")
 		{
 			userv1.POST("", uc.Create)
 			userv1.PUT(":name/change-password", uc.ChangePassword)
-			//userv1.Use(mw.Authn(), mw.Authz(authz))
-			userv1.GET(":name1", uc.Get)
+			userv1.Use(mwauth.Authn(), mwauth.Authz(authz))
+			userv1.GET(":name", uc.Get)
 			userv1.PUT(":name", uc.Update)
 			userv1.GET("", uc.List)
 			userv1.DELETE(":name", uc.Delete)

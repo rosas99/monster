@@ -13,11 +13,6 @@ func (b *Controller) Get(c *gin.Context) {
 	//r.Id = param
 	//fmt.Print(r.Id)
 
-	// todo 可修改为go playground
-	if err := r.Validate(); err != nil {
-		core.WriteResponse(c, err, nil)
-	}
-
 	template, err := b.svc.Get(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)

@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"sync"
 
-	v1 "github.com/rosas99/monster/pkg/api/usercenter/v2"
+	"github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
 var (
@@ -67,7 +67,7 @@ func GetClient() *impl {
 }
 
 func (i *impl) Auth(ctx context.Context, token string) (userID string, err error) {
-	rq := &v1.LoginRequest{}
+	rq := &v1.LoginRequest2{}
 	resp, err := i.client.Authorize(ctx, rq)
 	if err != nil {
 		return "", err

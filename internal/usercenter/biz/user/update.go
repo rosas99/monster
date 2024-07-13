@@ -2,11 +2,11 @@ package user
 
 import (
 	"context"
-	v1 "github.com/rosas99/monster/pkg/api/usercenter/v2"
+	"github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
 func (b *userBiz) Update(ctx context.Context, rq *v1.UpdateUserRequest) error {
-	userM, err := b.ds.Users().Get(ctx, rq.GetUsername())
+	userM, err := b.ds.Users().Get(ctx, rq.Username)
 	if err != nil {
 		return err
 	}

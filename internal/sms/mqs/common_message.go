@@ -2,14 +2,11 @@ package consumer
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/model"
 	factory "github.com/rosas99/monster/internal/sms/provider"
 	"github.com/rosas99/monster/internal/sms/types"
-	"github.com/segmentio/kafka-go"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type MessageConsumer struct {
@@ -29,16 +26,17 @@ func NewMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger 
 }
 
 func (l *MessageConsumer) Consume(elem any) error {
-	val := elem.(kafka.Message)
+	//val := elem.(kafka.Message)
 
-	var msg *types.TemplateMsgRequest
-	err := json.Unmarshal(val.Value, &msg)
-	if err != nil {
-		logx.Errorf("Consume val: %s error: %v", val, err)
-		return err
-	}
+	//var msg *types.TemplateMsgRequest
+	////err := json.Unmarshal(val.Value, &msg)
+	////if err != nil {
+	////	logx.Errorf("Consume val: %s error: %v", val, err)
+	////	return err
+	////}
+	//return l.handleSmsRequest(l.ctx, msg)
+	return nil
 
-	return l.handleSmsRequest(l.ctx, msg)
 }
 
 func (l *MessageConsumer) handleSmsRequest(ctx context.Context, msg *types.TemplateMsgRequest) error {

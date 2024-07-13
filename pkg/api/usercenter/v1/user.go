@@ -5,6 +5,19 @@
 
 package v1
 
+// CreateUserRequest 指定了 `POST /v1/users` 接口的请求参数.
+type CreateUserRequest struct {
+	Username string `json:"username" valid:"alphanum,required,stringlength(1|255)"`
+	Password string `json:"password" valid:"required,stringlength(6|18)"`
+	Nickname string `json:"nickname" valid:"required,stringlength(1|255)"`
+	Email    string `json:"email" valid:"required,email"`
+	Phone    string `json:"phone" valid:"required,stringlength(11|11)"`
+}
+
+type CreateUserResponse struct {
+	UserID int64 `json:"userId"`
+}
+
 // LoginRequest 指定了 `POST /login` 接口的请求参数.
 type LoginRequest struct {
 	Username string `json:"username" valid:"alphanum,required,stringlength(1|255)"`
@@ -20,9 +33,7 @@ type GetUserRequest struct {
 	Token    string `json:"token"`
 	Username string `json:"username"`
 }
-type CreateUserResponse struct {
-	Token string `json:"token"`
-}
+
 type DeleteUserRequest struct {
 	UserId int64 `json:"userId"`
 }
@@ -38,15 +49,6 @@ type ChangePasswordRequest struct {
 
 	// 新密码.
 	NewPassword string `json:"newPassword" valid:"required,stringlength(6|18)"`
-}
-
-// CreateUserRequest 指定了 `POST /v1/users` 接口的请求参数.
-type CreateUserRequest struct {
-	Username string `json:"username" valid:"alphanum,required,stringlength(1|255)"`
-	Password string `json:"password" valid:"required,stringlength(6|18)"`
-	Nickname string `json:"nickname" valid:"required,stringlength(1|255)"`
-	Email    string `json:"email" valid:"required,email"`
-	Phone    string `json:"phone" valid:"required,stringlength(11|11)"`
 }
 
 // GetUserResponse 指定了 `GET /v1/users/{name}` 接口的返回参数.
@@ -76,6 +78,7 @@ type ListUserResponse struct {
 
 // UpdateUserRequest 指定了 `PUT /v1/users/{name}` 接口的请求参数.
 type UpdateUserRequest struct {
+	Username string  `json:"username" valid:"stringlength(1|255)"`
 	Nickname *string `json:"nickname" valid:"stringlength(1|255)"`
 	Email    *string `json:"email" valid:"email"`
 	Phone    *string `json:"phone" valid:"stringlength(11|11)"`

@@ -3,12 +3,10 @@ package sms
 import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
-	"github.com/rosas99/monster/internal/pkg/client/usercenter"
 	"github.com/rosas99/monster/internal/pkg/core"
 	"github.com/rosas99/monster/internal/sms/controller/v1/interaction"
 	"github.com/rosas99/monster/internal/sms/controller/v1/message"
 	"github.com/rosas99/monster/internal/sms/controller/v1/template"
-	mw "github.com/rosas99/monster/internal/sms/middleware/auth"
 	"github.com/rosas99/monster/internal/sms/service"
 	v1api "github.com/rosas99/monster/pkg/api/sms/v1"
 )
@@ -23,13 +21,12 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 	pprof.Register(g)
 
 	// creates a user center client by GRPC
-	//usercenter.NewUserCenterServer()
 	// creates a v1 router group and adds an auth middleware.
-	v1 := g.Group("/v1", mw.BasicAuth(usercenter.GetClient()))
-	//v1 := g.Group("/v1")
+	//v1 := g.Group("/v1", mw.BasicAuth(usercenter.GetClient()))
+	v1 := g.Group("/v1")
 	{
 		// create template router group
-		templatev1 := v1.Group("/template")
+		templatev1 := v1.Group("/templates")
 		{
 			tl := template.New(svc)
 			templatev1.POST("/create", tl.Create)

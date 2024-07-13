@@ -1,91 +1,20 @@
-
-
 syntax = "proto3";
 
-package sms.v1; // 告诉编译器此文件使用什么版本的语法
-
-import "google/api/annotations.proto";
-import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
-import "validate/validate.proto";
+package usercenter.v1;
 
 option go_package = "github.com/rosas99/monster/pkg/api/usercenter/v1";
 
 service UserCenter {
-    rpc Authorize(LoginRequest) returns (LoginResponse) {
-//      option (google.api.http) = {delete: "/v1/orders"};
+    rpc Authorize(LoginRequest2) returns (LoginResponse2) {
     }
 }
 
-
-// string templateName = 1 [(validate.rules).string = {min_len: 1, max_len: 253, pattern: "[^\\s]+"}];; // 模板名称
-// string username = 1 [(validate.rules).string = {min_len: 1, max_len: 253}];
-// 这个规则要求字符串字段必须至少包含一个非空白字符，并且不能包含任何空白字符。如果字段为空或者只包含空白字符，它将不满足这个验证规则。
-message LoginRequest {
-  string username = 1  [(validate.rules).string = {min_len: 1, max_len: 253}];
+message LoginRequest2 {
+  string username = 1;
   string password = 2;
 }
 
-message LoginResponse {
+message LoginResponse2 {
   string token = 1;
 }
 
-message ChangePasswordRequest {
-  string username = 1;
-  string oldPassword = 2;
-  string newPassword = 3;
-}
-
-
-message CreateUserRequest {
-  string username = 1;
-  string password = 2;
-  string nickname = 3;
-  string email = 4;
-  string phone = 5;
-}
-
-message CreateUserResponse {
-  int64 userID = 1                                                                                                                                                             ;
-}
-
-message DeleteUserRequest{
-  int64 userID = 1                                                                                                                                                             ;
-}
-
-message GetUserRequest {
-  string userName = 1                                                                                                                                                             ;
-
-}
-
-message GetUserResponse {
-  UserInfo userInfo = 1;
-}
-
-message UserInfo {
-  string username = 1;
-  string nickname = 2;
-  string email = 3;
-  string phone = 4;
-  int64 postCount = 5;
-    google.protobuf.Timestamp createdAt = 16; // 创建时间
-    google.protobuf.Timestamp updatedAt = 17; // 更新时间
-
-}
-
-message ListUserRequest {
-  int64 offset = 1;
-  int64 limit = 2;
-}
-
-message ListUserResponse {
-  int64 totalCount = 1;
-  repeated UserInfo users = 2;
-}
-
-message UpdateUserRequest {
-  string username = 1;
-  optional string nickname = 2;
-  optional string email = 3;
-  optional  string phone = 4;
-}

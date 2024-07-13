@@ -2,7 +2,7 @@ package user
 
 import (
 	"context"
-	v1 "github.com/rosas99/monster/pkg/api/usercenter/v1"
+	v1 "github.com/rosas99/monster/pkg/api/usercenter/v2"
 )
 
 func (b *userBiz) Update(ctx context.Context, rq *v1.UpdateUserRequest) error {

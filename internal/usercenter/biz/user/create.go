@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/jinzhu/copier"
 	"github.com/rosas99/monster/internal/usercenter/model"
-	v1 "github.com/rosas99/monster/pkg/api/usercenter/v1"
+	v1 "github.com/rosas99/monster/pkg/api/usercenter/v2"
 	"regexp"
 )
 

@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
-	v1 "github.com/rosas99/monster/pkg/api/usercenter/v1"
+	"github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
 func (b *Controller) List(c *gin.Context) {

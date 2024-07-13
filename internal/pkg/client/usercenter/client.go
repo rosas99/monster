@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"sync"
 
-	v1 "github.com/rosas99/monster/pkg/api/usercenter/v1"
+	v1 "github.com/rosas99/monster/pkg/api/usercenter/v2"
 )
 
 var (

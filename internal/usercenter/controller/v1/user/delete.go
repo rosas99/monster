@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
-	v1 "github.com/rosas99/monster/pkg/api/usercenter/v1"
+	"github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
 func (b *Controller) Delete(c *gin.Context) {
@@ -16,6 +16,12 @@ func (b *Controller) Delete(c *gin.Context) {
 		core.WriteResponse(c, err, nil)
 
 	}
+
+	//if _, err := ctrl.a.RemoveNamedPolicy("p", username, "", ""); err != nil {
+	//	core.WriteResponse(c, err, nil)
+	//
+	//	return
+	//}
 	core.WriteResponse(c, nil, template)
 
 }

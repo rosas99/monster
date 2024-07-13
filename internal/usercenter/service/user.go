@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	v1 "github.com/rosas99/monster/pkg/api/usercenter/v1"
+	"github.com/rosas99/monster/pkg/api/usercenter/v1"
 	"github.com/rosas99/monster/pkg/log"
 	"google.golang.org/protobuf/types/known/emptypb"
 )

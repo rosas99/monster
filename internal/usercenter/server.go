@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"time"
 
-	pb "github.com/rosas99/monster/pkg/api/usercenter/v1"
+	pb "github.com/rosas99/monster/pkg/api/usercenter/v2"
 	"github.com/rosas99/monster/pkg/log"
 	genericoptions "github.com/rosas99/monster/pkg/options"
 	"google.golang.org/grpc"

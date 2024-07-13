@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
+	"github.com/rosas99/monster/internal/pkg/client/usercenter"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/pkg/middleware/header"
 	"github.com/rosas99/monster/internal/pkg/middleware/trace"
@@ -105,6 +106,9 @@ func (c completedConfig) New() (*SmsServer, error) {
 	gin.SetMode(gin.ReleaseMode)
 	// create a gin engine
 	g := gin.New()
+
+	usercenter.NewUserCenterServer()
+
 	installRouters(g, srv)
 	mws := []gin.HandlerFunc{
 		gin.Recovery(), header.NoCache, header.Cors, header.Secure,

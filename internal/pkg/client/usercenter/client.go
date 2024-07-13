@@ -46,6 +46,15 @@ func NewUserCenterServer() *impl {
 		defer conn.Close()
 
 		rpcclient := v1.NewUserCenterClient(conn)
+		//request := v1.LoginRequest{
+		//	Username: "123",
+		//	Password: "123",
+		//}
+		//authorize, err := rpcclient.Authorize(context.Background(), &request)
+		//if err != nil {
+		//	log.Fatalw("Authorize failed", "err", err)
+		//}
+		//fmt.Println(authorize)
 		cli = &impl{rpcclient}
 	})
 

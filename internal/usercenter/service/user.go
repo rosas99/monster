@@ -7,10 +7,6 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *UserCenterService) Authorize(ctx context.Context, rq *v1.LoginRequest) (*v1.LoginResponse, error) {
-	log.C(ctx).Infow("CreateOrder function called")
-	return s.biz.Users().Authorize(ctx, rq)
-}
 func (s *UserCenterService) ChangePassword(ctx context.Context, rq *v1.ChangePasswordRequest) error {
 	log.C(ctx).Infow("CreateOrder function called")
 	return s.biz.Users().ChangePassword(ctx, rq)

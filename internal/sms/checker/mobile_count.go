@@ -45,7 +45,7 @@ func (m *MessageCountForMobileRule) isValid(ctx context.Context, rq *types.Reque
 			return false
 		}
 		if count == 0 {
-			if err := rds.SetNX(ctx, key, 1, types.LimitLeftTime*time.Second).Err(); err != nil {
+			if err := rds.SetNX(ctx, key, 1, types.LimitLeftTime).Err(); err != nil {
 				log.Errorf("Failed to set key with expiration for key: %s, error: %v", key, err)
 				return false
 			}

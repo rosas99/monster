@@ -1,10 +1,10 @@
 package app
 
 import (
+	"github.com/rosas99/monster/internal/usercenter"
 	genericapiserver "k8s.io/apiserver/pkg/server"
 
-	"github.com/rosas99/monster/cmd/monster-nightwatch/app/options"
-	"github.com/rosas99/monster/internal/sms"
+	"github.com/rosas99/monster/cmd/monster-usercenter/app/options"
 	"github.com/rosas99/monster/pkg/app"
 )
 
@@ -39,7 +39,7 @@ func run(opts *options.Options) app.RunFunc {
 }
 
 // Run runs the specified APIServer. This should never exit.
-func Run(c *sms.Config, stopCh <-chan struct{}) error {
+func Run(c *usercenter.Config, stopCh <-chan struct{}) error {
 	server, err := c.Complete().New()
 	if err != nil {
 		return err

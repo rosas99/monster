@@ -2,7 +2,7 @@
 package options
 
 import (
-	"github.com/rosas99/monster/internal/sms"
+	"github.com/rosas99/monster/internal/usercenter"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	cliflag "k8s.io/component-base/cli/flag"
 
@@ -92,7 +92,7 @@ func (o *Options) Validate() error {
 }
 
 // ApplyTo fills up onex-fakeserver config with options.
-func (o *Options) ApplyTo(c *sms.Config) error {
+func (o *Options) ApplyTo(c *usercenter.Config) error {
 	c.GRPCOptions = o.GRPCOptions
 	c.HTTPOptions = o.HTTPOptions
 	//c.TLSOptions = o.TLSOptions
@@ -103,8 +103,8 @@ func (o *Options) ApplyTo(c *sms.Config) error {
 }
 
 // Config return a onex-fakeserver config object.
-func (o *Options) Config() (*sms.Config, error) {
-	c := &sms.Config{}
+func (o *Options) Config() (*usercenter.Config, error) {
+	c := &usercenter.Config{}
 
 	if err := o.ApplyTo(c); err != nil {
 		return nil, err

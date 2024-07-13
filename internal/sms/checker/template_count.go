@@ -33,7 +33,7 @@ func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *types.Req
 	}
 
 	if sentCount == 1 {
-		if err := m.RDS.SetNX(ctx, key, 1, types.LimitLeftTime*time.Second).Err(); err != nil {
+		if err := m.RDS.SetNX(ctx, key, 1, types.LimitLeftTime).Err(); err != nil {
 			log.Errorf("Failed to set key with expiration for key: %s, error: %v", key, err)
 			return false
 		}

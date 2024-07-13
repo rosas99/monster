@@ -2,9 +2,9 @@
 
 # onex-sms 服务配置文件
 http:
-  addr: 127.0.0.1:9093 # HTTP/HTTPS 服务监听地址
+  addr: 127.0.0.1:9090 # HTTP/HTTPS 服务监听地址
 grpc:
-  addr: 127.0.0.1:3379 # gRPC 服务监听地址
+  addr: 127.0.0.1:3380 # gRPC 服务监听地址
 tls:
   use-tls: false # 是否启用 TLS
   cert:  # TLS 证书路径
@@ -52,7 +52,7 @@ kafka:
 #  这里自定义kafka的类型 articleConsumer
 kafka2:
   brokers: 127.0.0.1:9092
-  topic: message
+  topic: audit
   timeout: 3s
 #  options提供了默认值，如果不修改，这里不用配置
   reader: # 使用默认值即可，不需要在 manifests/env.local 中配置

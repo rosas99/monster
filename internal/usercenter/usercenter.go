@@ -1,4 +1,4 @@
-package sms
+package usercenter
 
 import (
 	"github.com/gin-gonic/gin"

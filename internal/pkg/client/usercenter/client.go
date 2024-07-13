@@ -4,11 +4,11 @@ import (
 	"context"
 	"github.com/rosas99/monster/pkg/log"
 	flag "github.com/spf13/pflag"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"sync"
 
 	v1 "github.com/rosas99/monster/pkg/api/usercenter/v1"
-	"google.golang.org/grpc"
 )
 
 var (
@@ -31,7 +31,7 @@ type impl struct {
 type Impl = impl
 
 var (
-	addr  = flag.String("addr", "localhost:9090", "The address to connect to.")
+	addr  = flag.String("addr", "127.0.0.1:3380", "The address to connect to.")
 	limit = flag.Int64("limit", 10, "Limit to list users.")
 )
 

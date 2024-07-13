@@ -1,4 +1,4 @@
-package sms
+package usercenter
 
 import (
 	"github.com/gin-contrib/pprof"
@@ -32,12 +32,12 @@ func installRouters(g *gin.Engine, svc *service.UserCenterService) {
 		userv1 := v1.Group("/msg")
 		{
 			userv1.POST("", uc.Create)
-			userv1.PUT(":name/change-password", uc.ChangePassword)
+			userv1.PUT("name0/change-password", uc.ChangePassword)
 			userv1.Use(mw.Authn(), mw.Authz(authz))
-			userv1.POST(":name", uc.Get)
-			userv1.POST(":name", uc.Update)
-			userv1.POST("", uc.List)
-			userv1.POST(":name", uc.Delete)
+			userv1.GET(":name1", uc.Get)
+			userv1.PUT(":name2", uc.Update)
+			userv1.GET("", uc.List)
+			userv1.DELETE(":name3", uc.Delete)
 		}
 	}
 

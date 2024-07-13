@@ -35,7 +35,7 @@ func (m *TimeIntervalForMobileRule) isValid(ctx context.Context, rq *types.Reque
 		return false
 	}
 	if timeStampStr == "" {
-		if _, err := rds.Set(ctx, key, start, types.LimitLeftTime*time.Second).Result(); err != nil {
+		if _, err := rds.Set(ctx, key, start, types.LimitLeftTime).Result(); err != nil {
 			log.Errorf("Failed to set key with expiration for key: %s, error: %v", key, err)
 			return false
 		}

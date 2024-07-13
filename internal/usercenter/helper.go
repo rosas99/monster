@@ -1,4 +1,4 @@
-package sms
+package usercenter
 
 import (
 	genericoptions "github.com/rosas99/monster/pkg/options"

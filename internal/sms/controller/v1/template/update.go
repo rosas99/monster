@@ -6,8 +6,10 @@ import (
 )
 
 func (b *TemplateController) Update(c *gin.Context) {
-	b.svc.UpdateTemplate(c, nil)
-	// todo 临时测试用
-	core.WriteResponse(c, nil, "order")
+	ret, err := b.svc.UpdateTemplate(c, nil)
+	if err != nil {
+		return
+	}
+	core.WriteResponse(c, nil, ret)
 
 }

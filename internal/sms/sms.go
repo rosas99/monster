@@ -82,7 +82,6 @@ func (c completedConfig) New() (*SmsServer, error) {
 	factory.RegisterRule(types.TimeIntervalForMobilePerDay, checker.NewTimeIntervalForMobileRule(ds, rds))
 
 	// creates  a logger instance
-	// todo 其他options
 	l, err := logger.NewLogger(c.TemplateMessageKqOptions, c.UplinkMessageKqOptions, ds.Histories())
 	if err != nil {
 		return nil, err
@@ -127,7 +126,6 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	// todo 其他kafka options
 	logic2 := mqs.NewUplinkMessageConsumer(context.Background(), ds, idt, l)
 	mqsrv2, err := NewMqServer(c.UplinkMessageKqOptions, logic2, true)
 	if err != nil {

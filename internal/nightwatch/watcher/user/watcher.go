@@ -24,11 +24,6 @@ type userWatcher struct {
 	maxWorkers int64
 }
 
-//func (w *userWatcher) Initialize(ctx context.Context, config *interface{}) error {
-//	//TODO implement me
-//	panic("implement me")
-//}
-
 type User struct {
 	*model.UserM
 	*fsm.FSM

@@ -73,10 +73,9 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 
 func (b *messageBiz) log(rq *v1.SendMessageRequest, err error, m *model.TemplateM) {
 	hm := model.HistoryM{
-		Mobile:   maskPhone(rq.Mobile),
-		SendTime: time.Now(),
-		Status:   types.ERROR_STATUS,
-		// todo
+		Mobile:            maskPhone(rq.Mobile),
+		SendTime:          time.Now(),
+		Status:            types.ERROR_STATUS,
 		Message:           err.Error(),
 		Content:           m.Content,
 		MessageTemplateID: m.ID,

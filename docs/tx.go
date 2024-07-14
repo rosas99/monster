@@ -101,7 +101,6 @@ func main() {
 	if token != "" {
 		httpRequest.Header["X-TC-Token"] = []string{token}
 	}
-	// todo 这里修改为retry
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(httpRequest)
 	if err != nil {
@@ -117,7 +116,6 @@ func main() {
 	}
 	log.Println(body.String())
 
-	// todo
 	request := client.NewRequest()
 	response, err := request.
 		SetBody(strings.NewReader(payload)).

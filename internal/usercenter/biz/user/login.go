@@ -8,7 +8,7 @@ import (
 	"github.com/rosas99/monster/pkg/token"
 )
 
-// Login 是 Biz 接口中 `Login` 方法的实现.
+// Login 是 IBiz 接口中 `Login` 方法的实现.
 func (b *userBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error) {
 	// 获取登录用户的所有信息
 	user, err := b.ds.Users().Get(ctx, r.Username)

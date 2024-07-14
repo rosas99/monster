@@ -82,7 +82,14 @@ func (c completedConfig) New() (*SmsServer, error) {
 	factory.RegisterRule(types.TimeIntervalForMobilePerDay, checker.NewTimeIntervalForMobileRule(ds, rds))
 
 	// creates  a logger instance
-	l, err := logger.NewLogger(c.TemplateMessageKqOptions, c.UplinkMessageKqOptions, ds.Histories())
+	// todo common verify  kpi uplink
+	l, err := logger.NewLogger(
+		c.TemplateMessageKqOptions,
+		c.TemplateMessageKqOptions,
+		c.TemplateMessageKqOptions,
+		c.UplinkMessageKqOptions,
+		ds.Histories(),
+	)
 	if err != nil {
 		return nil, err
 	}

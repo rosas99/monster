@@ -11,23 +11,38 @@ type Logger struct {
 	// enabled is an atomic boolean indicating whether the logger is enabled.
 	enabled int32
 	// writer is the Kafka writer used to write log messages.
-
-	// 不同的队列使用不同的writer
-	writer  *kafka.Writer
-	writer2 *kafka.Writer
-	ds      store.HistoryStore
+	templateWriter *kafka.Writer
+	uplinkWriter   *kafka.Writer
+	uplinkWriter2  *kafka.Writer
+	uplinkWriter3  *kafka.Writer
+	ds             store.HistoryStore
 }
 
 // NewLogger creates a new kafkaLogger instance.
-func NewLogger(kafkaOpts *genericoptions.KafkaOptions, kafkaOpts2 *genericoptions.KafkaOptions, ds store.HistoryStore) (*Logger, error) {
-	writer, err := kafkaOpts.Writer()
+func NewLogger(templateOpts *genericoptions.KafkaOptions, uplinkOpts *genericoptions.KafkaOptions, uplinkOpts2 *genericoptions.KafkaOptions, uplinkOpts3 *genericoptions.KafkaOptions, ds store.HistoryStore) (*Logger, error) {
+	templateWriter, err := templateOpts.Writer()
 	if err != nil {
 		return nil, err
 	}
-	writer2, err := kafkaOpts2.Writer()
+	uplinkWriter, err := uplinkOpts.Writer()
+	if err != nil {
+		return nil, err
+	}
+	uplinkWriter2, err := uplinkOpts2.Writer()
+	if err != nil {
+		return nil, err
+	}
+	uplinkWriter3, err := uplinkOpts3.Writer()
 	if err != nil {
 		return nil, err
 	}
 
-	return &Logger{writer: writer, writer2: writer2, ds: ds}, nil
+	logger := Logger{
+		templateWriter: templateWriter,
+		uplinkWriter:   uplinkWriter,
+		uplinkWriter2:  uplinkWriter2,
+		uplinkWriter3:  uplinkWriter3,
+		ds:             ds,
+	}
+	return &logger, nil
 }

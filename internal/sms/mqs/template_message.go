@@ -3,6 +3,7 @@ package consumer
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/model"
@@ -12,15 +13,15 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type MessageConsumer struct {
+type TemplateMessageConsumer struct {
 	ctx      context.Context
 	idt      *idempotent.Idempotent
 	logger   *logger.Logger
 	provider *factory.ProviderFactory
 }
 
-func NewMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger *logger.Logger, provider *factory.ProviderFactory) *MessageConsumer {
-	return &MessageConsumer{
+func NewTemplateMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger *logger.Logger, provider *factory.ProviderFactory) *TemplateMessageConsumer {
+	return &TemplateMessageConsumer{
 		ctx:      ctx,
 		idt:      idt,
 		logger:   logger,
@@ -28,7 +29,7 @@ func NewMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger 
 	}
 }
 
-func (l *MessageConsumer) Consume(elem any) error {
+func (l *TemplateMessageConsumer) Consume(elem any) error {
 	val := elem.(kafka.Message)
 
 	var msg *types.TemplateMsgRequest
@@ -41,12 +42,12 @@ func (l *MessageConsumer) Consume(elem any) error {
 
 }
 
-func (l *MessageConsumer) handleSmsRequest(ctx context.Context, msg *types.TemplateMsgRequest) error {
+func (l *TemplateMessageConsumer) handleSmsRequest(ctx context.Context, msg *types.TemplateMsgRequest) error {
 
 	// 消息id
 	ok := l.idt.Check(ctx, msg.RequestId)
 	if !ok {
-		// 消费失败
+		return errors.New("message repeat")
 	}
 
 	m := model.TemplateM{}

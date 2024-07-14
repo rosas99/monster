@@ -3,6 +3,7 @@ package consumer
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/google/uuid"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/pkg/meta"
@@ -48,7 +49,7 @@ func (l *UplinkMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 	// 消息id
 	ok := l.idt.Check(ctx, msg.RequestId)
 	if !ok {
-		// 消费失败
+		return errors.New("message repeat")
 	}
 
 	filter := make(map[string]any)
@@ -57,7 +58,7 @@ func (l *UplinkMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 	filter["receive_time"] = msg.SendTime
 	count, _, _ := l.ds.Interactions().List(ctx, "", meta.WithFilter(filter))
 	if count > 0 {
-		// log
+		// log record has existed
 	}
 
 	var interactionM model.InteractionM

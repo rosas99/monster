@@ -10,9 +10,6 @@ import (
 	"sort"
 )
 
-// 策略模式
-// todo 参考iam注册方式
-// Rule 接口定义了验证规则需要实现的方法
 type Rule interface {
 	isValid(ctx context.Context, rq *types.Request) bool
 	getFailReason() error
@@ -23,7 +20,6 @@ type RuleFactory struct {
 }
 
 // NewRuleFactory 构造函数，初始化 RuleFactory 实例
-// todo 注册到biz 中
 func NewRuleFactory() *RuleFactory {
 	return &RuleFactory{
 		rules: make(map[string]Rule),

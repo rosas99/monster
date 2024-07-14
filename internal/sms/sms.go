@@ -121,7 +121,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	logic := mqs.NewMessageConsumer(context.Background(), idt, l, provider)
+	logic := mqs.NewTemplateMessageConsumer(context.Background(), idt, l, provider)
 	mqsrv, err := NewMqServer(c.TemplateMessageKqOptions, logic, true)
 	if err != nil {
 		return nil, err

@@ -71,6 +71,7 @@ func (l *UplinkMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 	err := l.ds.Interactions().Create(ctx, &interactionM)
 	if err != nil {
 		// log
+		return err
 	}
 	return nil
 }

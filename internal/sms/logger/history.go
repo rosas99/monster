@@ -7,11 +7,9 @@ import (
 )
 
 // LogHistory adds a new secret record in the datastore.
-func (l *Logger) LogHistory(history *model.HistoryM) error {
+func (l *Logger) LogHistory(history *model.HistoryM) {
 	err := l.ds.Create(context.Background(), history)
 	if err != nil {
 		log.Errorw(err, "Failed to create history messages")
-		return err
 	}
-	return nil
 }

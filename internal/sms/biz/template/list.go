@@ -7,7 +7,6 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 	"github.com/rosas99/monster/pkg/log"
 	"golang.org/x/sync/errgroup"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"sync"
 )
 
@@ -31,8 +30,8 @@ func (t *templateBiz) List(ctx context.Context, rq *v1.ListTemplateRequest) (*v1
 				var t v1.TemplateReply
 				_ = copier.Copy(&t, template)
 				m.Store(template.ID, &v1.TemplateReply{
-					CreatedAt: timestamppb.New(template.CreatedAt),
-					UpdatedAt: timestamppb.New(template.UpdatedAt),
+					CreatedAt: template.CreatedAt.Format("2006-01-02 15:04:05"),
+					UpdatedAt: template.UpdatedAt.Format("2006-01-02 15:04:05"),
 				})
 				return nil
 			}

@@ -6,8 +6,7 @@ import (
 )
 
 func (b *TemplateController) Update(c *gin.Context) {
-	_, _ = b.svc.GetTemplate(c, nil)
-
+	b.svc.UpdateTemplate(c, nil)
 	// todo 临时测试用
 	core.WriteResponse(c, nil, "order")
 

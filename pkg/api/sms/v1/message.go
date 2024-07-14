@@ -23,6 +23,20 @@ type AILIYUNReportListRequest struct {
 	AILIYUNReportList []AILIYUNReport `json:"msg" valid:"required,stringlength(1|255)"`
 }
 
+type AILIYUNCallbackListRequest struct {
+	AILIYUNCallbackList []AILIYUNCallbackList `json:"msg" valid:"required,stringlength(1|255)"`
+}
+
+type AILIYUNCallbackList struct {
+	PhoneNumber string `json:"phoneNumber" valid:"required,stringlength(1|255)"`
+	SendTime    string `json:"sendTime" valid:"required,stringlength(1|255)"`
+	Content     string `json:"content" valid:"required,stringlength(1|255)"`
+	SignName    string `json:"signName" valid:"required,stringlength(1|255)"`
+	DestCode    string `json:"destCode" valid:"required,stringlength(1|255)"`
+	SequenceId  string `json:"sequenceId" valid:"required,stringlength(1|255)"`
+	RequestId   string `json:"requestId" valid:"required,stringlength(1|255)"`
+}
+
 type AILIYUNReport struct {
 	PhoneNumber string `json:"phoneNumber" valid:"alphanum,required,stringlength(1|255)"`
 	SendTime    string `json:"sendTime-time" valid:"required,stringlength(1|255)"`

@@ -9,14 +9,14 @@ import (
 // AILIYUNMessageReport is a method for receive message reports.
 // It takes a AILIYUNReportListRequest as input and returns an CommonResponse or an error.
 func (s *SmsServerService) AILIYUNMessageReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) (*v1.CommonResponse, error) {
-	log.C(ctx).Infow("CreateOrder function called")
+	log.C(ctx).Infow("AILIYUNMessageReport function called")
 	return s.biz.Messages().AILIYUNReport(ctx, rq)
 }
 
 // SendMessage is a method for send a message.
 // It takes a SendMessageRequest as input and returns an CommonResponse or an error.
 func (s *SmsServerService) SendMessage(ctx context.Context, rq *v1.SendMessageRequest) (*v1.CommonResponse, error) {
-	log.C(ctx).Infow("CreateOrder function called")
+	log.C(ctx).Infow("SendMessage function called")
 	return s.biz.Messages().Send(ctx, rq)
 }
 

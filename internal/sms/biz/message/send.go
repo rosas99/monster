@@ -11,15 +11,7 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 	"time"
 
-	//"encoding/json"
-	//"github.com/jinzhu/copier"
-	//"github.com/rosas99/monster/internal/sms/model"
-	//factory "github.com/rosas99/monster/internal/sms/store/redis"
-	//"github.com/rosas99/monster/internal/sms/types"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
-	//"github.com/rosas99/monster/pkg/id"
-	//"github.com/rosas99/monster/pkg/log"
-	//"time"
 )
 
 // Send checks the template configuration and send the message to kafka queue.
@@ -27,25 +19,35 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	var templateMsgRequest types.TemplateMsgRequest
 	templateMsgRequest.RequestId = b.idt.Token(ctx)
 
-	// todo 参考cache服务如何实现
 	result, _ := b.rds.Get(ctx, factory.WrapperTemplate(rq.TemplateCode)).Result()
-	m := &model.TemplateM{}
+	tm := &model.TemplateM{}
 	if result != "" {
 		templateM := &model.TemplateM{}
 		json.Unmarshal([]byte(result), &templateM)
 
-		m = templateM
+		tm = templateM
 	} else {
 		templateM, err := b.ds.Templates().Get(ctx, rq.TemplateCode)
 		if err != nil {
-			b.logger.LogHistory(&model.HistoryM{})
+			hm := model.HistoryM{
+				Mobile:   rq.Mobile,
+				SendTime: time.Now(),
+				Status:   "fail",
+				// todo
+				//Content:           templateM.Content,
+				//MessageTemplateID: templateM.ID,
+			}
+			err = b.logger.LogHistory(&hm)
+			if err != nil {
+				return nil, err
+			}
 		}
 		jsonDataBytes, _ := json.Marshal(templateM)
 		b.rds.Set(ctx, factory.WrapperTemplate(templateM.TemplateCode), jsonDataBytes, time.Hour*24)
-		m = templateM
+		tm = templateM
 	}
 
-	if m.Type == types.VerificationMessage {
+	if tm.Type == types.VerificationMessage {
 		rq.Code = id.RandomNumeric(6)
 	}
 
@@ -78,6 +80,6 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 
 	// todo log记录短信延时
 
-	return &v1.CommonResponse{Code: m.ID}, nil
+	return &v1.CommonResponse{Code: tm.ID}, nil
 	// todo 错误不为空，返回错误码
 }

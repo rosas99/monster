@@ -23,9 +23,9 @@ type Querier interface {
 
 var (
 	addr     = pflag.StringP("address", "a", "127.0.0.1:3306", "MySQL host address.")
-	username = pflag.StringP("username", "u", "root", "Username to connect to the database.")
-	password = pflag.StringP("password", "p", "root", "Password to use when connecting to the database.")
-	dbname   = pflag.StringP("db", "d", "smsgateway", "Database name to connect to.")
+	username = pflag.StringP("username", "u", "onex", "Username to connect to the database.")
+	password = pflag.StringP("password", "p", "onex(#)666", "Password to use when connecting to the database.")
+	dbname   = pflag.StringP("db", "d", "monster", "Database name to connect to.")
 
 	// outPath   = pflag.String("outpath", "./store", "generated gorm query code's path.").
 	modelPath = pflag.String("model-pkg-path", "./model", "Generated model code's package name.")
@@ -77,9 +77,9 @@ func main() {
 
 	//g.GenerateModelAs("sms_template", "TemplateM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("uc_user", "UserM", gen.FieldIgnore("placeholder"))
-	//g.GenerateModelAs("sms_history", "HistoryM", gen.FieldIgnore("placeholder"))
+	g.GenerateModelAs("sms_history", "HistoryM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("sms_interaction", "InteractionM", gen.FieldIgnore("placeholder"))
-	g.GenerateModelAs("sms_configuration", "ConfigurationM", gen.FieldIgnore("placeholder"))
+	//g.GenerateModelAs("sms_configuration", "ConfigurationM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("api_minerset", "MinerSetM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("api_miner", "MinerM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("uc_user", "UserM", gen.FieldIgnore("placeholder"))

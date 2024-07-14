@@ -4,18 +4,18 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
+	"github.com/rosas99/monster/internal/pkg/errno"
 	"github.com/rosas99/monster/internal/usercenter/controller/v1/user"
 	mwauth "github.com/rosas99/monster/internal/usercenter/middleware/auth"
 	"github.com/rosas99/monster/internal/usercenter/service"
 	"github.com/rosas99/monster/internal/usercenter/store/mysql"
-	v1api "github.com/rosas99/monster/pkg/api/sms/v1"
 	"github.com/rosas99/monster/pkg/auth"
 )
 
 func installRouters(g *gin.Engine, svc *service.UserCenterService) {
 	// 注册 404 Handler.
 	g.NoRoute(func(c *gin.Context) {
-		core.WriteResponse(c, v1api.ErrorOrderAlreadyExists("route not found"), nil)
+		core.WriteResponse(c, errno.ErrPageNotFound, nil)
 	})
 
 	// 注册 pprof 路由
@@ -36,6 +36,7 @@ func installRouters(g *gin.Engine, svc *service.UserCenterService) {
 			userv1.POST("", uc.Create)
 			userv1.PUT(":name/change-password", uc.ChangePassword)
 			userv1.Use(mwauth.Authn(), mwauth.Authz(authz))
+			//userv1.Use(mwauth.Authz(authz))
 			userv1.GET(":name", uc.Get)
 			userv1.PUT(":name", uc.Update)
 			userv1.GET("", uc.List)

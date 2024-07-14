@@ -19,9 +19,10 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 	// register pprof handler
 	pprof.Register(g)
 
-	// creates a user center client by GRPC
 	// creates a v1 router group and adds an auth middleware.
-	//v1 := g.Group("/v1", mw.BasicAuth(usercenter.GetClient()))
+	// get a grpc usercenter client
+	// todo 开启认证
+	// v1 := g.Group("/v1", mw.BasicAuth(usercenter.GetClient()))
 	v1 := g.Group("/v1")
 	{
 		// create template router group

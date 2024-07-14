@@ -7,7 +7,7 @@ import (
 
 // Delete 是 OrderBiz 接口中 `Delete` 方法的实现.
 func (b *userBiz) Delete(ctx context.Context, rq *v1.DeleteUserRequest) error {
-	if err := b.ds.Users().Delete(ctx, rq.UserId); err != nil {
+	if err := b.ds.Users().Delete(ctx, rq.Username); err != nil {
 		return err
 	}
 

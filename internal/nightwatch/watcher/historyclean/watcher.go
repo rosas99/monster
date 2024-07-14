@@ -30,10 +30,10 @@ func (w *historiesCleanWatcher) Run() {
 		if history.CreatedAt.Unix() < time.Now().AddDate(-1, 0, 0).Unix() {
 			err := w.store.Sms().Histories().Delete(context.TODO(), history.ID)
 			if err != nil {
-				//log.Warnw("Failed to delete secret from database", "userID", history.ID, "name", secret.Name)
+				log.Warnw("Failed to delete secret from database", "userID", history.ID, "name", "secret.Name")
 				continue
 			}
-			//log.Infow("Successfully deleted secret from database", "userID", history.ID, "name", secret.Name)
+			log.Infow("Successfully deleted secret from database", "userID", history.ID, "name", "secret.Name")
 		}
 	}
 }

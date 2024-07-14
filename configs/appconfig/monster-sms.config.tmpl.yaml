@@ -31,7 +31,7 @@ log: # 使用默认值即可，不需要在 manifests/env.local 中配置
 ailiyun:
   url: https://sms.aliyuncs.com
 
-kafka:
+templateKafka:
   brokers: 127.0.0.1:9092
   topic: test
   timeout: 3s
@@ -63,7 +63,7 @@ kafka:
     max-attempts: 3
     group-id: testg
 #  这里自定义kafka的类型 articleConsumer
-kafka2:
+uplinkKafka:
   brokers: 127.0.0.1:9092
   topic: test
   timeout: 3s

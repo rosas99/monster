@@ -4,18 +4,18 @@ import (
 	"context"
 	"errors"
 	"github.com/jinzhu/copier"
+	"github.com/rosas99/monster/internal/pkg/errno"
 	"github.com/rosas99/monster/internal/sms/types"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
 )
 
 // Get retrieves a single template from the database.
 func (t *templateBiz) Get(ctx context.Context, rq *v1.GetTemplateRequest) (*v1.TemplateReply, error) {
-	templateM, err := t.ds.Templates().Get(ctx, rq.GetId())
+	templateM, err := t.ds.Templates().Get(ctx, rq.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, v1.ErrorOrderNotFound(err.Error())
+			return nil, errno.ErrPageNotFound
 		}
 
 		return nil, err
@@ -23,8 +23,8 @@ func (t *templateBiz) Get(ctx context.Context, rq *v1.GetTemplateRequest) (*v1.T
 
 	var template v1.TemplateReply
 	_ = copier.Copy(&template, templateM)
-	template.CreatedAt = timestamppb.New(templateM.CreatedAt)
-	template.UpdatedAt = timestamppb.New(templateM.UpdatedAt)
+	template.CreatedAt = templateM.CreatedAt.Format("2006-01-02 15:04:05")
+	template.UpdatedAt = templateM.UpdatedAt.Format("2006-01-02 15:04:05")
 
 	_, cfgList, err := t.ds.Configurations().List(ctx, templateM.TemplateCode)
 	for _, m := range cfgList {

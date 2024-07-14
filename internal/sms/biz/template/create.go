@@ -14,29 +14,30 @@ func (t *templateBiz) Create(ctx context.Context, rq *v1.CreateTemplateRequest) 
 	var templateM model.TemplateM
 	_ = copier.Copy(&templateM, rq)
 	if err := t.ds.Templates().Create(ctx, &templateM); err != nil {
-		return nil, v1.ErrorOrderCreateFailed("create order failed: %v", err)
+		return nil, err
 	}
 
 	configurationsM := []*model.ConfigurationM{
 		{
 			ConfigKey:    types.MessageCountForMobilePerDay,
-			ConfigValue:  rq.GetMobileCount(),
-			TemplateCode: rq.GetTemplateCode(),
+			ConfigValue:  rq.MobileCount,
+			TemplateCode: rq.TemplateCode,
 		},
 		{
 			ConfigKey:    types.MessageCountForTemplatePerDay,
-			ConfigValue:  rq.GetTemplateCount(),
-			TemplateCode: rq.GetTemplateCode(),
+			ConfigValue:  rq.TemplateCount,
+			TemplateCode: rq.TemplateCode,
 		},
 		{
 			ConfigKey:    types.TimeIntervalForMobilePerDay,
-			ConfigValue:  rq.GetTimeInterval(),
-			TemplateCode: rq.GetTemplateCode(),
+			ConfigValue:  rq.TimeInterval,
+			TemplateCode: rq.TemplateCode,
 		}}
 
 	if err := t.ds.Configurations().CreateBatch(ctx, configurationsM); err != nil {
-		return nil, v1.ErrorOrderCreateFailed("create order failed: %v", err)
+		return nil, err
+
 	}
 
-	return &v1.CreateTemplateResponse{OrderID: templateM.ID}, nil
+	return &v1.CreateTemplateResponse{OrderID: templateM.TemplateCode}, nil
 }

@@ -2,14 +2,12 @@ package service
 
 import (
 	"github.com/rosas99/monster/internal/sms/biz"
-	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
 // SmsServerService is a struct that implements the v1.UnimplementedSmsServerServer interface
 // and holds the business logic, represented by a IBiz instance.
 type SmsServerService struct {
 	biz biz.IBiz
-	v1.UnimplementedSmsServerServer
 }
 
 // NewSmsServerService is a constructor function that takes a IBiz instance

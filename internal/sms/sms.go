@@ -25,16 +25,17 @@ import (
 
 // Config represents the configuration of the service.
 type Config struct {
-	GRPCOptions       *genericoptions.GRPCOptions
-	HTTPOptions       *genericoptions.HTTPOptions
-	TLSOptions        *genericoptions.TLSOptions
-	MySQLOptions      *genericoptions.MySQLOptions
-	RedisOptions      *genericoptions.RedisOptions
-	KafkaOptions      *genericoptions.KafkaOptions
-	Address           string
-	Accounts          map[string]string
-	AiliyunUrl        string
-	AiliyunSmsOptions *ailiyunoptions.SmsOptions
+	GRPCOptions              *genericoptions.GRPCOptions
+	HTTPOptions              *genericoptions.HTTPOptions
+	TLSOptions               *genericoptions.TLSOptions
+	MySQLOptions             *genericoptions.MySQLOptions
+	RedisOptions             *genericoptions.RedisOptions
+	TemplateMessageKqOptions *genericoptions.KafkaOptions
+	UplinkMessageKqOptions   *genericoptions.KafkaOptions
+	Address                  string
+	Accounts                 map[string]string
+	AiliyunUrl               string
+	AiliyunSmsOptions        *ailiyunoptions.SmsOptions
 }
 
 // Complete fills in any fields not set that are required to have valid data. It's mutating the receiver.
@@ -49,7 +50,6 @@ type completedConfig struct {
 // SmsServer represents the fake server.
 type SmsServer struct {
 	httpsrv Server
-	grpcsrv Server
 	mqsrv   MqServer
 	mqsrv2  MqServer
 	config  completedConfig
@@ -83,7 +83,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 
 	// creates  a logger instance
 	// todo 其他options
-	l, err := logger.NewLogger(c.KafkaOptions, c.KafkaOptions, ds.Histories())
+	l, err := logger.NewLogger(c.TemplateMessageKqOptions, c.UplinkMessageKqOptions, ds.Histories())
 	if err != nil {
 		return nil, err
 	}
@@ -121,29 +121,23 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	grpcsrv, err := NewGRPCServer(c.GRPCOptions, c.TLSOptions, srv)
-	if err != nil {
-		return nil, err
-	}
-
 	logic := mqs.NewMessageConsumer(context.Background(), idt, l, provider)
-	mqsrv, err := NewMqServer(c.KafkaOptions, logic, true)
+	mqsrv, err := NewMqServer(c.TemplateMessageKqOptions, logic, true)
 	if err != nil {
 		return nil, err
 	}
 
 	// todo 其他kafka options
 	logic2 := mqs.NewUplinkMessageConsumer(context.Background(), ds, idt, l)
-	mqsrv2, err := NewMqServer(c.KafkaOptions, logic2, true)
+	mqsrv2, err := NewMqServer(c.UplinkMessageKqOptions, logic2, true)
 	if err != nil {
 		return nil, err
 	}
 	go mqsrv.RunOrDie()
-	//go mqsrv2.RunOrDie()
+	go mqsrv2.RunOrDie()
 
 	// Need start grpc server first. http server depends on grpc sever.
-	go grpcsrv.RunOrDie()
-	return &SmsServer{grpcsrv: grpcsrv, httpsrv: httpsrv, mqsrv: mqsrv, mqsrv2: mqsrv2, config: c}, nil
+	return &SmsServer{httpsrv: httpsrv, mqsrv: mqsrv, mqsrv2: mqsrv2, config: c}, nil
 }
 
 // Run is a method of the SmsServer struct that starts the server.
@@ -159,7 +153,6 @@ func (s *SmsServer) Run(stopCh <-chan struct{}) error {
 	// The most gracefully way is to shut down the dependent service first,
 	// and then shutdown the depended on service.
 	s.httpsrv.GracefulStop()
-	s.grpcsrv.GracefulStop()
 	s.mqsrv.GracefulStop()
 	s.mqsrv2.GracefulStop()
 

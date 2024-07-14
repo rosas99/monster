@@ -19,6 +19,11 @@ const (
 	VerificationMessage = "VERIFICATION_MESSAGE"
 )
 
+const (
+	ERROR_STATUS   = "ERROR"
+	SUCCESS_STATUS = "SUCCESS"
+)
+
 // Request  模拟验证请求
 type Request struct {
 	Mobile       string

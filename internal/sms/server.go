@@ -7,13 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	kafkaconnector "github.com/rosas99/monster/pkg/streams/connector/kafka"
 	"github.com/segmentio/kafka-go"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/reflection"
-	"net"
 	"net/http"
 	"time"
 
-	pb "github.com/rosas99/monster/pkg/api/sms/v1"
 	"github.com/rosas99/monster/pkg/log"
 	genericoptions "github.com/rosas99/monster/pkg/options"
 	"google.golang.org/grpc"
@@ -75,45 +71,6 @@ func (s *HTTPServer) GracefulStop() {
 	if err := s.srv.Shutdown(ctx); err != nil {
 		log.Errorw(err, "Failed to gracefully shutdown http(s) server")
 	}
-}
-
-func NewGRPCServer(
-	grpcOptions *genericoptions.GRPCOptions,
-	tlsOptions *genericoptions.TLSOptions,
-	srv pb.SmsServerServer,
-) (*GRPCServer, error) {
-	var dialOptions []grpc.ServerOption
-	if tlsOptions != nil && tlsOptions.UseTLS {
-		tlsConfig, err := tlsOptions.TLSConfig()
-		if err != nil {
-			return nil, err
-		}
-
-		dialOptions = append(dialOptions, grpc.Creds(credentials.NewTLS(tlsConfig)))
-	}
-
-	grpcsrv := grpc.NewServer(dialOptions...)
-	pb.RegisterSmsServerServer(grpcsrv, srv)
-	reflection.Register(grpcsrv)
-
-	return &GRPCServer{srv: grpcsrv, opts: grpcOptions}, nil
-}
-
-func (s *GRPCServer) RunOrDie() {
-	lis, err := net.Listen("tcp", s.opts.Addr)
-	if err != nil {
-		log.Fatalw("Failed to listen", "err", err)
-	}
-
-	log.Infow("Start to listening the incoming requests on grpc address", "addr", s.opts.Addr)
-	if err := s.srv.Serve(lis); err != nil {
-		log.Fatalw(err.Error())
-	}
-}
-
-func (s *GRPCServer) GracefulStop() {
-	log.Infof("Gracefully stop grpc server")
-	s.srv.GracefulStop()
 }
 
 func NewMqServer(

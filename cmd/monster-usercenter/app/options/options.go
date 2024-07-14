@@ -13,7 +13,7 @@ import (
 
 const (
 	// UserAgent is the userAgent name when starting onex-sms server.
-	UserAgent = "monster-nightwatch"
+	UserAgent = "monster-usercenter"
 )
 
 var _ app.CliOptions = (*Options)(nil)
@@ -26,11 +26,7 @@ type Options struct {
 	MySQLOptions *genericoptions.MySQLOptions `json:"mysql" mapstructure:"mysql"`
 	//Redis options for configuring Redis related options.
 	RedisOptions *genericoptions.RedisOptions `json:"redis" mapstructure:"redis"`
-	// Kafka options for configuring Kafka related options.
-	KafkaOptions *genericoptions.KafkaOptions `json:"kafka1" mapstructure:"kafka"`
-	// Kafka options for configuring Kafka related options.
-	//KafkaOptions2 *genericoptions.KafkaOptions `json:"kafka2" mapstructure:"kafka2"`
-	Log *log.Options `json:"log" mapstructure:"log"`
+	Log          *log.Options                 `json:"log" mapstructure:"log"`
 }
 
 // NewOptions returns initialized Options.
@@ -41,9 +37,7 @@ func NewOptions() *Options {
 		//TLSOptions:    genericoptions.NewTLSOptions(),
 		MySQLOptions: genericoptions.NewMySQLOptions(),
 		RedisOptions: genericoptions.NewRedisOptions(),
-		KafkaOptions: genericoptions.NewKafkaOptions(),
-		//KafkaOptions2: genericoptions.NewKafkaOptions(),
-		Log: log.NewOptions(),
+		Log:          log.NewOptions(),
 	}
 
 	return o
@@ -59,8 +53,6 @@ func (o *Options) Flags() (fss cliflag.NamedFlagSets) {
 	//o.MySQLOptions.AddFlags(fss.FlagSet("mysql"))
 	//o.Log.AddFlags(fss.FlagSet("log"))
 	//o.RedisOptions.AddFlags(fss.FlagSet("redis"))
-	//o.KafkaOptions1.AddFlags(fss.FlagSet("kafka"))
-	//o.KafkaOptions2.AddFlags(fss.FlagSet("kafka"))
 	// Note: the weird ""+ in below lines seems to be the only way to get gofmt to
 	// arrange these text blocks sensibly. Grrr.
 	//fs := fss.FlagSet("misc")
@@ -87,7 +79,6 @@ func (o *Options) Validate() error {
 	//errs = append(errs, o.Metrics.Validate()...)
 	errs = append(errs, o.Log.Validate()...)
 	errs = append(errs, o.RedisOptions.Validate()...)
-	errs = append(errs, o.KafkaOptions.Validate()...)
 	return utilerrors.NewAggregate(errs)
 }
 
@@ -98,7 +89,6 @@ func (o *Options) ApplyTo(c *usercenter.Config) error {
 	//c.TLSOptions = o.TLSOptions
 	c.MySQLOptions = o.MySQLOptions
 	c.RedisOptions = o.RedisOptions
-	c.KafkaOptions = o.KafkaOptions
 	return nil
 }
 

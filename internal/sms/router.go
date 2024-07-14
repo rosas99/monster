@@ -4,16 +4,16 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
+	"github.com/rosas99/monster/internal/pkg/errno"
 	"github.com/rosas99/monster/internal/sms/controller/v1/message"
 	"github.com/rosas99/monster/internal/sms/controller/v1/template"
 	"github.com/rosas99/monster/internal/sms/service"
-	v1api "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
 func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 	// register 404 Handler.
 	g.NoRoute(func(c *gin.Context) {
-		core.WriteResponse(c, v1api.ErrorOrderAlreadyExists("route not found"), nil)
+		core.WriteResponse(c, errno.ErrPageNotFound, nil)
 	})
 
 	// register pprof handler

@@ -22,20 +22,13 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	if err != nil && result != "" {
 		json.Unmarshal([]byte(result), tm)
 	} else {
-		templateM, err := b.ds.Templates().Get(ctx, rq.TemplateCode)
-		if err != nil { // todo gorm record not found
-			return nil, err
+		templateM, err2 := b.ds.Templates().Get(ctx, rq.TemplateCode)
+		if err2 != nil { // todo gorm record not found
+			return nil, err2
 		}
 		jsonDataBytes, _ := json.Marshal(templateM)
 		b.rds.Set(ctx, factory.WrapperTemplate(templateM.TemplateCode), jsonDataBytes, time.Hour*24)
 		tm = templateM
-	}
-
-	if tm.Type == types.VerificationMessage {
-		rq.Code = id.RandomNumeric(6)
-		// 缓存短信验证码
-		key := factory.WrapperCode(rq.TemplateCode, rq.Code)
-		b.rds.Set(ctx, key, rq.Code, time.Hour*24)
 	}
 
 	var templateMsgRequest types.TemplateMsgRequest
@@ -46,15 +39,22 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 
 	err = b.rule.CheckRules(ctx, cfgList)
 	if err != nil {
-		b.log(rq)
+		b.log(rq, err, tm)
 		// 记录错误码和错误类型
 		return nil, err
 	}
 
+	if tm.Type == types.VerificationMessage {
+		rq.Code = id.RandomNumeric(6)
+		key := factory.WrapperCode(rq.TemplateCode, rq.Code)
+		b.rds.Set(ctx, key, rq.Code, time.Hour*24)
+	}
+
 	// todo 分类型
-	err = b.logger.WriteCommonMessage(ctx, &templateMsgRequest)
+	err = b.logger.WriteMessage(ctx, &templateMsgRequest, tm.Type)
 	if err != nil {
 		log.C(ctx).Infof("test")
+		b.log(rq, err, tm)
 		return nil, err
 	}
 
@@ -64,8 +64,6 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	}
 
 	b.logger.LogKpi(message)
-	// 组装好code和msg
-	b.log(rq)
 
 	// todo log记录短信延时
 
@@ -73,14 +71,23 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	// todo 错误不为空，返回错误码
 }
 
-func (b *messageBiz) log(rq *v1.SendMessageRequest) {
+func (b *messageBiz) log(rq *v1.SendMessageRequest, err error, m *model.TemplateM) {
 	hm := model.HistoryM{
-		Mobile:   rq.Mobile,
+		Mobile:   maskPhone(rq.Mobile),
 		SendTime: time.Now(),
-		Status:   "fail",
+		Status:   types.ERROR_STATUS,
 		// todo
-		//Content:           templateM.Content,
-		//MessageTemplateID: templateM.ID,
+		Message:           err.Error(),
+		Content:           m.Content,
+		MessageTemplateID: m.ID,
 	}
 	b.logger.LogHistory(&hm)
+}
+
+func maskPhone(phone string) string {
+	if len(phone) < 8 {
+		return phone // 如果电话号码长度不足8位，则直接返回
+	}
+	mask := "****"
+	return phone[:3] + mask + phone[7:]
 }

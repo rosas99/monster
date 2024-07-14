@@ -7,7 +7,7 @@ import (
 
 // Delete deletes a template from the database.
 func (t *templateBiz) Delete(ctx context.Context, rq *v1.DeleteTemplateRequest) error {
-	if err := t.ds.Templates().Delete(ctx, rq.Id); err != nil {
+	if err := t.ds.Templates().Delete(ctx, rq.ID); err != nil {
 		return err
 	}
 

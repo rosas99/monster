@@ -28,11 +28,10 @@ type Options struct {
 	//Redis options for configuring Redis related options.
 	RedisOptions *genericoptions.RedisOptions `json:"redis" mapstructure:"redis"`
 	// Kafka options for configuring Kafka related options.
-	KafkaOptions *genericoptions.KafkaOptions `json:"kafka1" mapstructure:"kafka"`
-	// Kafka options for configuring Kafka related options.
-	//KafkaOptions2 *genericoptions.KafkaOptions `json:"kafka2" mapstructure:"kafka2"`
-	Log              *log.Options        `json:"log" mapstructure:"log"`
-	AliyunSmsOptions *ailiyun.SmsOptions `json:"ailiyun" mapstructure:"ailiyun"`
+	TemplateKafkaOptions *genericoptions.KafkaOptions `json:"templateKafka" mapstructure:"templateKafka"`
+	UplinkKafkaOptions   *genericoptions.KafkaOptions `json:"uplinkKafka" mapstructure:"uplinkKafka"`
+	Log                  *log.Options                 `json:"log" mapstructure:"log"`
+	AliyunSmsOptions     *ailiyun.SmsOptions          `json:"ailiyun" mapstructure:"ailiyun"`
 }
 
 // NewOptions returns initialized Options.
@@ -41,12 +40,12 @@ func NewOptions() *Options {
 		GRPCOptions: genericoptions.NewGRPCOptions(),
 		HTTPOptions: genericoptions.NewHTTPOptions(),
 		//TLSOptions:    genericoptions.NewTLSOptions(),
-		MySQLOptions: genericoptions.NewMySQLOptions(),
-		RedisOptions: genericoptions.NewRedisOptions(),
-		KafkaOptions: genericoptions.NewKafkaOptions(),
-		//KafkaOptions2: genericoptions.NewKafkaOptions(),
-		Log:              log.NewOptions(),
-		AliyunSmsOptions: ailiyun.NewSmsOptions(),
+		MySQLOptions:         genericoptions.NewMySQLOptions(),
+		RedisOptions:         genericoptions.NewRedisOptions(),
+		TemplateKafkaOptions: genericoptions.NewKafkaOptions(),
+		UplinkKafkaOptions:   genericoptions.NewKafkaOptions(),
+		Log:                  log.NewOptions(),
+		AliyunSmsOptions:     ailiyun.NewSmsOptions(),
 	}
 
 	return o
@@ -90,7 +89,8 @@ func (o *Options) Validate() error {
 	//errs = append(errs, o.Metrics.Validate()...)
 	errs = append(errs, o.Log.Validate()...)
 	errs = append(errs, o.RedisOptions.Validate()...)
-	errs = append(errs, o.KafkaOptions.Validate()...)
+	errs = append(errs, o.TemplateKafkaOptions.Validate()...)
+	errs = append(errs, o.UplinkKafkaOptions.Validate()...)
 	return utilerrors.NewAggregate(errs)
 }
 
@@ -101,7 +101,8 @@ func (o *Options) ApplyTo(c *sms.Config) error {
 	//c.TLSOptions = o.TLSOptions
 	c.MySQLOptions = o.MySQLOptions
 	c.RedisOptions = o.RedisOptions
-	c.KafkaOptions = o.KafkaOptions
+	c.TemplateMessageKqOptions = o.TemplateKafkaOptions
+	c.UplinkMessageKqOptions = o.UplinkKafkaOptions
 	c.AiliyunSmsOptions = o.AliyunSmsOptions
 	return nil
 }

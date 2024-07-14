@@ -32,22 +32,22 @@ func (t *templateBiz) Update(ctx context.Context, rq *v1.UpdateTemplateRequest) 
 	configurationsM := []*model.ConfigurationM{
 		{
 			ConfigKey:    types.MessageCountForMobilePerDay,
-			ConfigValue:  rq.GetMobileCount(),
-			TemplateCode: rq.GetTemplateCode(),
+			ConfigValue:  rq.MobileCount,
+			TemplateCode: rq.TemplateCode,
 		},
 		{
 			ConfigKey:    types.MessageCountForTemplatePerDay,
-			ConfigValue:  rq.GetTemplateCount(),
-			TemplateCode: rq.GetTemplateCode(),
+			ConfigValue:  rq.TemplateCount,
+			TemplateCode: rq.TemplateCode,
 		},
 		{
 			ConfigKey:    types.TimeIntervalForMobilePerDay,
-			ConfigValue:  rq.GetTimeInterval(),
-			TemplateCode: rq.GetTemplateCode(),
+			ConfigValue:  rq.TimeInterval,
+			TemplateCode: rq.TemplateCode,
 		}}
 	if err := t.ds.Configurations().CreateBatch(ctx, configurationsM); err != nil {
 		// todo 错误码定义
-		return v1.ErrorOrderCreateFailed("create order failed: %v", err)
+		return err
 	}
 	return err
 }

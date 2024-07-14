@@ -68,10 +68,12 @@ type ListTemplateRequest struct {
 }
 
 type ListTemplateResponse struct {
+	TotalCount int64            `json:"totalCount"`
+	Templates  []*TemplateReply `json:"templates"`
 }
 type GetTemplateRequest struct {
 	ID string `json:"id" valid:"required,stringlength(1|255)"`
 }
 type DeleteTemplateRequest struct {
-	ID string `json:"id" valid:"required,stringlength(1|255)"`
+	ID int64 `json:"id" valid:"required,stringlength(1|255)"`
 }

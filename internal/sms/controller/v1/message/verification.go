@@ -6,7 +6,7 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-func (b *MessageController) CodeVerify(c *gin.Context) {
+func (b *Controller) CodeVerify(c *gin.Context) {
 	var r v1.VerifyCodeRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)

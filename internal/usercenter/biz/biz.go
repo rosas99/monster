@@ -11,7 +11,7 @@ import (
 
 // IBiz 定义了 Biz 层需要实现的方法.
 type IBiz interface {
-	Users() user.UserBiz
+	Users() user.Biz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -30,6 +30,6 @@ func NewBiz(ds store.IStore, rds *redis.Client) *Biz {
 }
 
 // Orders 返回一个实现了 OrderBiz 接口的实例.
-func (b *Biz) Users() user.UserBiz {
+func (b *Biz) Users() user.Biz {
 	return user.New(b.ds, b.rds)
 }

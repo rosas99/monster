@@ -10,14 +10,14 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-// MessageBiz defines methods used to handle message-related functions.
-type MessageBiz interface {
+// IBiz defines methods used to handle message-related functions.
+type IBiz interface {
 	Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.CommonResponse, error)
 	CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (*v1.CommonResponse, error)
 	AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) (*v1.CommonResponse, error)
 }
 
-// messageBiz struct implements the MessageBiz interface.
+// messageBiz struct implements the IBiz interface.
 type messageBiz struct {
 	ds     store.IStore
 	logger *logger.Logger
@@ -26,7 +26,7 @@ type messageBiz struct {
 	idt    *idempotent.Idempotent
 }
 
-var _ MessageBiz = (*messageBiz)(nil)
+var _ IBiz = (*messageBiz)(nil)
 
 // New returns a new instance of messageBiz.
 func New(ds store.IStore, logger *logger.Logger, rds *redis.Client, idt *idempotent.Idempotent) *messageBiz {

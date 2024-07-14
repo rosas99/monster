@@ -3,17 +3,11 @@ package template
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
-	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-func (b *TemplateController) Get(c *gin.Context) {
-	var r v1.GetTemplateRequest
+func (b *Controller) Get(c *gin.Context) {
 
-	//param := c.Param("id")
-	//r.Id = param
-	//fmt.Print(r.Id)
-
-	template, err := b.svc.GetTemplate(c, &r)
+	template, err := b.svc.GetTemplate(c, c.Param("id"))
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

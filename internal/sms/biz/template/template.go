@@ -7,16 +7,16 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-// TemplateBiz defines methods used to handle template request.
-type TemplateBiz interface {
+// IBiz defines methods used to handle template request.
+type IBiz interface {
 	Create(ctx context.Context, rq *v1.CreateTemplateRequest) (*v1.CreateTemplateResponse, error)
-	Get(ctx context.Context, rq *v1.GetTemplateRequest) (*v1.TemplateReply, error)
+	Get(ctx context.Context, id int64) (*v1.TemplateReply, error)
 	List(ctx context.Context, rq *v1.ListTemplateRequest) (*v1.ListTemplateResponse, error)
-	Update(ctx context.Context, rq *v1.UpdateTemplateRequest) error
-	Delete(ctx context.Context, rq *v1.DeleteTemplateRequest) error
+	Update(ctx context.Context, id int64, rq *v1.UpdateTemplateRequest) error
+	Delete(ctx context.Context, id int64) error
 }
 
-// templateBiz struct implements the TemplateBiz interface.
+// templateBiz struct implements the IBiz interface.
 type templateBiz struct {
 	ds  store.IStore
 	rds *redis.Client

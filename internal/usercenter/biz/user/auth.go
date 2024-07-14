@@ -7,7 +7,7 @@ import (
 	"github.com/rosas99/monster/pkg/token"
 )
 
-// ChangePassword 是 UserBiz 接口中 `ChangePassword` 方法的实现.
+// ChangePassword 是 Biz 接口中 `ChangePassword` 方法的实现.
 func (b *userBiz) Authorize(ctx context.Context, rq *v1.LoginRequest2) (*v1.LoginResponse2, error) {
 	// 只需要认证，在修改用户时才需要授权
 	username, err := token.Parse(rq.Username, "config.key")

@@ -10,12 +10,12 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-// InteractionBiz defines methods used to handle uplink message request.
-type InteractionBiz interface {
+// IBiz defines methods used to handle uplink message request.
+type IBiz interface {
 	AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) (*v1.CommonResponse, error)
 }
 
-// interactionBiz struct implements the InteractionBiz interface.
+// interactionBiz struct implements the IBiz interface.
 type interactionBiz struct {
 	ds     store.IStore
 	logger *logger.Logger
@@ -24,7 +24,7 @@ type interactionBiz struct {
 	idt    *idempotent.Idempotent
 }
 
-var _ InteractionBiz = (*interactionBiz)(nil)
+var _ IBiz = (*interactionBiz)(nil)
 
 // New returns a new instance of interactionBiz.
 func New(ds store.IStore, logger *logger.Logger, rds *redis.Client, idt *idempotent.Idempotent) *interactionBiz {

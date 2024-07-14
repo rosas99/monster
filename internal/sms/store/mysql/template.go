@@ -37,9 +37,9 @@ func (t *templateStore) Delete(ctx context.Context, id int64) error {
 }
 
 // Get retrieves a template record from the datastore.
-func (t *templateStore) Get(ctx context.Context, templateCode string) (*model.TemplateM, error) {
+func (t *templateStore) Get(ctx context.Context, id string) (*model.TemplateM, error) {
 	var template model.TemplateM
-	if err := t.db.Where("template_code = ?", templateCode).First(&template).Error; err != nil {
+	if err := t.db.Where("id = ?", id).First(&template).Error; err != nil {
 		return nil, err
 	}
 	return &template, nil

@@ -26,14 +26,14 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 	v1 := g.Group("/v1")
 	{
 		// create template router group
-		templatev1 := v1.Group("/templates")
+		templatev1 := v1.Group("/template")
 		{
 			tl := template.New(svc)
-			templatev1.POST("/create", tl.Create)
-			templatev1.POST("/update", tl.Update)
+			templatev1.POST("", tl.Create)
+			templatev1.PUT("", tl.Update)
 			templatev1.GET("/:id", tl.Get)
-			templatev1.POST("/getList", tl.List)
-			templatev1.POST("/delete", tl.Delete)
+			templatev1.GET("", tl.List)
+			templatev1.DELETE("/:id", tl.Delete)
 		}
 
 		// creates message router group

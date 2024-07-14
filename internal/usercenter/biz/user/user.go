@@ -7,7 +7,7 @@ import (
 	"github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
-type UserBiz interface {
+type Biz interface {
 	Authorize(ctx context.Context, rq *v1.LoginRequest2) (*v1.LoginResponse2, error)
 	ChangePassword(ctx context.Context, r *v1.ChangePasswordRequest) error
 	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)

@@ -6,10 +6,9 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-func (b *TemplateController) Create(c *gin.Context) {
+func (b *Controller) Create(c *gin.Context) {
 	var r v1.CreateTemplateRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
-		// 使用错误码
 		core.WriteResponse(c, err, nil)
 		return
 	}

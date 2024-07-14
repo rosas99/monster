@@ -15,9 +15,9 @@ import (
 
 // IBiz defines a set of methods for returning interfaces that the biz struct implements.
 type IBiz interface {
-	Templates() template.TemplateBiz
-	Messages() message.MessageBiz
-	Interaction() interaction.InteractionBiz
+	Templates() template.IBiz
+	Messages() message.IBiz
+	Interaction() interaction.IBiz
 }
 
 type biz struct {
@@ -36,17 +36,17 @@ func NewBiz(ds store.IStore, rds *redis.Client, idt *idempotent.Idempotent, logg
 	return &biz{ds: ds, rds: rds, idt: idt, logger: logger}
 }
 
-// Templates returns a new instance of the TemplateBiz interface.
-func (b *biz) Templates() template.TemplateBiz {
+// Templates returns a new instance of the IBiz interface.
+func (b *biz) Templates() template.IBiz {
 	return template.New(b.ds, b.rds)
 }
 
-// Messages returns a new instance of the MessageBiz interface.
-func (b *biz) Messages() message.MessageBiz {
+// Messages returns a new instance of the IBiz interface.
+func (b *biz) Messages() message.IBiz {
 	return message.New(b.ds, b.logger, b.rds, b.idt)
 }
 
-// Interaction returns a new instance of the InteractionBiz interface.
-func (b *biz) Interaction() interaction.InteractionBiz {
+// Interaction returns a new instance of the IBiz interface.
+func (b *biz) Interaction() interaction.IBiz {
 	return interaction.New(b.ds, b.logger, b.rds, b.idt)
 }

@@ -8,8 +8,8 @@ import (
 )
 
 // Update updates a template's information in the database.
-func (t *templateBiz) Update(ctx context.Context, rq *v1.UpdateTemplateRequest) error {
-	orderM, err := t.ds.Templates().Get(ctx, rq.TemplateCode)
+func (t *templateBiz) Update(ctx context.Context, id int64, rq *v1.UpdateTemplateRequest) error {
+	orderM, err := t.ds.Templates().Get(ctx, id)
 	if err != nil {
 		return err
 	}

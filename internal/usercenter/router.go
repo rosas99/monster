@@ -13,7 +13,6 @@ import (
 )
 
 func installRouters(g *gin.Engine, svc *service.UserCenterService) {
-	// 注册 404 Handler.
 	g.NoRoute(func(c *gin.Context) {
 		core.WriteResponse(c, errno.ErrPageNotFound, nil)
 	})
@@ -31,12 +30,11 @@ func installRouters(g *gin.Engine, svc *service.UserCenterService) {
 
 	v1 := g.Group("/v1")
 	{
-		userv1 := v1.Group("/users")
+		userv1 := v1.Group("/user")
 		{
 			userv1.POST("", uc.Create)
 			userv1.PUT(":name/change-password", uc.ChangePassword)
 			userv1.Use(mwauth.Authn(), mwauth.Authz(authz))
-			//userv1.Use(mwauth.Authz(authz))
 			userv1.GET(":name", uc.Get)
 			userv1.PUT(":name", uc.Update)
 			userv1.GET("", uc.List)

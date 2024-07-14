@@ -65,10 +65,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 
 	b.logger.LogKpi(message)
 
-	// todo log记录短信延时
-
 	return &v1.CommonResponse{Code: tm.ID}, nil
-	// todo 错误不为空，返回错误码
 }
 
 func (b *messageBiz) log(rq *v1.SendMessageRequest, err error, m *model.TemplateM) {

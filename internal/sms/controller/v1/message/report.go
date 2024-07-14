@@ -7,7 +7,7 @@ import (
 )
 
 // AiliReport handles the request for aili cloud message reports.
-func (b *MessageController) AiliReport(c *gin.Context) {
+func (b *Controller) AiliReport(c *gin.Context) {
 	var r v1.AILIYUNReportListRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)

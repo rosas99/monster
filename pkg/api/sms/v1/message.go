@@ -7,10 +7,10 @@ type SendMessageRequest struct {
 	Code         string `json:"code" valid:"required,stringlength(1|255)"`
 }
 
-type CommonResponse struct {
-	Code int64  `json:"code" valid:"required,stringlength(1|255)"`
-	Msg  string `json:"msg" valid:"required,stringlength(1|255)"`
-}
+//type CommonResponse struct {
+//	Code int64  `json:"code" valid:"required,stringlength(1|255)"`
+//	Msg  string `json:"msg" valid:"required,stringlength(1|255)"`
+//}
 
 type VerifyCodeRequest struct {
 	TemplateCode string `json:"templateCode" valid:"alphanum,required,stringlength(1|255)"`

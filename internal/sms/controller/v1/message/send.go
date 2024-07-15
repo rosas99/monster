@@ -3,6 +3,7 @@ package message
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
+	"github.com/rosas99/monster/internal/pkg/errno"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
@@ -12,12 +13,12 @@ func (b *Controller) Send(c *gin.Context) {
 		core.WriteResponse(c, err, nil)
 
 	}
-	template, err := b.svc.SendMessage(c, &r)
+	_, err := b.svc.SendMessage(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
 	}
-	core.WriteResponse(c, nil, template)
+	core.WriteResponse(c, errno.Success, nil)
 
 	// todo log kpi
 

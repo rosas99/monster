@@ -36,7 +36,6 @@ func (t *templateBiz) Create(ctx context.Context, rq *v1.CreateTemplateRequest) 
 
 	if err := t.ds.Configurations().CreateBatch(ctx, configurationsM); err != nil {
 		return nil, err
-
 	}
 
 	return &v1.CreateTemplateResponse{OrderID: templateM.TemplateCode}, nil

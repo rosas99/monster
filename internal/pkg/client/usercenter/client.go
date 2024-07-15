@@ -35,7 +35,7 @@ var (
 	limit = flag.Int64("limit", 10, "Limit to list users.")
 )
 
-// NewUserCenter creates a new client to work with usercenter services.
+// NewUserCenterServer creates a new client to work with sms services.
 func NewUserCenterServer() *impl {
 	flag.Parse()
 	once.Do(func() {
@@ -45,17 +45,8 @@ func NewUserCenterServer() *impl {
 		}
 		defer conn.Close()
 
-		rpcclient := v1.NewUserCenterClient(conn)
-		//request := v1.LoginRequest{
-		//	Username: "123",
-		//	Password: "123",
-		//}
-		//authorize, err := rpcclient.Authorize(context.Background(), &request)
-		//if err != nil {
-		//	log.Fatalw("Authorize failed", "err", err)
-		//}
-		//fmt.Println(authorize)
-		cli = &impl{rpcclient}
+		client := v1.NewUserCenterClient(conn)
+		cli = &impl{client}
 	})
 
 	return cli

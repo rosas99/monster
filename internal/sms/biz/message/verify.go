@@ -7,12 +7,12 @@ import (
 )
 
 // CodeVerify verifies a message code and clear cache if success.
-func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (*v1.CommonResponse, error) {
+func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) error {
 
 	key := factory.WrapperCode(rq.Mobile, rq.TemplateCode)
 	code, err := b.rds.Get(ctx, key).Result()
 	if rq.Code != code {
-		return &v1.CommonResponse{Code: 500, Msg: "fail"}, err
+		return err
 	}
 	b.rds.Del(ctx, key)
 	message := map[string]any{
@@ -20,6 +20,6 @@ func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (
 		"other": 123,
 	}
 	b.logger.LogKpi(message)
-	return &v1.CommonResponse{Code: 0, Msg: "success"}, nil
+	return nil
 
 }

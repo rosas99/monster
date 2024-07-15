@@ -16,23 +16,23 @@ import (
 )
 
 // Send checks the template configuration and send the message to kafka queue.
-func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.CommonResponse, error) {
+func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) error {
 	templateCode := rq.TemplateCode
 	tm := b.getTemplate(ctx, templateCode)
 	if tm == nil {
-		return nil, errors.New("")
+		return errors.New("")
 	}
 
 	cfgList := b.getCfgList(ctx, templateCode)
 	if len(cfgList) == 0 {
-		return nil, errors.New("")
+		return errors.New("")
 	}
 
 	err := b.rule.CheckRules(ctx, cfgList)
 	if err != nil {
 		b.log(rq, err, tm)
 		// 记录错误码和错误类型
-		return nil, err
+		return err
 	}
 
 	if tm.Type == types.VerificationMessage {
@@ -49,7 +49,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	if err != nil {
 		log.C(ctx).Infof("test")
 		b.log(rq, err, tm)
-		return nil, err
+		return err
 	}
 
 	message := map[string]any{
@@ -59,7 +59,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 
 	b.logger.LogKpi(message)
 
-	return &v1.CommonResponse{Code: tm.ID}, nil
+	return nil
 }
 
 func (b *messageBiz) getTemplate(ctx context.Context, templateCode string) *model.TemplateM {

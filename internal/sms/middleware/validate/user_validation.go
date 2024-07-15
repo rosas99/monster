@@ -17,6 +17,8 @@ import (
 // Validation make sure users have the right resource permission and operation.
 func Validation(ds store.IStore) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// todo 发送短信需要校验模板码
+		// 验证短信验证码前先验证模板码和短信验证码是否位6位：这个可以在valid验证
 
 		//switch c.FullPath() {
 		//// todo 根据url校验：

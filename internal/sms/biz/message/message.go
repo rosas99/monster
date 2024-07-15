@@ -12,9 +12,9 @@ import (
 
 // IBiz defines methods used to handle message-related functions.
 type IBiz interface {
-	Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.CommonResponse, error)
-	CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) (*v1.CommonResponse, error)
-	AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) (*v1.CommonResponse, error)
+	Send(ctx context.Context, rq *v1.SendMessageRequest) error
+	CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) error
+	AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) error
 }
 
 // messageBiz struct implements the IBiz interface.

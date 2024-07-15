@@ -8,7 +8,7 @@ import (
 )
 
 // AILIYUNReport receives AILI cloud message reports and link them to their sending history.
-func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) (*v1.CommonResponse, error) {
+func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) error {
 	for _, item := range rq.AILIYUNReportList {
 		filter := make(map[string]any)
 		filter["message_id"] = item.BizId
@@ -19,5 +19,5 @@ func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportList
 			history.Report = string(marshal)
 		}
 	}
-	return &v1.CommonResponse{Code: 0, Msg: "success"}, nil
+	return nil
 }

@@ -19,6 +19,6 @@ func (b *Controller) AILIYUNCallback(c *gin.Context) {
 		core.WriteResponse(c, err, nil)
 
 	}
-	core.WriteResponse(c, errno.Success, nil)
+	core.WriteResponse(c, errno.AiliCloudSuccess, nil)
 
 }

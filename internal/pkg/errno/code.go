@@ -1,10 +1,14 @@
 package errno
 
+// 第三方错误码
+
+var (
+	AiliCloudSuccess = &Errno{HTTP: 200, Code: "0", Message: "suc"}
+)
+
 var (
 	// OK 代表请求成功.
 	OK = &Errno{HTTP: 200, Code: "", Message: ""}
-
-	Success = &Errno{HTTP: 200, Code: "0", Message: "suc"}
 
 	// InternalServerError 表示所有未知的服务器端错误.
 	InternalServerError = &Errno{HTTP: 500, Code: "InternalError", Message: "Internal server error."}
@@ -26,4 +30,8 @@ var (
 
 	// ErrUnauthorized 表示请求没有被授权.
 	ErrUnauthorized = &Errno{HTTP: 401, Code: "AuthFailure.Unauthorized", Message: "Unauthorized."}
+
+	ErrTemplateCount  = &Errno{HTTP: 401, Code: "TemplateCountFailure.ExceedLimit", Message: "Exceed limit for this template"}
+	ErrMobileCount    = &Errno{HTTP: 401, Code: "MobileCountFailure.ExceedLimit", Message: "Exceed limit for this phone"}
+	ErrTimestampCount = &Errno{HTTP: 401, Code: "TimestampCountFailure.TooFrequently", Message: "Sent message too frequently"}
 )

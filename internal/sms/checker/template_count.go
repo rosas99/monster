@@ -2,8 +2,8 @@ package checker
 
 import (
 	"context"
-	"errors"
 	"github.com/redis/go-redis/v9"
+	"github.com/rosas99/monster/internal/pkg/errno"
 	"github.com/rosas99/monster/internal/sms/store"
 	factory "github.com/rosas99/monster/internal/sms/store/redis"
 	"github.com/rosas99/monster/internal/sms/types"
@@ -43,7 +43,7 @@ func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *types.Req
 	isValid := sentCount <= rq.LimitValue
 	if !isValid {
 		log.Infow(":warning:", "key", key, "sentCount", sentCount, "isValid", isValid)
-		return errors.New("")
+		return errno.ErrTemplateCount
 	}
 	return nil
 }

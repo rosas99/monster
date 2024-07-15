@@ -93,7 +93,6 @@ func NewMqServer(
 		StartOffset:       KafkaOptions.ReaderOptions.StartOffset,
 		MaxAttempts:       KafkaOptions.ReaderOptions.MaxAttempts,
 	}
-	r.Topic = "audit"
 
 	consumer, err := kafkaconnector.NewConsumer(context.Background(), r, logic, forceCommit)
 	if err != nil {
@@ -108,6 +107,6 @@ func (s *MqServer) RunOrDie() {
 }
 
 func (s *MqServer) GracefulStop() {
-	log.Infof("Gracefully stop grpc server")
+	log.Infof("Gracefully stop mq server")
 	s.srv.Stop()
 }

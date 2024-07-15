@@ -7,7 +7,6 @@ const (
 )
 
 // defines a group of constants for message configuration.
-
 const (
 	MessageCountForTemplatePerDay = "MESSAGE_COUNT_FOR_TEMPLATE_PER_DAY"
 	MessageCountForMobilePerDay   = "MESSAGE_COUNT_FOR_MOBILE_PER_DAY"

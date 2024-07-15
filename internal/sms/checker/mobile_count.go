@@ -33,7 +33,7 @@ func (m *MessageCountForMobileRule) isValid(ctx context.Context, rq *types.Reque
 	}
 
 	if sentCount == 1 {
-		err = m.RDS.Expire(ctx, key, 24*time.Hour).Err()
+		err = m.RDS.Expire(ctx, key, types.LimitLeftTime).Err()
 		if err != nil {
 			// 处理错误
 			log.Fatalf("Error setting expiration for key: %v", err)

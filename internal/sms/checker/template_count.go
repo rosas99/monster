@@ -22,14 +22,14 @@ func NewMessageCountForTemplateRule(DS store.IStore, RDS *redis.Client) *Message
 
 var _ Rule = (*MessageCountForTemplateRule)(nil)
 
-func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *types.Request) bool {
+func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *types.Request) error {
 
 	start := time.Now().Unix()
 	key := factory.WrapperTemplateCount(rq.Mobile, rq.TemplateCode)
 	sentCount, err := m.RDS.Incr(ctx, key).Result()
 	if err != nil {
 		log.Errorf("Failed to increment count for key: %s, error: %v", key, err)
-		return false
+		return err
 	}
 
 	if sentCount == 1 {
@@ -43,11 +43,7 @@ func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *types.Req
 	isValid := sentCount <= rq.LimitValue
 	if !isValid {
 		log.Infow(":warning:", "key", key, "sentCount", sentCount, "isValid", isValid)
+		return errors.New("")
 	}
-	return isValid
-}
-
-func (m *MessageCountForTemplateRule) getFailReason() error {
-	// todo  locales
-	return errors.New("exceed_limit_for_this_template")
+	return nil
 }

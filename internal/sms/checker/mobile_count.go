@@ -22,14 +22,14 @@ func NewMessageCountForMobileRule(DS store.IStore, RDS *redis.Client) *MessageCo
 
 var _ Rule = (*MessageCountForMobileRule)(nil)
 
-func (m *MessageCountForMobileRule) isValid(ctx context.Context, rq *types.Request) bool {
+func (m *MessageCountForMobileRule) isValid(ctx context.Context, rq *types.Request) error {
 	start := time.Now().Unix()
 	key := factory.WrapperMobileCount(rq.Mobile, rq.TemplateCode)
 
 	sentCount, err := m.RDS.Incr(ctx, key).Result()
 	if err != nil {
 		log.Errorf("Failed to increment count for key: %s, error: %v", key, err)
-		return false
+		return err
 	}
 
 	if sentCount == 1 {
@@ -45,10 +45,8 @@ func (m *MessageCountForMobileRule) isValid(ctx context.Context, rq *types.Reque
 	isValid := sentCount <= rq.LimitValue
 	if !isValid {
 		log.Infow(":warning:", "key", key, "sentCount", sentCount, "isValid", isValid)
-	}
-	return isValid
-}
+		return errors.New("")
 
-func (m *MessageCountForMobileRule) getFailReason() error {
-	return errors.New("exceed_limit_for_this_phone")
+	}
+	return nil
 }

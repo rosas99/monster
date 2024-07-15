@@ -11,16 +11,24 @@ type Logger struct {
 	// enabled is an atomic boolean indicating whether the logger is enabled.
 	enabled int32
 	// writer is the Kafka writer used to write log messages.
-	templateWriter *kafka.Writer
-	uplinkWriter   *kafka.Writer
-	uplinkWriter2  *kafka.Writer
-	uplinkWriter3  *kafka.Writer
-	ds             store.HistoryStore
+	commonWriter  *kafka.Writer
+	verifyWriter  *kafka.Writer
+	uplinkWriter  *kafka.Writer
+	monitorWriter *kafka.Writer
+	historyStore  store.HistoryStore
 }
 
 // NewLogger creates a new kafkaLogger instance.
-func NewLogger(templateOpts *genericoptions.KafkaOptions, uplinkOpts *genericoptions.KafkaOptions, uplinkOpts2 *genericoptions.KafkaOptions, uplinkOpts3 *genericoptions.KafkaOptions, ds store.HistoryStore) (*Logger, error) {
-	templateWriter, err := templateOpts.Writer()
+func NewLogger(commonOpts *genericoptions.KafkaOptions,
+	verifyOpts *genericoptions.KafkaOptions,
+	uplinkOpts *genericoptions.KafkaOptions,
+	monitorOpts *genericoptions.KafkaOptions,
+	historyStore store.HistoryStore) (*Logger, error) {
+	commonWriter, err := commonOpts.Writer()
+	if err != nil {
+		return nil, err
+	}
+	verifyWriter, err := verifyOpts.Writer()
 	if err != nil {
 		return nil, err
 	}
@@ -28,21 +36,18 @@ func NewLogger(templateOpts *genericoptions.KafkaOptions, uplinkOpts *genericopt
 	if err != nil {
 		return nil, err
 	}
-	uplinkWriter2, err := uplinkOpts2.Writer()
-	if err != nil {
-		return nil, err
-	}
-	uplinkWriter3, err := uplinkOpts3.Writer()
+
+	monitorWriter, err := monitorOpts.Writer()
 	if err != nil {
 		return nil, err
 	}
 
 	logger := Logger{
-		templateWriter: templateWriter,
-		uplinkWriter:   uplinkWriter,
-		uplinkWriter2:  uplinkWriter2,
-		uplinkWriter3:  uplinkWriter3,
-		ds:             ds,
+		commonWriter:  commonWriter,
+		verifyWriter:  verifyWriter,
+		uplinkWriter:  uplinkWriter,
+		monitorWriter: monitorWriter,
+		historyStore:  historyStore,
 	}
 	return &logger, nil
 }

@@ -19,28 +19,11 @@ redis:
   # pool-time:
   pool-size: 10
   enable-trace: false
-kafka:
+monitorKafka:
   brokers: 127.0.0.1:9092
-  topic: test
-  timeout: 3s
-  # tls:
-  #mechanism:
-#  username: onex
-#  password: onex(#)666
-  #algorithm:
-  #compressed:
-  reader: # 使用默认值即可，不需要在 manifests/env.local 中配置
+  topic: q_monitor
+  reader:
     partition: 0
-    queue-capacity: 100
-    min-bytes: 1
-    max-bytes: 1024
-    max-wait: 1s
-    read-batch-timeout: 10s
-    heartbeat-interval: 3s
-    commit-interval: 0s
-    rebalance-timeout: 30s
-    start-offset: 0
-    max-attempts: 3
     group-id: testgroup
 mongo:
   url: 127.0.0.1:27017

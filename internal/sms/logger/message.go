@@ -13,9 +13,9 @@ import (
 func (l *Logger) WriteMessage(ctx context.Context, msg *types.TemplateMsgRequest, messageType string) error {
 	out, _ := json.Marshal(msg)
 	if messageType == types.VerificationMessage {
-		return l.templateWriter.WriteMessages(ctx, kafka.Message{Value: out})
+		return l.commonWriter.WriteMessages(ctx, kafka.Message{Value: out})
 	} else {
-		return l.templateWriter.WriteMessages(ctx, kafka.Message{Value: out})
+		return l.commonWriter.WriteMessages(ctx, kafka.Message{Value: out})
 	}
 
 }

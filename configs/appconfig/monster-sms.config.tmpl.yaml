@@ -1,6 +1,3 @@
-
-
-# onex-sms 服务配置文件
 http:
   addr: 127.0.0.1:9093 # HTTP/HTTPS 服务监听地址
 grpc:
@@ -31,53 +28,27 @@ log: # 使用默认值即可，不需要在 manifests/env.local 中配置
 ailiyun:
   url: https://sms.aliyuncs.com
 
-templateKafka:
+commonKafka:
   brokers: 127.0.0.1:9092
-  topic: test
-  timeout: 3s
-  # tls:
-  #mechanism:
-  #username:
-  #password:
-  #algorithm:
-  #compressed:
-  writer: # 使用默认值即可，不需要在 manifests/env.local 中配置
-    max-attempts: 10
-    required-acks: 1
-    async: true
-    batch-size: 100
-    batch-timeout: 1s
-    batch-bytes: 1024
-
+  topic: q_sms_common
   reader: # 使用默认值即可，不需要在 manifests/env.local 中配置
     partition: 0
-    queue-capacity: 100
-    min-bytes: 1
-    max-bytes: 1024
-    max-wait: 1s
-    read-batch-timeout: 10s
-    heartbeat-interval: 3s
-    commit-interval: 0s
-    rebalance-timeout: 30s
-    start-offset: 0
-    max-attempts: 3
     group-id: testg
-#  这里自定义kafka的类型 articleConsumer
+verifyKafka:
+  brokers: 127.0.0.1:9092
+  topic: q_sms_verify
+  reader: # 使用默认值即可，不需要在 manifests/env.local 中配置
+    partition: 0
+    group-id: testg
 uplinkKafka:
   brokers: 127.0.0.1:9092
-  topic: test
-  timeout: 3s
-#  options提供了默认值，如果不修改，这里不用配置
-  reader: # 使用默认值即可，不需要在 manifests/env.local 中配置
+  topic: q_sms_uplink
+  reader:
     partition: 0
-    queue-capacity: 100
-    min-bytes: 1
-    max-bytes: 1024
-    max-wait: 1s
-    read-batch-timeout: 10s
-    heartbeat-interval: 3s
-    commit-interval: 0s
-    rebalance-timeout: 30s
-    start-offset: 0
-    max-attempts: 3
+    group-id: testg
+monitorKafka:
+  brokers: 127.0.0.1:9092
+  topic: q_monitor
+  reader:
+    partition: 0
     group-id: testg

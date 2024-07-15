@@ -23,48 +23,46 @@ func NewTimeIntervalForMobileRule(DS store.IStore, RDS *redis.Client) *TimeInter
 
 var _ Rule = (*TimeIntervalForMobileRule)(nil)
 
-func (m *TimeIntervalForMobileRule) isValid(ctx context.Context, rq *types.Request) bool {
+func (m *TimeIntervalForMobileRule) isValid(ctx context.Context, rq *types.Request) error {
 	start := time.Now().UnixMilli()
 	key := factory.WrapperTimeInterval(rq.Mobile, rq.TemplateCode)
 
 	timeStampStr, err := m.RDS.Get(ctx, key).Result()
 	if err != nil && !errors.Is(err, redis.Nil) {
 		log.Errorf("Failed to get timestamp from Redis for key: %s, error: %v", key, err)
-		return false
+		return err
 	}
 
 	if timeStampStr == "" {
 		_, err2 := m.RDS.Set(ctx, key, time.Now().UnixMilli(), 24*time.Hour).Result()
 		if err2 != nil {
-			return false
+			return err
 		}
-		return true
+		return nil
 	}
 
 	remainingTTL, err2 := m.RDS.TTL(ctx, key).Result()
 	if err2 != nil {
-		return false
+		return err
 	}
 	_, err2 = m.RDS.Set(ctx, key, time.Now().UnixMilli(), remainingTTL).Result()
 	if err2 != nil {
-		return false
+		return err
 	}
 
-	log.Infof("timeInterval --- checker time -----效验时间戳的总时间: %d", time.Now().UnixMilli()-start)
+	log.C(ctx).Infof("timeInterval --- checker time -----效验时间戳的总时间: %d", time.Now().UnixMilli()-start)
 
 	timeStampInt, err := strconv.ParseInt(timeStampStr, 10, 64)
 	if err != nil {
-		return false
+		return err
 	}
 
 	interval2 := time.Now().UnixMilli() - timeStampInt
 	isValid := interval2 >= rq.LimitValue
 	if !isValid {
 		log.Warnf("%s request too frequently!", rq.Mobile)
-	}
-	return isValid
-}
+		return errors.New("")
 
-func (m *TimeIntervalForMobileRule) getFailReason() error {
-	return errors.New("sent_message_too_frequently")
+	}
+	return nil
 }

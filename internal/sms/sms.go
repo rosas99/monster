@@ -25,17 +25,19 @@ import (
 
 // Config represents the configuration of the service.
 type Config struct {
-	GRPCOptions              *genericoptions.GRPCOptions
-	HTTPOptions              *genericoptions.HTTPOptions
-	TLSOptions               *genericoptions.TLSOptions
-	MySQLOptions             *genericoptions.MySQLOptions
-	RedisOptions             *genericoptions.RedisOptions
-	TemplateMessageKqOptions *genericoptions.KafkaOptions
-	UplinkMessageKqOptions   *genericoptions.KafkaOptions
-	Address                  string
-	Accounts                 map[string]string
-	AiliyunUrl               string
-	AiliyunSmsOptions        *ailiyunoptions.SmsOptions
+	GRPCOptions            *genericoptions.GRPCOptions
+	HTTPOptions            *genericoptions.HTTPOptions
+	TLSOptions             *genericoptions.TLSOptions
+	MySQLOptions           *genericoptions.MySQLOptions
+	RedisOptions           *genericoptions.RedisOptions
+	CommonKafkaOptions     *genericoptions.KafkaOptions
+	VerifyKafkaOptions     *genericoptions.KafkaOptions
+	UplinkMessageKqOptions *genericoptions.KafkaOptions
+	MonitorKafkaOptions    *genericoptions.KafkaOptions
+	Address                string
+	Accounts               map[string]string
+	AiliyunUrl             string
+	AiliyunSmsOptions      *ailiyunoptions.SmsOptions
 }
 
 // Complete fills in any fields not set that are required to have valid data. It's mutating the receiver.
@@ -52,6 +54,7 @@ type SmsServer struct {
 	httpsrv Server
 	mqsrv   MqServer
 	mqsrv2  MqServer
+	mqsrv3  MqServer
 	config  completedConfig
 }
 
@@ -82,14 +85,8 @@ func (c completedConfig) New() (*SmsServer, error) {
 	factory.RegisterRule(types.TimeIntervalForMobilePerDay, checker.NewTimeIntervalForMobileRule(ds, rds))
 
 	// creates  a logger instance
-	// todo common verify  kpi uplink
-	l, err := logger.NewLogger(
-		c.TemplateMessageKqOptions,
-		c.TemplateMessageKqOptions,
-		c.TemplateMessageKqOptions,
-		c.UplinkMessageKqOptions,
-		ds.Histories(),
-	)
+	l, err := logger.NewLogger(c.CommonKafkaOptions, c.VerifyKafkaOptions,
+		c.UplinkMessageKqOptions, c.MonitorKafkaOptions, ds.Histories())
 	if err != nil {
 		return nil, err
 	}
@@ -127,22 +124,26 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	logic := mqs.NewTemplateMessageConsumer(context.Background(), idt, l, provider)
-	mqsrv, err := NewMqServer(c.TemplateMessageKqOptions, logic, true)
+	logic := mqs.NewCommonMessageConsumer(context.Background(), idt, l, provider)
+	mqsrv, err := NewMqServer(c.CommonKafkaOptions, logic, true)
 	if err != nil {
 		return nil, err
 	}
 
-	logic2 := mqs.NewUplinkMessageConsumer(context.Background(), ds, idt, l)
-	mqsrv2, err := NewMqServer(c.UplinkMessageKqOptions, logic2, true)
+	logic2 := mqs.NewVerifyMessageConsumer(context.Background(), idt, l, provider)
+	mqsrv2, err := NewMqServer(c.VerifyKafkaOptions, logic2, true)
 	if err != nil {
 		return nil, err
 	}
-	go mqsrv.RunOrDie()
-	go mqsrv2.RunOrDie()
+
+	logic3 := mqs.NewUplinkMessageConsumer(context.Background(), ds, idt, l)
+	mqsrv3, err := NewMqServer(c.UplinkMessageKqOptions, logic3, true)
+	if err != nil {
+		return nil, err
+	}
 
 	// Need start grpc server first. http server depends on grpc sever.
-	return &SmsServer{httpsrv: httpsrv, mqsrv: mqsrv, mqsrv2: mqsrv2, config: c}, nil
+	return &SmsServer{httpsrv: httpsrv, mqsrv: mqsrv, mqsrv2: mqsrv2, mqsrv3: mqsrv3, config: c}, nil
 }
 
 // Run is a method of the SmsServer struct that starts the server.
@@ -150,7 +151,9 @@ func (s *SmsServer) Run(stopCh <-chan struct{}) error {
 
 	log.Infof("Successfully start sms server")
 	go s.httpsrv.RunOrDie()
-
+	go s.mqsrv.RunOrDie()
+	go s.mqsrv2.RunOrDie()
+	go s.mqsrv3.RunOrDie()
 	<-stopCh
 
 	log.Infof("Gracefully shutting down sms server ...")

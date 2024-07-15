@@ -23,7 +23,7 @@ var _ app.CliOptions = (*Options)(nil)
 // Options contains state for master/api server.
 type Options struct {
 	HealthOptions *genericoptions.HealthOptions `json:"health" mapstructure:"health"`
-	KafkaOptions  *genericoptions.KafkaOptions  `json:"kafka" mapstructure:"kafka"`
+	KafkaOptions  *genericoptions.KafkaOptions  `json:"kafka" mapstructure:"monitorKafka"`
 	MongoOptions  *genericoptions.MongoOptions  `json:"mongo" mapstructure:"mongo"`
 	FeatureGates  map[string]bool               `json:"feature-gates"`
 }
@@ -31,7 +31,6 @@ type Options struct {
 // NewOptions returns initialized Options.
 func NewOptions() *Options {
 	o := &Options{
-		// RedisOptions: genericoptions.NewRedisOptions(),
 		HealthOptions: genericoptions.NewHealthOptions(),
 		KafkaOptions:  genericoptions.NewKafkaOptions(),
 		MongoOptions:  genericoptions.NewMongoOptions(),

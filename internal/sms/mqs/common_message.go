@@ -13,15 +13,15 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type TemplateMessageConsumer struct {
+type CommonMessageConsumer struct {
 	ctx      context.Context
 	idt      *idempotent.Idempotent
 	logger   *logger.Logger
 	provider *factory.ProviderFactory
 }
 
-func NewTemplateMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger *logger.Logger, provider *factory.ProviderFactory) *TemplateMessageConsumer {
-	return &TemplateMessageConsumer{
+func NewCommonMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger *logger.Logger, provider *factory.ProviderFactory) *CommonMessageConsumer {
+	return &CommonMessageConsumer{
 		ctx:      ctx,
 		idt:      idt,
 		logger:   logger,
@@ -29,7 +29,7 @@ func NewTemplateMessageConsumer(ctx context.Context, idt *idempotent.Idempotent,
 	}
 }
 
-func (l *TemplateMessageConsumer) Consume(elem any) error {
+func (l *CommonMessageConsumer) Consume(elem any) error {
 	val := elem.(kafka.Message)
 
 	var msg *types.TemplateMsgRequest
@@ -42,7 +42,7 @@ func (l *TemplateMessageConsumer) Consume(elem any) error {
 
 }
 
-func (l *TemplateMessageConsumer) handleSmsRequest(ctx context.Context, msg *types.TemplateMsgRequest) error {
+func (l *CommonMessageConsumer) handleSmsRequest(ctx context.Context, msg *types.TemplateMsgRequest) error {
 
 	// 消息id
 	ok := l.idt.Check(ctx, msg.RequestId)

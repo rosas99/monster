@@ -63,76 +63,43 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 }
 
 func (b *messageBiz) getTemplate(ctx context.Context, templateCode string) *model.TemplateM {
-	cache := b.fromTemplateCache(ctx, templateCode)
-
-	if cache != nil {
-		return cache
+	tpCache, _ := b.rds.Get(ctx, factory.WrapperTemplate(templateCode)).Result()
+	if tpCache != "" {
+		tm := &model.TemplateM{}
+		err := json.Unmarshal([]byte(tpCache), tm)
+		if err != nil {
+			return nil
+		}
+		return tm
 	}
 
-	return b.fromTemplateDb(ctx, templateCode)
-
-}
-
-func (b *messageBiz) fromTemplateDb(ctx context.Context, templateCode string) *model.TemplateM {
-	templateM, err := b.ds.Templates().GetByTemplateCode(ctx, templateCode)
-	if err != nil { // todo gorm record not found
-		return nil
+	tm, _ := b.ds.Templates().GetByTemplateCode(ctx, templateCode)
+	if tm != nil {
+		marshal, _ := json.Marshal(tm)
+		b.rds.Set(ctx, factory.WrapperTemplate(tm.TemplateCode), marshal, time.Hour*24)
+		return tm
 	}
-
-	marshal, _ := json.Marshal(templateM)
-	b.rds.Set(ctx, factory.WrapperTemplate(templateM.TemplateCode), marshal, time.Hour*24)
-
-	return templateM
-}
-
-func (b *messageBiz) fromTemplateCache(ctx context.Context, templateCode string) *model.TemplateM {
-	tpCache, err := b.rds.Get(ctx, factory.WrapperTemplate(templateCode)).Result()
-	if err != nil {
-		return nil
-	}
-
-	tm := &model.TemplateM{}
-	err = json.Unmarshal([]byte(tpCache), tm)
-	if err != nil {
-		return nil
-	}
-
-	return tm
+	return nil
 }
 
 func (b *messageBiz) getCfgList(ctx context.Context, templateCode string) []*model.ConfigurationM {
-	var tm *model.TemplateM
-	cache := b.fromCfgCache(ctx, templateCode)
-	if len(cache) != 0 {
-		return cache
+	cache, _ := b.rds.Get(ctx, factory.WrapperTemplateCfg(templateCode)).Result()
+	if cache != "" {
+		var cfgList []*model.ConfigurationM
+		err := json.Unmarshal([]byte(cache), &cfgList)
+		if err != nil {
+			return nil
+		}
+		return cfgList
 	}
 
-	return b.fromCfgDb(ctx, templateCode, tm)
-
-}
-
-func (b *messageBiz) fromCfgCache(ctx context.Context, templateCode string) []*model.ConfigurationM {
-	cache, err := b.rds.Get(ctx, factory.WrapperTemplateCfg(templateCode)).Result()
-	if err != nil || cache == "" {
-		return nil
-	}
-
-	var cfgList []*model.ConfigurationM
-	err = json.Unmarshal([]byte(cache), &cfgList)
-	if err != nil {
-		return nil
-	}
-	return cfgList
-}
-
-func (b *messageBiz) fromCfgDb(ctx context.Context, templateCode string, tm *model.TemplateM) []*model.ConfigurationM {
-	_, list, err := b.ds.Configurations().List(ctx, templateCode)
-	if err != nil { // todo gorm record not found
+	_, list, _ := b.ds.Configurations().List(ctx, templateCode)
+	if len(list) <= 0 { // todo gorm record not found
 		return nil
 	}
 
 	marshal, _ := json.Marshal(list)
-	b.rds.Set(ctx, factory.WrapperTemplateCfg(tm.TemplateCode), marshal, time.Hour*24)
+	b.rds.Set(ctx, factory.WrapperTemplateCfg(templateCode), marshal, time.Hour*24)
 	return list
 }
 

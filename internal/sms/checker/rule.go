@@ -11,8 +11,7 @@ import (
 )
 
 type Rule interface {
-	isValid(ctx context.Context, rq *types.Request) bool
-	getFailReason() error
+	isValid(ctx context.Context, rq *types.Request) error
 }
 
 type RuleFactory struct {
@@ -46,12 +45,15 @@ func (rf *RuleFactory) CheckRules(ctx context.Context, cfgList []*model.Configur
 		if err != nil {
 			// todo  log
 			log.C(ctx).Errorw(err, "Failed to list orders from storage")
+			return err
+		}
 
-		}
 		var c types.Request
-		if !checker.isValid(ctx, &c) {
-			return checker.getFailReason()
+		err = checker.isValid(ctx, &c)
+		if err != nil {
+			return err
 		}
+
 	}
 
 	return nil

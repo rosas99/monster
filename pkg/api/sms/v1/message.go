@@ -23,7 +23,7 @@ type AILIYUNReportListRequest struct {
 	AILIYUNReportList []AILIYUNReport `json:"msg" valid:"required,stringlength(1|255)"`
 }
 
-type AILIYUNCallbackListRequest struct {
+type AILIYUNUplinkListRequest struct {
 	AILIYUNCallbackList []AILIYUNCallbackList `json:"msg" valid:"required,stringlength(1|255)"`
 }
 

@@ -9,15 +9,14 @@ import (
 
 // AILIYUNCallback is a controller for receive uplink messages from Alibaba Cloud.
 func (b *Controller) AILIYUNCallback(c *gin.Context) {
-	var r v1.AILIYUNCallbackListRequest
+	var r v1.AILIYUNUplinkListRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)
 
 	}
-	_, err := b.svc.AILIYUNInteractionCallback(c, &r)
+	err := b.svc.AILIYUNUplink(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
-
 	}
 	core.WriteResponse(c, errno.AiliCloudSuccess, nil)
 

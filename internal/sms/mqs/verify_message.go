@@ -44,10 +44,8 @@ func (l *VerifyMessageConsumer) Consume(elem any) error {
 
 func (l *VerifyMessageConsumer) handleSmsRequest(ctx context.Context, msg *types.TemplateMsgRequest) error {
 
-	// 消息id
-	ok := l.idt.Check(ctx, msg.RequestId)
-	if !ok {
-		return errors.New("message repeat")
+	if !l.idt.Check(ctx, msg.RequestId) {
+		return errors.New("idempotent token is invalid")
 	}
 
 	m := model.TemplateM{}

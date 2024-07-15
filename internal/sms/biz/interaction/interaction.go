@@ -12,7 +12,7 @@ import (
 
 // IBiz defines methods used to handle uplink message request.
 type IBiz interface {
-	AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) error
+	AILIYUNUplink(ctx context.Context, rq *v1.AILIYUNUplinkListRequest) error
 }
 
 // interactionBiz struct implements the IBiz interface.

@@ -46,10 +46,8 @@ func (l *UplinkMessageConsumer) Consume(elem any) error {
 
 func (l *UplinkMessageConsumer) handleSmsRequest(ctx context.Context, msg *types.UplinkMsgRequest) error {
 
-	// 消息id
-	ok := l.idt.Check(ctx, msg.RequestId)
-	if !ok {
-		return errors.New("message repeat")
+	if !l.idt.Check(ctx, msg.RequestId) {
+		return errors.New("idempotent token is invalid")
 	}
 
 	filter := make(map[string]any)

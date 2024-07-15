@@ -7,8 +7,8 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-// AILIYUNCallback receives an uplink message and writes to kafka queue.
-func (b *interactionBiz) AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) error {
+// AILIYUNUplink receives an uplink message and writes to kafka queue.
+func (b *interactionBiz) AILIYUNUplink(ctx context.Context, rq *v1.AILIYUNUplinkListRequest) error {
 	for _, item := range rq.AILIYUNCallbackList {
 		var msgRequest types.UplinkMsgRequest
 		err := copier.Copy(msgRequest, item)

@@ -33,9 +33,10 @@ func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *types.Req
 	}
 
 	if sentCount == 1 {
-		if err := m.RDS.SetNX(ctx, key, 1, types.LimitLeftTime).Err(); err != nil {
-			log.Errorf("Failed to set key with expiration for key: %s, error: %v", key, err)
-			return false
+		err = m.RDS.Expire(ctx, key, 24*time.Hour).Err()
+		if err != nil {
+			// 处理错误
+			log.Fatalf("Error setting expiration for key: %v", err)
 		}
 	}
 	log.Infof("TemplateAndMobileChecker-----checker time效验号码模板总时间----: %d", time.Now().Unix()-start)

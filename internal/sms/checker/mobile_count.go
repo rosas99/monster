@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"github.com/redis/go-redis/v9"
-	"github.com/rosas99/monster/internal/pkg/meta"
 	"github.com/rosas99/monster/internal/sms/store"
 	factory "github.com/rosas99/monster/internal/sms/store/redis"
 	"github.com/rosas99/monster/internal/sms/types"
@@ -26,29 +25,18 @@ var _ Rule = (*MessageCountForMobileRule)(nil)
 func (m *MessageCountForMobileRule) isValid(ctx context.Context, rq *types.Request) bool {
 	start := time.Now().Unix()
 	key := factory.WrapperMobileCount(rq.Mobile, rq.TemplateCode)
-	rds := m.RDS
 
-	sentCount, err := rds.Incr(ctx, key).Result()
+	sentCount, err := m.RDS.Incr(ctx, key).Result()
 	if err != nil {
 		log.Errorf("Failed to increment count for key: %s, error: %v", key, err)
 		return false
 	}
 
 	if sentCount == 1 {
-		filter := map[string]any{
-			"mobile": rq.Mobile,
-			"status": "OK",
-		}
-		count, _, dbErr := m.DS.Histories().List(ctx, rq.TemplateCode, meta.WithFilter(filter))
-		if dbErr != nil {
-			log.Errorf("Failed to list histories from database for mobile: %s, error: %v", rq.Mobile, dbErr)
-			return false
-		}
-		if count == 0 {
-			if err := rds.SetNX(ctx, key, 1, types.LimitLeftTime).Err(); err != nil {
-				log.Errorf("Failed to set key with expiration for key: %s, error: %v", key, err)
-				return false
-			}
+		err = m.RDS.Expire(ctx, key, 24*time.Hour).Err()
+		if err != nil {
+			// 处理错误
+			log.Fatalf("Error setting expiration for key: %v", err)
 		}
 	}
 

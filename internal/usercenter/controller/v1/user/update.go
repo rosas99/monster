@@ -12,13 +12,12 @@ func (b *Controller) Update(c *gin.Context) {
 	var r v1.UpdateUserRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, errno.ErrBind, nil)
-
 		return
 	}
+
 	_, _ = b.svc.Update(c, &r)
 	if _, err := govalidator.ValidateStruct(r); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
-
 		return
 	}
 

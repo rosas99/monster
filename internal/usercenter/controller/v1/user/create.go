@@ -22,7 +22,6 @@ func (b *Controller) Create(c *gin.Context) {
 
 	if _, err := govalidator.ValidateStruct(r); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
-
 		return
 	}
 
@@ -33,7 +32,6 @@ func (b *Controller) Create(c *gin.Context) {
 
 	if _, err := b.svc.Auth.AddNamedPolicy("p", r.Username, "/v1/users/"+r.Username, defaultMethods); err != nil {
 		core.WriteResponse(c, err, nil)
-
 		return
 	}
 

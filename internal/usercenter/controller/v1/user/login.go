@@ -13,7 +13,7 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 )
 
-// 登录 miniblog 并返回一个 JWT Token.
+// Login 登录 monster 并返回一个 JWT Token.
 func (b *Controller) Login(c *gin.Context) {
 	log.C(c).Infow("Login function called")
 

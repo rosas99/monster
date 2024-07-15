@@ -8,9 +8,10 @@ import (
 
 // TemplateMsgResponse
 type TemplateMsgResponse struct {
-	// todo 补充response
-	MessageID string
-	Error     error
+	Code      string
+	Message   string
+	BizId     string
+	RequestId string
 }
 
 // SMSTemplateProvider defines the SMS template sending interface.

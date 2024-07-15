@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"fmt"
 	dysmsapi "github.com/alibabacloud-go/dysmsapi-20170525/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/redis/go-redis/v9"
@@ -30,9 +29,6 @@ func NewAILIYUNProvider(rds *redis.Client, logger *logger.Logger, ailiyunSmsOpti
 
 // Send creates a sms client and sends sms by aili cloud.
 func (p *AILIYUNProvider) Send(ctx context.Context, rq types.TemplateMsgRequest) (TemplateMsgResponse, error) {
-	// 这里应该是调用微信的API发送短信的逻辑
-	fmt.Printf("Sending message via WEProvider to %s\n", rq.SendTime)
-	// 返回示例响应
 	client, err := p.ailiyunSmsOptions.NewSmsClient()
 	if err != nil {
 		return TemplateMsgResponse{}, err
@@ -46,16 +42,25 @@ func (p *AILIYUNProvider) Send(ctx context.Context, rq types.TemplateMsgRequest)
 	}
 
 	sendResp, err := client.SendSms(sendReq)
+
 	if err != nil {
 		return TemplateMsgResponse{}, err
 	}
+
+	if tea.Int32Value(sendResp.StatusCode) != 200 {
+		return TemplateMsgResponse{}, err
+	}
+
 	id := *sendResp.Body.BizId
-	fmt.Print(id)
 	var history model.HistoryM
 	history.MessageID = id
 	p.logger.LogHistory(&history)
 
-	// 组装code和msg
-	// 根据err是否为nil组装状态码，存到history
-	return TemplateMsgResponse{MessageID: "123456"}, nil
+	response := TemplateMsgResponse{
+		Code:      *sendResp.Body.Code,
+		Message:   *sendResp.Body.Message,
+		BizId:     *sendResp.Body.BizId,
+		RequestId: *sendResp.Body.RequestId,
+	}
+	return response, nil
 }

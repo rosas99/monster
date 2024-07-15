@@ -66,7 +66,7 @@ func (l *VerifyMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 			continue
 		}
 
-		historyM.MessageID = ret.MessageID
+		historyM.MessageID = ret.BizId
 		l.logger.LogHistory(&historyM)
 		break
 	}

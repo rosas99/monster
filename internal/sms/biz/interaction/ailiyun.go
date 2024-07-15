@@ -8,17 +8,17 @@ import (
 )
 
 // AILIYUNCallback receives an uplink message and writes to kafka queue.
-func (b *interactionBiz) AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) (*v1.CommonResponse, error) {
+func (b *interactionBiz) AILIYUNCallback(ctx context.Context, rq *v1.AILIYUNCallbackListRequest) error {
 	for _, item := range rq.AILIYUNCallbackList {
 		var msgRequest types.UplinkMsgRequest
 		err := copier.Copy(msgRequest, item)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		b.logger.WriteUplinkMessage(ctx, &msgRequest)
 
 	}
 	// log kpi
 
-	return &v1.CommonResponse{Code: 0, Msg: "success"}, nil
+	return nil
 }

@@ -10,13 +10,13 @@ func (b *Controller) CodeVerify(c *gin.Context) {
 	var r v1.VerifyCodeRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, err, nil)
-
 	}
-	template, err := b.svc.CodeVerify(c, &r)
+
+	err := b.svc.CodeVerify(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
-
 	}
-	core.WriteResponse(c, nil, template)
+
+	core.WriteResponse(c, nil, nil)
 
 }

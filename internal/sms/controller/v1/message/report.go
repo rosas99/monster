@@ -14,11 +14,12 @@ func (b *Controller) AiliReport(c *gin.Context) {
 		core.WriteResponse(c, err, nil)
 
 	}
-	_, err := b.svc.AILIYUNMessageReport(c, &r)
+	err := b.svc.AILIYUNMessageReport(c, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
 	}
+	// 返回success，否则会自动重试
 	core.WriteResponse(c, errno.AiliCloudSuccess, nil)
 
 }

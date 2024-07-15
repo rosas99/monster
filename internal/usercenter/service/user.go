@@ -7,9 +7,9 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *UserCenterService) ChangePassword(ctx context.Context, rq *v1.ChangePasswordRequest) error {
+func (s *UserCenterService) ChangePassword(ctx context.Context, username string, rq *v1.ChangePasswordRequest) error {
 	log.C(ctx).Infow("CreateOrder function called")
-	return s.biz.Users().ChangePassword(ctx, rq)
+	return s.biz.Users().ChangePassword(ctx, username, rq)
 }
 
 func (s *UserCenterService) Login(ctx context.Context, rq *v1.LoginRequest) (*v1.LoginResponse, error) {

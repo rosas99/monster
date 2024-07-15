@@ -12,7 +12,6 @@ import (
 
 func (b *userBiz) List(ctx context.Context, rq *v1.ListUserRequest) (*v1.ListUserResponse, error) {
 
-	// todo 查询到template 转换为resp
 	count, list, err := b.ds.Users().List(ctx, meta.WithOffset(rq.Offset), meta.WithLimit(rq.Limit))
 	if err != nil {
 		log.C(ctx).Errorw(err, "Failed to list orders from storage")

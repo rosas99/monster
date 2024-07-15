@@ -125,6 +125,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 	}
 
 	logic := mqs.NewCommonMessageConsumer(context.Background(), idt, l, provider)
+	//  todo force commit 配置化
 	mqsrv, err := NewMqServer(c.CommonKafkaOptions, logic, true)
 	if err != nil {
 		return nil, err

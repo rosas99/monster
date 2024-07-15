@@ -2,6 +2,7 @@ package message
 
 import (
 	"context"
+	"github.com/rosas99/monster/internal/pkg/errno"
 	factory "github.com/rosas99/monster/internal/sms/store/redis"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
@@ -11,14 +12,18 @@ func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) e
 
 	key := factory.WrapperCode(rq.Mobile, rq.TemplateCode)
 	code, err := b.rds.Get(ctx, key).Result()
-	if rq.Code != code {
+	if err != nil {
 		return err
 	}
-	b.rds.Del(ctx, key)
-	message := map[string]any{
-		"test":  "value1",
-		"other": 123,
+
+	if rq.Code != code {
+		return errno.ErrBind
 	}
+
+	b.rds.Del(ctx, key)
+
+	message := map[string]any{"test": "value1", "other": 123}
+
 	b.logger.LogKpi(message)
 	return nil
 

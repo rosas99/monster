@@ -44,7 +44,6 @@ func (l *CommonMessageConsumer) Consume(elem any) error {
 
 func (l *CommonMessageConsumer) handleSmsRequest(ctx context.Context, msg *types.TemplateMsgRequest) error {
 
-	// 消息id
 	ok := l.idt.Check(ctx, msg.RequestId)
 	if !ok {
 		return errors.New("message repeat")

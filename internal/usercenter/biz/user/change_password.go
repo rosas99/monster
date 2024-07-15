@@ -9,8 +9,8 @@ import (
 )
 
 // ChangePassword 是 IBiz 接口中 `ChangePassword` 方法的实现.
-func (b *userBiz) ChangePassword(ctx context.Context, rq *v1.ChangePasswordRequest) error {
-	userM, err := b.ds.Users().Get(ctx, rq.Username)
+func (b *userBiz) ChangePassword(ctx context.Context, username string, rq *v1.ChangePasswordRequest) error {
+	userM, err := b.ds.Users().Get(ctx, username)
 	if err != nil {
 		return err
 	}

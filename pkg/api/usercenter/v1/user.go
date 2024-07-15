@@ -41,9 +41,6 @@ type DeleteUserRequest struct {
 // ChangePasswordRequest 指定了 `POST /v1/users/{name}/change-password` 接口的请求参数.
 type ChangePasswordRequest struct {
 
-	// 用户名.
-	Username string `json:"userName" valid:"required,stringlength(6|18)"`
-
 	// 旧密码.
 	OldPassword string `json:"oldPassword" valid:"required,stringlength(6|18)"`
 

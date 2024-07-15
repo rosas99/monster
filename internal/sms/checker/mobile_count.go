@@ -45,7 +45,6 @@ func (m *MessageCountForMobileRule) isValid(ctx context.Context, rq *types.Reque
 	isValid := sentCount <= rq.LimitValue
 	if !isValid {
 		log.Infow(":warning:", "key", key, "sentCount", sentCount, "isValid", isValid)
-		// todo 定义校验异常
 		return errno.ErrMobileCount
 
 	}

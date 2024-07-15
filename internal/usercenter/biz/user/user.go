@@ -9,7 +9,7 @@ import (
 
 type IBiz interface {
 	Authorize(ctx context.Context, rq *v1.LoginRequest2) (*v1.LoginResponse2, error)
-	ChangePassword(ctx context.Context, r *v1.ChangePasswordRequest) error
+	ChangePassword(ctx context.Context, username string, r *v1.ChangePasswordRequest) error
 	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)
 	Create(ctx context.Context, rq *v1.CreateUserRequest) (*v1.CreateUserResponse, error)
 	Get(ctx context.Context, rq *v1.GetUserRequest) (*v1.GetUserResponse, error)

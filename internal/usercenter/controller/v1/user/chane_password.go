@@ -26,7 +26,7 @@ func (b *Controller) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	if err := b.svc.ChangePassword(c, &r); err != nil {
+	if err := b.svc.ChangePassword(c, c.Param("name"), &r); err != nil {
 		core.WriteResponse(c, err, nil)
 
 		return

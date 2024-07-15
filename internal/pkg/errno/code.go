@@ -31,6 +31,10 @@ var (
 	// ErrUnauthorized 表示请求没有被授权.
 	ErrUnauthorized = &Errno{HTTP: 401, Code: "AuthFailure.Unauthorized", Message: "Unauthorized."}
 
+	ErrUserAlreadyExist = &Errno{HTTP: 400, Code: "FailedOperation.UserAlreadyExist", Message: "User already exist."}
+
+	ErrIdempotentTokenExpired = &Errno{HTTP: 400, Code: "IdempotentToken.Expired", Message: "idempotent token is invalid"}
+
 	ErrTemplateCount  = &Errno{HTTP: 401, Code: "TemplateCountFailure.ExceedLimit", Message: "Exceed limit for this template"}
 	ErrMobileCount    = &Errno{HTTP: 401, Code: "MobileCountFailure.ExceedLimit", Message: "Exceed limit for this phone"}
 	ErrTimestampCount = &Errno{HTTP: 401, Code: "TimestampCountFailure.TooFrequently", Message: "Sent message too frequently"}

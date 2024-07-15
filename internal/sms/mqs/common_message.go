@@ -9,6 +9,7 @@ import (
 	"github.com/rosas99/monster/internal/sms/model"
 	factory "github.com/rosas99/monster/internal/sms/provider"
 	"github.com/rosas99/monster/internal/sms/types"
+	"github.com/rosas99/monster/pkg/log"
 	"github.com/segmentio/kafka-go"
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -35,7 +36,7 @@ func (l *CommonMessageConsumer) Consume(elem any) error {
 	var msg *types.TemplateMsgRequest
 	err := json.Unmarshal(val.Value, &msg)
 	if err != nil {
-		logx.Errorf("Consume val: %s error: %v", val, err)
+		logx.Errorf("Consume val: %v error: %v", val, err)
 		return err
 	}
 	return l.handleSmsRequest(l.ctx, msg)
@@ -48,22 +49,24 @@ func (l *CommonMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 		return errors.New("idempotent token is invalid")
 	}
 
-	m := model.TemplateM{}
-	providers := m.Providers
-	for _, provider := range providers {
+	historyM := model.HistoryM{}
+
+	for _, provider := range msg.Providers {
 		templateProvider, err := l.provider.GetSMSTemplateProvider(types.ProviderType(provider))
 		if err != nil {
-			break
-		}
-		ret, err := templateProvider.Send(ctx, types.TemplateMsgRequest{})
-		if err != nil {
+			log.C(ctx).Errorw(err, "get fail")
 			continue
 		}
-		historyM := model.HistoryM{
-			MessageID: ret.MessageID,
+
+		ret, err := templateProvider.Send(ctx, types.TemplateMsgRequest{})
+		log.C(ctx).Errorw(err, "send fail")
+
+		if err != nil {
+			l.logger.LogHistory(&historyM)
+			continue
 		}
-		// todo 记录到history
-		// 从响应获取bizid，关联到history
+
+		historyM.MessageID = ret.MessageID
 		l.logger.LogHistory(&historyM)
 		break
 	}

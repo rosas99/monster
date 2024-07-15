@@ -1,10 +1,12 @@
 package types
 
 // ProviderType defines an enumerated type for different cloud service providers.
-type ProviderType int
+type ProviderType string
 
 // defines a group of constants for cloud service providers.
 
 const (
-	ProviderTypeALIYUN ProviderType = iota + 1
+	ProviderTypeALIYUN ProviderType = "AILIYUN"
+
+	ProviderTypeDummy ProviderType = "DUMMY"
 )

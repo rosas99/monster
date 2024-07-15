@@ -11,7 +11,8 @@ const (
 	TemplateTypeVerificationCode = "TEMPLATE_TYPE_VERIFICATION_CODE"
 	DELIMITER                    = ":"
 
-	TemplateM = "TEMPLATE_M"
+	TemplateM   = "TEMPLATE_M"
+	TemplateCfg = "TEMPLATE_CONFIGURATION"
 )
 
 // WrapperMobileCount  is used to build the key name in Redis.
@@ -37,4 +38,8 @@ func WrapperCode(templateCode, mobile string) string {
 // WrapperTemplate  is used to build the key name in Redis.
 func WrapperTemplate(templateCode string) string {
 	return fmt.Sprintf("%s%s%s", TemplateM, DELIMITER, templateCode)
+}
+
+func WrapperTemplateCfg(templateCode string) string {
+	return fmt.Sprintf("%s%s%s", TemplateCfg, DELIMITER, templateCode)
 }

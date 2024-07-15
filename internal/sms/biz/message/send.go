@@ -3,6 +3,7 @@ package message
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/jinzhu/copier"
 	"github.com/rosas99/monster/internal/sms/model"
 	factory "github.com/rosas99/monster/internal/sms/store/redis"
@@ -16,28 +17,18 @@ import (
 
 // Send checks the template configuration and send the message to kafka queue.
 func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.CommonResponse, error) {
-
-	result, err := b.rds.Get(ctx, factory.WrapperTemplate(rq.TemplateCode)).Result()
-	tm := &model.TemplateM{}
-	if err != nil && result != "" {
-		json.Unmarshal([]byte(result), tm)
-	} else {
-		templateM, err2 := b.ds.Templates().Get(ctx, rq.TemplateCode)
-		if err2 != nil { // todo gorm record not found
-			return nil, err2
-		}
-		jsonDataBytes, _ := json.Marshal(templateM)
-		b.rds.Set(ctx, factory.WrapperTemplate(templateM.TemplateCode), jsonDataBytes, time.Hour*24)
-		tm = templateM
+	templateCode := rq.TemplateCode
+	tm := b.getTemplate(ctx, templateCode)
+	if tm == nil {
+		return nil, errors.New("")
 	}
 
-	var templateMsgRequest types.TemplateMsgRequest
-	templateMsgRequest.RequestId = b.idt.Token(ctx)
-	_ = copier.Copy(&templateMsgRequest, rq)
+	cfgList := b.getCfgList(ctx, templateCode)
+	if len(cfgList) == 0 {
+		return nil, errors.New("")
+	}
 
-	_, cfgList, err := b.ds.Configurations().List(ctx, rq.TemplateCode)
-
-	err = b.rule.CheckRules(ctx, cfgList)
+	err := b.rule.CheckRules(ctx, cfgList)
 	if err != nil {
 		b.log(rq, err, tm)
 		// 记录错误码和错误类型
@@ -51,6 +42,9 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	}
 
 	// todo 分类型
+	var templateMsgRequest types.TemplateMsgRequest
+	templateMsgRequest.RequestId = b.idt.Token(ctx)
+	_ = copier.Copy(&templateMsgRequest, rq)
 	err = b.logger.WriteMessage(ctx, &templateMsgRequest, tm.Type)
 	if err != nil {
 		log.C(ctx).Infof("test")
@@ -66,6 +60,80 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) (*v1.C
 	b.logger.LogKpi(message)
 
 	return &v1.CommonResponse{Code: tm.ID}, nil
+}
+
+func (b *messageBiz) getTemplate(ctx context.Context, templateCode string) *model.TemplateM {
+	cache := b.fromTemplateCache(ctx, templateCode)
+
+	if cache != nil {
+		return cache
+	}
+
+	return b.fromTemplateDb(ctx, templateCode)
+
+}
+
+func (b *messageBiz) fromTemplateDb(ctx context.Context, templateCode string) *model.TemplateM {
+	templateM, err := b.ds.Templates().GetByTemplateCode(ctx, templateCode)
+	if err != nil { // todo gorm record not found
+		return nil
+	}
+
+	marshal, _ := json.Marshal(templateM)
+	b.rds.Set(ctx, factory.WrapperTemplate(templateM.TemplateCode), marshal, time.Hour*24)
+
+	return templateM
+}
+
+func (b *messageBiz) fromTemplateCache(ctx context.Context, templateCode string) *model.TemplateM {
+	tpCache, err := b.rds.Get(ctx, factory.WrapperTemplate(templateCode)).Result()
+	if err != nil {
+		return nil
+	}
+
+	tm := &model.TemplateM{}
+	err = json.Unmarshal([]byte(tpCache), tm)
+	if err != nil {
+		return nil
+	}
+
+	return tm
+}
+
+func (b *messageBiz) getCfgList(ctx context.Context, templateCode string) []*model.ConfigurationM {
+	var tm *model.TemplateM
+	cache := b.fromCfgCache(ctx, templateCode)
+	if len(cache) != 0 {
+		return cache
+	}
+
+	return b.fromCfgDb(ctx, templateCode, tm)
+
+}
+
+func (b *messageBiz) fromCfgCache(ctx context.Context, templateCode string) []*model.ConfigurationM {
+	cache, err := b.rds.Get(ctx, factory.WrapperTemplateCfg(templateCode)).Result()
+	if err != nil || cache == "" {
+		return nil
+	}
+
+	var cfgList []*model.ConfigurationM
+	err = json.Unmarshal([]byte(cache), &cfgList)
+	if err != nil {
+		return nil
+	}
+	return cfgList
+}
+
+func (b *messageBiz) fromCfgDb(ctx context.Context, templateCode string, tm *model.TemplateM) []*model.ConfigurationM {
+	_, list, err := b.ds.Configurations().List(ctx, templateCode)
+	if err != nil { // todo gorm record not found
+		return nil
+	}
+
+	marshal, _ := json.Marshal(list)
+	b.rds.Set(ctx, factory.WrapperTemplateCfg(tm.TemplateCode), marshal, time.Hour*24)
+	return list
 }
 
 func (b *messageBiz) log(rq *v1.SendMessageRequest, err error, m *model.TemplateM) {

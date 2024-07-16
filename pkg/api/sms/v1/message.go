@@ -38,7 +38,7 @@ type AILIYUNCallbackList struct {
 }
 
 type AILIYUNReport struct {
-	PhoneNumber string `json:"phoneNumber" valid:"alphanum,required,stringlength(1|255)"`
+	PhoneNumber string `json:"phoneNumber" valid:"alphanum,required,stringlength(11)"`
 	SendTime    string `json:"sendTime-time" valid:"required,stringlength(1|255)"`
 	ReportTime  string `json:"reportTime" valid:"required,stringlength(1|255)"`
 	Success     bool   `json:"success" valid:"required,stringlength(1|255)"`

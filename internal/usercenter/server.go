@@ -61,7 +61,6 @@ func (s *HTTPServer) RunOrDie() {
 }
 
 func (s *HTTPServer) GracefulStop() {
-	// 创建 ctx 用于通知服务器 goroutine, 它有 10 秒时间完成当前正在处理的请求
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -82,6 +81,7 @@ func NewGRPCServer(
 			return nil, err
 		}
 
+		// grpc middleware
 		dialOptions = append(dialOptions, grpc.Creds(credentials.NewTLS(tlsConfig)))
 	}
 

@@ -22,21 +22,21 @@ func (s *SmsServerService) ListTemplate(ctx context.Context, rq *v1.ListTemplate
 
 // GetTemplate is a method for retrieving a specific template.
 // It takes a GetTemplateRequest as input and returns a TemplateReply with the secret or an error.
-func (s *SmsServerService) GetTemplate(ctx context.Context, id string) (*v1.TemplateReply, error) {
+func (s *SmsServerService) GetTemplate(ctx context.Context, id int64) (*v1.TemplateReply, error) {
 	log.C(ctx).Infow("GetOrder function called")
 	return s.biz.Templates().Get(ctx, id)
 }
 
 // UpdateTemplate is a method for updating a template.
 // It takes an UpdateTemplateRequest as input and returns an Empty message or an error.
-func (s *SmsServerService) UpdateTemplate(ctx context.Context, id string, rq *v1.UpdateTemplateRequest) (*emptypb.Empty, error) {
+func (s *SmsServerService) UpdateTemplate(ctx context.Context, id int64, rq *v1.UpdateTemplateRequest) (*emptypb.Empty, error) {
 	log.C(ctx).Infow("UpdateOrder function called")
 	return &emptypb.Empty{}, s.biz.Templates().Update(ctx, id, rq)
 }
 
 // DeleteTemplate is a method for deleting a template.
 // It takes a DeleteTemplateRequest as input and returns an Empty message or an error.
-func (s *SmsServerService) DeleteTemplate(ctx context.Context, id string) (*emptypb.Empty, error) {
+func (s *SmsServerService) DeleteTemplate(ctx context.Context, id int64) (*emptypb.Empty, error) {
 	log.C(ctx).Infow("DeleteOrder function called")
 	return &emptypb.Empty{}, s.biz.Templates().Delete(ctx, id)
 }

@@ -23,6 +23,7 @@ type TemplateM struct {
 	Providers    string    `gorm:"column:providers" json:"providers"`
 	CreatedAt    time.Time `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt    time.Time `gorm:"column:updated_at" json:"updated_at"`
+	// todo brand
 }
 
 // TableName TemplateM's table name

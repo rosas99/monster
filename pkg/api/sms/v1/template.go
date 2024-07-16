@@ -23,21 +23,21 @@ type CreateTemplateResponse struct {
 }
 
 type UpdateTemplateRequest struct {
-	TemplateName  string `json:"phoneNumber" valid:"required,stringlength(1|255)"`
-	Content       string `json:"content" valid:"required,stringlength(1|255)"`
-	TemplateType  string `json:"templateType" valid:"required,stringlength(1|255)"`
-	Brand         string `json:"brand" valid:"required,stringlength(1|255)"`
-	Providers     string `json:"providers" valid:"required,stringlength(1|255)"`
-	TokenId       string `json:"tokenId" valid:"required,stringlength(1|255)"`
-	TemplateCode  string `json:"templateCode" valid:"required,stringlength(1|255)"`
-	Sign          string `json:"sign" valid:"required,stringlength(1|255)"`
-	UserId        string `json:"userId" valid:"required,stringlength(1|255)"`
-	TemplateCount string `json:"templateCount" valid:"required,gt=0,stringlength(1|255)"`
-	MobileCount   string `json:"mobileCount" valid:"required,gt=0,stringlength(1|255)"`
-	TimeInterval  string `json:"timeInterval" valid:"required,gt=0,stringlength(1|255)"`
-	Region        string `json:"region" valid:"required,stringlength(1|255)"`
-	Mobile        string `json:"mobile" valid:"required,stringlength(1|255)"`
-	Code          string `json:"code" valid:"required,stringlength(1|255)"`
+	TemplateName  *string `json:"phoneNumber" valid:"required,stringlength(1|255)"`
+	Content       *string `json:"content" valid:"required,stringlength(1|255)"`
+	Type          *string `json:"templateType" valid:"required,stringlength(1|255)"`
+	Brand         *string `json:"brand" valid:"required,stringlength(1|255)"`
+	Providers     *string `json:"providers" valid:"required,stringlength(1|255)"`
+	TokenId       *string `json:"tokenId" valid:"required,stringlength(1|255)"`
+	TemplateCode  *string `json:"templateCode" valid:"required,stringlength(1|255)"`
+	Sign          *string `json:"sign" valid:"required,stringlength(1|255)"`
+	UserId        *string `json:"userId" valid:"required,stringlength(1|255)"`
+	TemplateCount *string `json:"templateCount" valid:"required,gt=0,stringlength(1|255)"`
+	MobileCount   *string `json:"mobileCount" valid:"required,gt=0,stringlength(1|255)"`
+	TimeInterval  *string `json:"timeInterval" valid:"required,gt=0,stringlength(1|255)"`
+	Region        *string `json:"region" valid:"required,stringlength(1|255)"`
+	Mobile        *string `json:"mobile" valid:"required,stringlength(1|255)"`
+	Code          *string `json:"code" valid:"required,stringlength(1|255)"`
 }
 
 type TemplateReply struct {

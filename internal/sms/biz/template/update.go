@@ -9,45 +9,65 @@ import (
 
 // Update updates a template's information in the database.
 func (t *templateBiz) Update(ctx context.Context, id int64, rq *v1.UpdateTemplateRequest) error {
+	var err error
 	orderM, err := t.ds.Templates().Get(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	//不为空才更新，类型Mybatis的动态sql
-	//if rq.Customer != nil {
-	//	orderM.Customer = *rq.Customer
-	//}
-	//
-	//if rq.Product != nil {
-	//	orderM.Product = *rq.Product
-	//}
-	//
-	//if rq.Quantity != nil {
-	//	orderM.Quantity = *rq.Quantity
+	//if rq.Brand != nil {
+	//	orderM.Brand = *rq.Brand
 	//}
 
-	err = t.ds.Templates().Update(ctx, orderM)
+	if rq.Sign != nil {
+		orderM.Sign = *rq.Sign
+	}
+
+	if rq.Content != nil {
+		orderM.Content = *rq.Content
+	}
+
+	if rq.Type != nil {
+		orderM.Type = *rq.Type
+	}
+
+	if rq.TemplateName != nil {
+		orderM.TemplateName = *rq.TemplateName
+	}
+
+	if rq.Region != nil {
+		orderM.Region = *rq.Region
+	}
+
+	if rq.Providers != nil {
+		orderM.Providers = *rq.Providers
+	}
+
+	if err = t.ds.Templates().Update(ctx, orderM); err != nil {
+		return err
+	}
 
 	configurationsM := []*model.ConfigurationM{
 		{
 			ConfigKey:    types.MessageCountForMobilePerDay,
-			ConfigValue:  rq.MobileCount,
-			TemplateCode: rq.TemplateCode,
+			ConfigValue:  *rq.MobileCount,
+			TemplateCode: *rq.TemplateCode,
 		},
 		{
 			ConfigKey:    types.MessageCountForTemplatePerDay,
-			ConfigValue:  rq.TemplateCount,
-			TemplateCode: rq.TemplateCode,
+			ConfigValue:  *rq.TemplateCount,
+			TemplateCode: *rq.TemplateCode,
 		},
 		{
 			ConfigKey:    types.TimeIntervalForMobilePerDay,
-			ConfigValue:  rq.TimeInterval,
-			TemplateCode: rq.TemplateCode,
+			ConfigValue:  *rq.TimeInterval,
+			TemplateCode: *rq.TemplateCode,
 		}}
-	if err := t.ds.Configurations().CreateBatch(ctx, configurationsM); err != nil {
-		// todo 错误码定义
+
+	err = t.ds.Configurations().CreateBatch(ctx, configurationsM)
+	if err != nil {
 		return err
 	}
+
 	return err
 }

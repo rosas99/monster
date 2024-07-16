@@ -2,9 +2,12 @@ package kafka
 
 import (
 	"context"
-	"fmt"
+	"errors"
+	"github.com/rosas99/monster/pkg/log"
 	"github.com/segmentio/kafka-go"
-	"k8s.io/klog/v2"
+	"github.com/zeromicro/go-zero/core/logx"
+	"io"
+	"sync"
 )
 
 type ConsumeHandler interface {
@@ -12,19 +15,19 @@ type ConsumeHandler interface {
 }
 
 type Consumer struct {
-	r           *kafka.Reader
-	ctx         context.Context
-	cancelCtx   context.CancelFunc
-	handler     ConsumeHandler
-	forceCommit bool
+	r                *kafka.Reader
+	handler          ConsumeHandler
+	producerRoutines *sync.WaitGroup
+	consumerRoutines *sync.WaitGroup
+	forceCommit      bool
+	channel          chan kafka.Message
+	processors       int
+	consumers        int
 }
 
 func NewConsumer(ctx context.Context, config kafka.ReaderConfig, handler ConsumeHandler, forceCommit bool) (*Consumer, error) {
-	cctx, cancel := context.WithCancel(ctx)
 	sink := &Consumer{
 		r:           kafka.NewReader(config),
-		ctx:         cctx,
-		cancelCtx:   cancel,
 		handler:     handler,
 		forceCommit: forceCommit,
 	}
@@ -32,35 +35,62 @@ func NewConsumer(ctx context.Context, config kafka.ReaderConfig, handler Consume
 	return sink, nil
 }
 
-func (ks *Consumer) Start() {
-	go ks.consume()
+func (c *Consumer) Start() {
+	go c.startConsumers()
+	go c.startProducers()
+
+	c.producerRoutines.Wait()
+	close(c.channel)
+	c.consumerRoutines.Wait()
 }
 
-func (ks *Consumer) Stop() {
-	ks.cancelCtx()
-	ks.r.Close()
+func (c *Consumer) Stop() {
+	c.r.Close()
 }
+func (c *Consumer) startProducers() {
+	for i := 0; i < c.consumers; i++ {
+		c.producerRoutines.Add(1)
+		go func() {
+			defer c.producerRoutines.Done()
+			for {
+				msg, err := c.r.FetchMessage(context.Background())
+				// io.EOF means consumer closed
+				// io.ErrClosedPipe means committing messages on the consumer,
+				// kafka will refire the messages on uncommitted messages, ignore
+				if errors.Is(err, io.EOF) || errors.Is(err, io.ErrClosedPipe) {
+					return
+				}
 
-func (ks *Consumer) consume() {
-	for {
-		msg, err := ks.r.ReadMessage(ks.ctx)
-		if err != nil {
-			klog.ErrorS(err, "Failed to read message")
-		}
-
-		err = ks.handler.Consume(msg)
-		if err != nil {
-			// log error
-			if !ks.forceCommit {
-				continue
+				if err != nil {
+					logx.Errorf("Error on reading message, %q", err.Error())
+					continue
+				}
+				c.channel <- msg
 			}
-		}
-
-		err = ks.r.CommitMessages(context.Background(), msg)
-		if err != nil {
-			fmt.Println("commit messages fail")
-		}
-		fmt.Println("commit messages suc")
+		}()
 
 	}
+}
+func (c *Consumer) startConsumers() {
+	for i := 0; i < c.processors; i++ {
+		c.consumerRoutines.Add(1)
+		go func() {
+			defer c.consumerRoutines.Done()
+			for msg := range c.channel {
+				if err := c.handler.Consume(msg); err != nil {
+					log.Errorf("consume: %s, error: %v", string(msg.Value), err)
+					if !c.forceCommit {
+						continue
+					}
+				}
+
+				if err := c.r.CommitMessages(context.Background(), msg); err != nil {
+
+				}
+				log.Infof("")
+			}
+		}()
+
+	}
+
 }

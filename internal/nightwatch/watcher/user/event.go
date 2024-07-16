@@ -3,12 +3,12 @@ package user
 import (
 	"context"
 	known "github.com/rosas99/monster/internal/pkg/known/usercenter"
+	"github.com/rosas99/monster/internal/pkg/monsterx"
 	"time"
 
 	"github.com/looplab/fsm"
 
 	"github.com/rosas99/monster/internal/pkg/client/store"
-	"github.com/rosas99/monster/internal/pkg/onexx"
 	"github.com/rosas99/monster/pkg/log"
 )
 
@@ -18,7 +18,7 @@ const (
 
 func NewActiveUserCallback(store store.Interface) fsm.Callback {
 	return func(ctx context.Context, event *fsm.Event) {
-		userM := onexx.FromUserM(ctx)
+		userM := monsterx.FromUserM(ctx)
 		log.Infow("Now active user", "event", event.Event, "username", userM.Username)
 		// Fake active user operations.
 		time.Sleep(5 * time.Second)
@@ -28,7 +28,7 @@ func NewActiveUserCallback(store store.Interface) fsm.Callback {
 
 func NewDisableUserCallback(store store.Interface) fsm.Callback {
 	return func(ctx context.Context, event *fsm.Event) {
-		userM := onexx.FromUserM(ctx)
+		userM := monsterx.FromUserM(ctx)
 		log.Infow("Now disable user", "event", event.Event, "username", userM.Username)
 		// Fake disable user operations.
 		time.Sleep(5 * time.Second)
@@ -38,7 +38,7 @@ func NewDisableUserCallback(store store.Interface) fsm.Callback {
 
 func NewDeleteUserCallback(store store.Interface) fsm.Callback {
 	return func(ctx context.Context, event *fsm.Event) {
-		userM := onexx.FromUserM(ctx)
+		userM := monsterx.FromUserM(ctx)
 		log.Infow("Now delete user", "event", event.Event, "username", userM.Username)
 		// Fake delete user operations.
 		time.Sleep(5 * time.Second)
@@ -49,7 +49,7 @@ func NewDeleteUserCallback(store store.Interface) fsm.Callback {
 func NewUserEventAfterEvent(store store.Interface) fsm.Callback {
 	return func(ctx context.Context, event *fsm.Event) {
 		alarmStatus := "success"
-		userM := onexx.FromUserM(ctx)
+		userM := monsterx.FromUserM(ctx)
 
 		defer func() {
 			log.Infow("This is a fake alarm message", "status", alarmStatus, "username", userM.Username)
@@ -62,7 +62,7 @@ func NewUserEventAfterEvent(store store.Interface) fsm.Callback {
 			return
 		}
 
-		user := onexx.FromUserM(ctx)
+		user := monsterx.FromUserM(ctx)
 		user.Username = event.FSM.Current()
 		if err := store.UserCenter().Users().Update(ctx, user); err != nil {
 			log.Errorw(err, "Failed to update status into database", "event", event.Event)

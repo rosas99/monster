@@ -56,3 +56,27 @@ func (t *templateBiz) List(ctx context.Context, rq *v1.ListTemplateRequest) (*v1
 
 	return &v1.ListTemplateResponse{TotalCount: count, Templates: templates}, nil
 }
+
+func (t *templateBiz) ListWithBadPerformance(ctx context.Context, rq *v1.ListTemplateRequest) (*v1.ListTemplateResponse, error) {
+
+	count, list, err := t.ds.Templates().List(ctx, rq.TemplateCode, meta.WithOffset(rq.Offset), meta.WithLimit(rq.Limit))
+	if err != nil {
+		log.C(ctx).Errorw(err, "Failed to list orders from storage")
+		return nil, err
+	}
+
+	templates := make([]*v1.TemplateReply, 0, len(list))
+
+	for _, item := range list {
+		var t v1.TemplateReply
+		_ = copier.Copy(&t, item)
+		templates = append(templates, &v1.TemplateReply{
+			CreatedAt: item.CreatedAt.Format("2006-01-02 15:04:05"),
+			UpdatedAt: item.UpdatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	log.C(ctx).Debugw("Get orders from backend storage", "count", len(templates))
+
+	return &v1.ListTemplateResponse{TotalCount: count, Templates: templates}, nil
+}

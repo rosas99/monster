@@ -3,6 +3,7 @@ package user
 
 import (
 	"context"
+	"github.com/rosas99/monster/internal/pkg/monsterx"
 
 	"github.com/gammazero/workerpool"
 	"github.com/looplab/fsm"
@@ -10,7 +11,6 @@ import (
 	"github.com/rosas99/monster/internal/nightwatch/watcher"
 	"github.com/rosas99/monster/internal/pkg/client/store"
 	known "github.com/rosas99/monster/internal/pkg/known/usercenter"
-	"github.com/rosas99/monster/internal/pkg/onexx"
 	"github.com/rosas99/monster/internal/usercenter/model"
 	"github.com/rosas99/monster/pkg/log"
 	stringsutil "github.com/rosas99/monster/pkg/util/strings"
@@ -50,7 +50,7 @@ func (w *userWatcher) Run() {
 		}
 
 		wp.Submit(func() {
-			ctx := onexx.NewUserM(context.Background(), user)
+			ctx := monsterx.NewUserM(context.Background(), user)
 			u := &User{UserM: user, FSM: NewFSM(user.Nickname, w)}
 			if err := u.Event(ctx, user.Status); err != nil {
 				log.Errorw(err, "Failed to event user", "username", user.Username, "status", user.Nickname)

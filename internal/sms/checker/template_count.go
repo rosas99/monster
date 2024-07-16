@@ -25,7 +25,7 @@ var _ Rule = (*MessageCountForTemplateRule)(nil)
 func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *types.Request) error {
 
 	start := time.Now().Unix()
-	key := factory.WrapperTemplateCount(rq.Mobile, rq.TemplateCode)
+	key := factory.WrapperTemplateCount(rq.TemplateCode)
 	sentCount, err := m.RDS.Incr(ctx, key).Result()
 	if err != nil {
 		log.Errorf("Failed to increment count for key: %s, error: %v", key, err)

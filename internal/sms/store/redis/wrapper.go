@@ -15,13 +15,13 @@ const (
 	TemplateCfg = "TEMPLATE_CONFIGURATION"
 )
 
-// WrapperMobileCount  is used to build the key name in Redis.
-func WrapperMobileCount(templateCode, mobile string) string {
-	return fmt.Sprintf("%s%s%s%s%s", MobileCount, DELIMITER, templateCode, DELIMITER, mobile)
+// WrapperTemplateCount  is used to build the key name in Redis.
+func WrapperTemplateCount(templateCode string) string {
+	return fmt.Sprintf("%s%s%s", MobileCount, DELIMITER, templateCode)
 }
 
-// WrapperTemplateCount  is used to build the key name in Redis.
-func WrapperTemplateCount(templateCode, mobile string) string {
+// WrapperMobileCount  is used to build the key name in Redis.
+func WrapperMobileCount(templateCode, mobile string) string {
 	return fmt.Sprintf("%s%s%s%s%s", TemplateCount, DELIMITER, templateCode, DELIMITER, mobile)
 }
 

@@ -72,8 +72,8 @@ func (s *HTTPServer) GracefulStop() {
 	}
 }
 
-func NewMqServer(KafkaOptions *genericoptions.KafkaOptions, logic kafkaconnector.ConsumeHandler) (MqServer, error) {
-	consumer, err := kafkaconnector.NewQueue(KafkaOptions, logic)
+func NewMqServer(KafkaOptions *genericoptions.KafkaOptions, handler kafkaconnector.ConsumeHandler) (MqServer, error) {
+	consumer, err := kafkaconnector.NewQueue(KafkaOptions, handler)
 	if err != nil {
 		return MqServer{}, err
 	}

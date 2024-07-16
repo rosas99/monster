@@ -12,24 +12,17 @@ const TableNameTemplateM = "sms_template"
 
 // TemplateM mapped from table <sms_template>
 type TemplateM struct {
-	ID           int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	TemplateName string `gorm:"column:template_name;not null" json:"template_name"`
-	TemplateCode string `gorm:"column:template_code;not null" json:"template_code"`
-	Type         string `gorm:"column:type;not null" json:"type"`
-	Content      string `gorm:"column:content;not null" json:"content"`
-	//BrandID      int64     `gorm:"column:brand_id" json:"brand_id"`
-	//TokenID      string    `gorm:"column:token_id" json:"token_id"`
-	Sign string `gorm:"column:sign" json:"sign"`
-	//PrimaryISP   string    `gorm:"column:primary_ISP" json:"primary_ISP"`
-	//UserID       string    `gorm:"column:user_id" json:"user_id"`
-	ExtCode   string `gorm:"column:ext_code" json:"ext_code"`
-	Brand     string `gorm:"column:brand" json:"brand"`
-	Provider  string `gorm:"column:provider" json:"provider"`          // 主供应商
-	Region    string `gorm:"column:region;comment:国家地区" json:"region"` // 国家地区
-	Providers string `gorm:"column:providers" json:"providers"`        // 备用供应商列表
-	//DemanderIds  string    `gorm:"column:demander_ids" json:"demander_ids"`
-	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt time.Time `gorm:"column:updated_at" json:"updated_at"`
+	ID           int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	TemplateName string    `gorm:"column:template_name;not null" json:"template_name"`
+	TemplateCode string    `gorm:"column:template_code;not null" json:"template_code"`
+	Type         string    `gorm:"column:type;not null" json:"type"`
+	Content      string    `gorm:"column:content;not null" json:"content"`
+	Sign         string    `gorm:"column:sign" json:"sign"`
+	Provider     string    `gorm:"column:provider" json:"provider"`
+	Region       string    `gorm:"column:region;comment:国家地区" json:"region"` // 国家地区
+	Providers    string    `gorm:"column:providers" json:"providers"`
+	CreatedAt    time.Time `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt    time.Time `gorm:"column:updated_at" json:"updated_at"`
 }
 
 // TableName TemplateM's table name

@@ -75,7 +75,7 @@ func main() {
 	// if you want to use GenerateModel/GenerateModelAs, UseDB is necessary or it will panic
 	g.UseDB(dbIns)
 
-	//g.GenerateModelAs("sms_template", "TemplateM", gen.FieldIgnore("placeholder"))
+	g.GenerateModelAs("sms_template", "TemplateM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("uc_user", "UserM", gen.FieldIgnore("placeholder"))
 	g.GenerateModelAs("sms_history", "HistoryM", gen.FieldIgnore("placeholder"))
 	//g.GenerateModelAs("sms_interaction", "InteractionM", gen.FieldIgnore("placeholder"))

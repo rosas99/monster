@@ -175,6 +175,10 @@ type KafkaOptions struct {
 
 	// kafka-go reader options
 	ReaderOptions ReaderOptions `mapstructure:"reader"`
+
+	Consumers   int  `mapstructure:"consumers"`
+	Processors  int  `mapstructure:"processors"`
+	ForceCommit bool `mapstructure:"forceCommit"`
 }
 
 // NewKafkaOptions create a `zero` value instance.
@@ -202,6 +206,9 @@ func NewKafkaOptions() *KafkaOptions {
 			StartOffset:       kafka.FirstOffset,
 			MaxAttempts:       3,
 		},
+		Consumers:   8,
+		Processors:  8,
+		ForceCommit: true,
 	}
 }
 

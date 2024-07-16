@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/rosas99/monster/pkg/log"
+	genericoptions "github.com/rosas99/monster/pkg/options"
 	"github.com/segmentio/kafka-go"
 	"github.com/zeromicro/go-zero/core/logx"
 	"io"
@@ -14,8 +15,8 @@ type ConsumeHandler interface {
 	Consume(val any) error
 }
 
-type Consumer struct {
-	r                *kafka.Reader
+type Queue struct {
+	consumer         *kafka.Reader
 	handler          ConsumeHandler
 	producerRoutines *sync.WaitGroup
 	consumerRoutines *sync.WaitGroup
@@ -25,17 +26,39 @@ type Consumer struct {
 	consumers        int
 }
 
-func NewConsumer(ctx context.Context, config kafka.ReaderConfig, handler ConsumeHandler, forceCommit bool) (*Consumer, error) {
-	sink := &Consumer{
-		r:           kafka.NewReader(config),
-		handler:     handler,
-		forceCommit: forceCommit,
+func NewQueue(KafkaOptions *genericoptions.KafkaOptions, handler ConsumeHandler) (*Queue, error) {
+	r := kafka.ReaderConfig{
+		Brokers:           KafkaOptions.Brokers,
+		Topic:             KafkaOptions.Topic,
+		GroupID:           KafkaOptions.ReaderOptions.GroupID,
+		QueueCapacity:     KafkaOptions.ReaderOptions.QueueCapacity,
+		MinBytes:          KafkaOptions.ReaderOptions.MinBytes,
+		MaxBytes:          KafkaOptions.ReaderOptions.MaxBytes,
+		MaxWait:           KafkaOptions.ReaderOptions.MaxWait,
+		ReadBatchTimeout:  KafkaOptions.ReaderOptions.ReadBatchTimeout,
+		HeartbeatInterval: KafkaOptions.ReaderOptions.HeartbeatInterval,
+		CommitInterval:    KafkaOptions.ReaderOptions.CommitInterval,
+		RebalanceTimeout:  KafkaOptions.ReaderOptions.RebalanceTimeout,
+		StartOffset:       KafkaOptions.ReaderOptions.StartOffset,
+		MaxAttempts:       KafkaOptions.ReaderOptions.MaxAttempts,
+	}
+
+	sink := &Queue{
+		consumer:         kafka.NewReader(r),
+		handler:          handler,
+		channel:          make(chan kafka.Message),
+		producerRoutines: new(sync.WaitGroup),
+		consumerRoutines: new(sync.WaitGroup),
+
+		forceCommit: KafkaOptions.ForceCommit,
+		processors:  KafkaOptions.Processors,
+		consumers:   KafkaOptions.Consumers,
 	}
 
 	return sink, nil
 }
 
-func (c *Consumer) Start() {
+func (c *Queue) Start() {
 	go c.startConsumers()
 	go c.startProducers()
 
@@ -44,16 +67,16 @@ func (c *Consumer) Start() {
 	c.consumerRoutines.Wait()
 }
 
-func (c *Consumer) Stop() {
-	c.r.Close()
+func (c *Queue) Stop() {
+	c.consumer.Close()
 }
-func (c *Consumer) startProducers() {
+func (c *Queue) startProducers() {
 	for i := 0; i < c.consumers; i++ {
 		c.producerRoutines.Add(1)
 		go func() {
 			defer c.producerRoutines.Done()
 			for {
-				msg, err := c.r.FetchMessage(context.Background())
+				msg, err := c.consumer.FetchMessage(context.Background())
 				// io.EOF means consumer closed
 				// io.ErrClosedPipe means committing messages on the consumer,
 				// kafka will refire the messages on uncommitted messages, ignore
@@ -71,7 +94,7 @@ func (c *Consumer) startProducers() {
 
 	}
 }
-func (c *Consumer) startConsumers() {
+func (c *Queue) startConsumers() {
 	for i := 0; i < c.processors; i++ {
 		c.consumerRoutines.Add(1)
 		go func() {
@@ -84,7 +107,7 @@ func (c *Consumer) startConsumers() {
 					}
 				}
 
-				if err := c.r.CommitMessages(context.Background(), msg); err != nil {
+				if err := c.consumer.CommitMessages(context.Background(), msg); err != nil {
 
 				}
 				log.Infof("")

@@ -126,19 +126,19 @@ func (c completedConfig) New() (*SmsServer, error) {
 
 	logic := mqs.NewCommonMessageConsumer(context.Background(), idt, l, provider)
 	//  todo force commit 配置化
-	mqsrv, err := NewMqServer(c.CommonKafkaOptions, logic, true)
+	mqsrv, err := NewMqServer(c.CommonKafkaOptions, logic)
 	if err != nil {
 		return nil, err
 	}
 
 	logic2 := mqs.NewVerifyMessageConsumer(context.Background(), idt, l, provider)
-	mqsrv2, err := NewMqServer(c.VerifyKafkaOptions, logic2, true)
+	mqsrv2, err := NewMqServer(c.VerifyKafkaOptions, logic2)
 	if err != nil {
 		return nil, err
 	}
 
 	logic3 := mqs.NewUplinkMessageConsumer(context.Background(), ds, idt, l)
-	mqsrv3, err := NewMqServer(c.UplinkMessageKqOptions, logic3, true)
+	mqsrv3, err := NewMqServer(c.UplinkMessageKqOptions, logic3)
 	if err != nil {
 		return nil, err
 	}

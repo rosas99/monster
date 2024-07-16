@@ -65,10 +65,10 @@ func (b *messageBiz) getTemplate(ctx context.Context, templateCode string) *mode
 	tpCache, _ := b.rds.Get(ctx, factory.WrapperTemplate(templateCode)).Result()
 	if tpCache != "" {
 		tm := &model.TemplateM{}
-		err := json.Unmarshal([]byte(tpCache), tm)
-		if err != nil {
+		if err := json.Unmarshal([]byte(tpCache), tm); err != nil {
 			return nil
 		}
+
 		return tm
 	}
 
@@ -85,10 +85,10 @@ func (b *messageBiz) getCfgList(ctx context.Context, templateCode string) []*mod
 	cache, _ := b.rds.Get(ctx, factory.WrapperTemplateCfg(templateCode)).Result()
 	if cache != "" {
 		var cfgList []*model.ConfigurationM
-		err := json.Unmarshal([]byte(cache), &cfgList)
-		if err != nil {
+		if err := json.Unmarshal([]byte(cache), &cfgList); err != nil {
 			return nil
 		}
+
 		return cfgList
 	}
 

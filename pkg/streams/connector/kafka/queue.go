@@ -91,9 +91,9 @@ func (c *Queue) startProducers() {
 				c.channel <- msg
 			}
 		}()
-
 	}
 }
+
 func (c *Queue) startConsumers() {
 	for i := 0; i < c.processors; i++ {
 		c.consumerRoutines.Add(1)
@@ -108,12 +108,10 @@ func (c *Queue) startConsumers() {
 				}
 
 				if err := c.consumer.CommitMessages(context.Background(), msg); err != nil {
-
+					log.Errorf("commit failed, error: %v", err)
 				}
-				log.Infof("")
 			}
 		}()
 
 	}
-
 }

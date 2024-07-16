@@ -16,20 +16,20 @@ func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportList
 		count, list, _ := b.ds.Histories().List(ctx, "", meta.WithFilter(filter))
 		if count > 0 {
 			history := list[0]
-			marshal, err2 := json.Marshal(history)
-			if err2 != nil {
+			marshal, err := json.Marshal(history)
+			if err != nil {
 				message := map[string]any{
 					"test":  "value1",
 					"other": 123,
 				}
-				log.C(ctx).Warnf("marshal history record fail %v", err2)
+				log.C(ctx).Warnf("marshal history record fail %v", err)
 				b.logger.LogKpi(message) // todo
-				return err2
+				return err
 			}
 			history.Report = string(marshal)
-			err2 = b.ds.Histories().Update(ctx, history)
-			if err2 != nil {
-				log.C(ctx).Warnf("update histroy report fail %v", err2)
+			err = b.ds.Histories().Update(ctx, history)
+			if err != nil {
+				log.C(ctx).Warnf("update histroy report fail %v", err)
 			}
 		}
 	}

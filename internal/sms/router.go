@@ -25,6 +25,7 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 	// v1 := g.Group("/v1", mw.BasicAuth(usercenter.GetClient()))
 	v1 := g.Group("/v1")
 	{
+		v1.Use()
 		// create template router group
 		templatev1 := v1.Group("/template")
 		{

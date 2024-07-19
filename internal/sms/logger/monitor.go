@@ -10,7 +10,7 @@ import (
 // LogKpi writes a log message for the api request.
 func (l *Logger) LogKpi(messageMap map[string]any) {
 	out, _ := json.Marshal(messageMap)
-	if err := l.uplinkWriter.WriteMessages(context.Background(), kafka.Message{Value: out}); err != nil {
+	if err := l.monitorWriter.WriteMessages(context.Background(), kafka.Message{Value: out}); err != nil {
 		log.Errorw(err, "Failed to write kafka messages")
 	}
 }

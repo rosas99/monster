@@ -43,7 +43,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) error 
 	var templateMsgRequest types.TemplateMsgRequest
 	templateMsgRequest.RequestId = b.idt.Token(ctx)
 	_ = copier.Copy(&templateMsgRequest, rq)
-	err = b.logger.WriteCommonMessage(ctx, &templateMsgRequest, tm.Type)
+	err = b.logger.WriteMessage(ctx, &templateMsgRequest, tm.Type)
 	if err != nil {
 		log.C(ctx).Infof("test")
 		b.log(rq, err, tm)

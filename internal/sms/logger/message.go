@@ -9,8 +9,8 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-// WriteCommonMessage writes a log message for the common message.
-func (l *Logger) WriteCommonMessage(ctx context.Context, msg *types.TemplateMsgRequest, messageType string) error {
+// WriteMessage writes a log message for the common message.
+func (l *Logger) WriteMessage(ctx context.Context, msg *types.TemplateMsgRequest, messageType string) error {
 	out, _ := json.Marshal(msg)
 	if messageType == types.VerificationMessage {
 		return l.commonWriter.WriteMessages(ctx, kafka.Message{Value: out})

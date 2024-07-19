@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
+	"strconv"
 )
 
 func (b *Controller) Update(c *gin.Context) {
@@ -13,7 +14,8 @@ func (b *Controller) Update(c *gin.Context) {
 		return
 	}
 
-	ret, err := b.svc.UpdateTemplate(c, c.Param("id"), &r)
+	i, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	ret, err := b.svc.UpdateTemplate(c, i, &r)
 	if err != nil {
 		return
 	}

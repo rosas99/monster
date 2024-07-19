@@ -21,9 +21,9 @@ var _ app.CliOptions = (*Options)(nil)
 
 // Options contains state for master/api server.
 type Options struct {
-	GRPCOptions *genericoptions.GRPCOptions `json:"grpc" mapstructure:"grpc"`
-	HTTPOptions *genericoptions.HTTPOptions `json:"http" mapstructure:"http"`
-	//TLSOptions   *genericoptions.TLSOptions     `json:"tls" mapstructure:"tls"`
+	GRPCOptions  *genericoptions.GRPCOptions  `json:"grpc" mapstructure:"grpc"`
+	HTTPOptions  *genericoptions.HTTPOptions  `json:"http" mapstructure:"http"`
+	TLSOptions   *genericoptions.TLSOptions   `json:"tls" mapstructure:"tls"`
 	MySQLOptions *genericoptions.MySQLOptions `json:"mysql" mapstructure:"mysql"`
 	//Redis options for configuring Redis related options.
 	RedisOptions *genericoptions.RedisOptions `json:"redis" mapstructure:"redis"`
@@ -39,9 +39,9 @@ type Options struct {
 // NewOptions returns initialized Options.
 func NewOptions() *Options {
 	o := &Options{
-		GRPCOptions: genericoptions.NewGRPCOptions(),
-		HTTPOptions: genericoptions.NewHTTPOptions(),
-		//TLSOptions:    genericoptions.NewTLSOptions(),
+		GRPCOptions:         genericoptions.NewGRPCOptions(),
+		HTTPOptions:         genericoptions.NewHTTPOptions(),
+		TLSOptions:          genericoptions.NewTLSOptions(),
 		MySQLOptions:        genericoptions.NewMySQLOptions(),
 		RedisOptions:        genericoptions.NewRedisOptions(),
 		CommonKafkaOptions:  genericoptions.NewKafkaOptions(),
@@ -88,7 +88,7 @@ func (o *Options) Validate() error {
 
 	errs = append(errs, o.GRPCOptions.Validate()...)
 	errs = append(errs, o.HTTPOptions.Validate()...)
-	//errs = append(errs, o.TLSOptions.Validate()...)
+	errs = append(errs, o.TLSOptions.Validate()...)
 	errs = append(errs, o.MySQLOptions.Validate()...)
 	//errs = append(errs, o.Metrics.Validate()...)
 	errs = append(errs, o.Log.Validate()...)
@@ -104,7 +104,7 @@ func (o *Options) Validate() error {
 func (o *Options) ApplyTo(c *sms.Config) error {
 	c.GRPCOptions = o.GRPCOptions
 	c.HTTPOptions = o.HTTPOptions
-	//c.TLSOptions = o.TLSOptions
+	c.TLSOptions = o.TLSOptions
 	c.MySQLOptions = o.MySQLOptions
 	c.RedisOptions = o.RedisOptions
 	c.CommonKafkaOptions = o.CommonKafkaOptions

@@ -11,13 +11,13 @@ import (
 const commandDesc = `The sms server is a standard, specification-compliant demo 
 example of the onex service.
 
-Find more onex-sms information at:
+Find more monster-sms information at:
     https://"github.com/rosas99/monster/blob/master/docs/guide/en-US/cmd/onex-sms.md`
 
 // NewApp creates an App object with default parameters.
 func NewApp(name string) *app.App {
 	opts := options.NewOptions()
-	application := app.NewApp(name, "Launch a onex sms server",
+	application := app.NewApp(name, "Launch a monster sms server",
 		app.WithDescription(commandDesc),
 		app.WithOptions(opts),
 		app.WithDefaultValidArgs(),

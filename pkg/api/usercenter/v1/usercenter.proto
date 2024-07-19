@@ -9,6 +9,7 @@ service UserCenter {
     }
 }
 
+// todo
 message LoginRequest2 {
   string username = 1;
   string password = 2;

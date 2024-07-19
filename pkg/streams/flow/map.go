@@ -67,18 +67,21 @@ func (m *Map[T, R]) transmit(inlet streams.Inlet) {
 	close(inlet.In())
 }
 
+// 写两个 sem <- struct{}{} 的原因是：
+// 第一个用于控制并发，确保不会超出 m.parallelism 指定的并发数。
+// 第二个用于在所有协程完成后，确保 m.out 通道可以安全关闭，防止 panic 发生，因为关闭一个已经关闭的通道会引发 panic。
 func (m *Map[T, R]) doStream() {
 	sem := make(chan struct{}, m.parallelism)
 	for elem := range m.in {
-		sem <- struct{}{}
+		sem <- struct{}{} // try to acquire semaphore
 		go func(element T) {
-			defer func() { <-sem }()
-			result := m.mapFunction(element)
-			m.out <- result
+			defer func() { <-sem }()         // release semaphore
+			result := m.mapFunction(element) // apply transformation
+			m.out <- result                  // send result
 		}(elem.(T))
 	}
 	for i := 0; i < int(m.parallelism); i++ {
-		sem <- struct{}{}
+		sem <- struct{}{} // Make sure the sem channel is filled again
 	}
 	close(m.out)
 }

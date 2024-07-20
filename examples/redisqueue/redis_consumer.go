@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/redis/go-redis/v9"
 	stream "github.com/rosas99/monster/pkg/streams/connector/redis"
 	"github.com/rosas99/monster/pkg/streams/flow"
@@ -22,6 +23,8 @@ var addUTC = func(msg any) any {
 	return msg
 }
 
+const redisChannel = "channel"
+
 func main() {
 
 	quit := make(chan os.Signal, 1)
@@ -37,13 +40,15 @@ func main() {
 		DB:   0,
 	}
 
-	source, err := stream.NewRedisSource(ctx, &redisOptions, "channel")
+	source, err := stream.NewRedisSource(ctx, &redisOptions, redisChannel)
 	if err != nil {
-
+		fmt.Println("redis source err:", err)
 	}
+
+	sink := stream.NewRedisSink(&redisOptions, redisChannel)
+
 	filter := flow.NewMap(addUTC, 1)
-	source.Via(filter)
-	//source.Via(filter).To(Sink)
+	source.Via(filter).To(sink)
 
 	<-quit
 	stopCh <- struct{}{}

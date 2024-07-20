@@ -10,23 +10,11 @@ import (
 	"time"
 )
 
-// AnalyticsRecord encodes the details of a authorization request.
-type AnalyticsRecord struct {
-	TimeStamp  int64     `json:"timestamp"`
-	Username   string    `json:"username"`
-	Effect     string    `json:"effect"`
-	Conclusion string    `json:"conclusion"`
-	Request    string    `json:"request"`
-	Policies   string    `json:"policies"`
-	Deciders   string    `json:"deciders"`
-	ExpireAt   time.Time `json:"expireAt"   bson:"expireAt"`
-}
-
 // Pusher will record analytics data to a redis back end as defined in the Config object.
 type Pusher struct {
 	store                      *redis.Client
 	poolSize                   int
-	recordsChan                chan *AnalyticsRecord
+	recordsChan                chan any
 	workerBufferSize           uint64
 	recordsBufferFlushInterval uint64
 	shouldStop                 uint32
@@ -47,7 +35,7 @@ func NewPusher(options *PusherOptions, store *redis.Client) *Pusher {
 	workerBufferSize := recordsBufferSize / uint64(ps)
 	log.Debugw("Analytics pool worker buffer size", workerBufferSize)
 
-	recordsChan := make(chan *AnalyticsRecord, recordsBufferSize)
+	recordsChan := make(chan any, recordsBufferSize)
 
 	pushers = &Pusher{
 		store:                      store,
@@ -89,7 +77,7 @@ func (p *Pusher) Stop() {
 }
 
 // Record will store an AnalyticsRecord in Redis.
-func (p *Pusher) Record(record *AnalyticsRecord) error {
+func (p *Pusher) Record(record any) error {
 	// check if we should stop sending records 1st
 	if atomic.LoadUint32(&p.shouldStop) > 0 {
 		return nil

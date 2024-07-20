@@ -31,7 +31,7 @@ type GRPCServer struct {
 }
 
 type MqServer struct {
-	srv  *kafkaconnector.Queue
+	srv  *kafkaconnector.KQueue
 	opts *genericoptions.KafkaOptions
 }
 

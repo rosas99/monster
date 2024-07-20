@@ -107,7 +107,6 @@ func (s PreparedServer) Run(stopCh <-chan struct{}) error {
 	if err != nil {
 		return err
 	}
-
 	log.Infof("Successfully start pump server")
 	source.Via(filter).To(sink)
 

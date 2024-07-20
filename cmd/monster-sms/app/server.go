@@ -22,6 +22,7 @@ func NewApp(name string) *app.App {
 		app.WithOptions(opts),
 		app.WithDefaultValidArgs(),
 		app.WithRunFunc(run(opts)),
+		app.WithDefaultHealthCheckFunc(),
 	)
 
 	return application

@@ -15,7 +15,7 @@ type ConsumeHandler interface {
 	Consume(val any) error
 }
 
-type Queue struct {
+type KQueue struct {
 	consumer         *kafka.Reader
 	handler          ConsumeHandler
 	producerRoutines *sync.WaitGroup
@@ -26,7 +26,7 @@ type Queue struct {
 	consumers        int
 }
 
-func NewQueue(KafkaOptions *genericoptions.KafkaOptions, handler ConsumeHandler) (*Queue, error) {
+func NewQueue(KafkaOptions *genericoptions.KafkaOptions, handler ConsumeHandler) (*KQueue, error) {
 	r := kafka.ReaderConfig{
 		Brokers:           KafkaOptions.Brokers,
 		Topic:             KafkaOptions.Topic,
@@ -43,7 +43,7 @@ func NewQueue(KafkaOptions *genericoptions.KafkaOptions, handler ConsumeHandler)
 		MaxAttempts:       KafkaOptions.ReaderOptions.MaxAttempts,
 	}
 
-	sink := &Queue{
+	sink := &KQueue{
 		consumer:         kafka.NewReader(r),
 		handler:          handler,
 		channel:          make(chan kafka.Message),
@@ -58,7 +58,7 @@ func NewQueue(KafkaOptions *genericoptions.KafkaOptions, handler ConsumeHandler)
 	return sink, nil
 }
 
-func (c *Queue) Start() {
+func (c *KQueue) Start() {
 	go c.startConsumers()
 	go c.startProducers()
 
@@ -67,10 +67,10 @@ func (c *Queue) Start() {
 	c.consumerRoutines.Wait()
 }
 
-func (c *Queue) Stop() {
+func (c *KQueue) Stop() {
 	c.consumer.Close()
 }
-func (c *Queue) startProducers() {
+func (c *KQueue) startProducers() {
 	for i := 0; i < c.consumers; i++ {
 		c.producerRoutines.Add(1)
 		go func() {
@@ -94,7 +94,7 @@ func (c *Queue) startProducers() {
 	}
 }
 
-func (c *Queue) startConsumers() {
+func (c *KQueue) startConsumers() {
 	for i := 0; i < c.processors; i++ {
 		c.consumerRoutines.Add(1)
 		go func() {

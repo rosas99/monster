@@ -37,6 +37,7 @@ func NewLogger(commonOpts *genericoptions.KafkaOptions,
 		return nil, err
 	}
 
+	// todo 这里封装pusher
 	monitorWriter, err := monitorOpts.Writer()
 	if err != nil {
 		return nil, err

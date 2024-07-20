@@ -11,7 +11,7 @@ import (
 	"github.com/rosas99/monster/internal/sms/checker"
 	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/middleware/validate"
-	mqs "github.com/rosas99/monster/internal/sms/mqs"
+	"github.com/rosas99/monster/internal/sms/mqs"
 	providerFactory "github.com/rosas99/monster/internal/sms/provider"
 	"github.com/rosas99/monster/internal/sms/service"
 	"github.com/rosas99/monster/internal/sms/store"
@@ -163,6 +163,8 @@ func (s *SmsServer) Run(stopCh <-chan struct{}) error {
 	s.httpsrv.GracefulStop()
 	s.mqsrv.GracefulStop()
 	s.mqsrv2.GracefulStop()
+	s.mqsrv3.GracefulStop()
+	// todo 简化 通用短信和验证码短信放在一个q 交互短信不用放到q，采用异步返回
 
 	return nil
 }

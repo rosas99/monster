@@ -16,7 +16,7 @@ func main() {
 
 	pusherOptions := pusher.NewPusherOptions()
 	rds := redis.NewClient(&redisOptions)
-	ins := pusher.NewPusher(pusherOptions, rds)
+	ins := pusher.NewPusher(pusherOptions, rds, "channel")
 	ins.Start()
 
 	_ = ins.Record("test message")

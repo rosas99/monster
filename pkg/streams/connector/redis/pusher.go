@@ -29,7 +29,7 @@ const (
 var pushers *Pusher
 
 // NewPusher returns a new analytics instance.
-func NewPusher(options *PusherOptions, store *redis.Client) *Pusher {
+func NewPusher(options *PusherOptions, store *redis.Client, channel string) *Pusher {
 	ps := options.PoolSize
 	recordsBufferSize := options.RecordsBufferSize
 	workerBufferSize := recordsBufferSize / uint64(ps)
@@ -43,6 +43,7 @@ func NewPusher(options *PusherOptions, store *redis.Client) *Pusher {
 		recordsChan:                recordsChan,
 		workerBufferSize:           workerBufferSize,
 		recordsBufferFlushInterval: options.FlushInterval,
+		channel:                    channel,
 	}
 
 	return pushers

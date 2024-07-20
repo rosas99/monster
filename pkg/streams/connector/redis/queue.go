@@ -1,5 +1,5 @@
 package redis
 
-func main() {
-
+func todo() {
+	// implement me
 }

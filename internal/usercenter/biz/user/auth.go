@@ -7,12 +7,12 @@ import (
 	"github.com/rosas99/monster/pkg/token"
 )
 
-// ChangePassword 是 IBiz 接口中 `ChangePassword` 方法的实现.
-func (b *userBiz) Authorize(ctx context.Context, rq *v1.LoginRequest2) (*v1.LoginResponse2, error) {
-	username, err := token.Parse(rq.Username, "config.key")
+// Authorize 是 IBiz 接口中 `ChangePassword` 方法的实现.
+func (b *userBiz) Authorize(ctx context.Context, rq *v1.AuthzRequest) (*v1.AuthzResponse, error) {
+	username, err := token.Parse(rq.Token, "config.key")
 	fmt.Print(username)
 	if err != nil {
 		return nil, err
 	}
-	return &v1.LoginResponse2{}, nil
+	return &v1.AuthzResponse{}, nil
 }

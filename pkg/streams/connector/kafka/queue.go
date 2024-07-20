@@ -26,7 +26,7 @@ type KQueue struct {
 	consumers        int
 }
 
-func NewQueue(KafkaOptions *genericoptions.KafkaOptions, handler ConsumeHandler) (*KQueue, error) {
+func NewKQueue(KafkaOptions *genericoptions.KafkaOptions, handler ConsumeHandler) (*KQueue, error) {
 	r := kafka.ReaderConfig{
 		Brokers:           KafkaOptions.Brokers,
 		Topic:             KafkaOptions.Topic,

@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserCenterClient interface {
-	Authorize(ctx context.Context, in *LoginRequest2, opts ...grpc.CallOption) (*LoginResponse2, error)
+	Authorize(ctx context.Context, in *AuthzRequest, opts ...grpc.CallOption) (*AuthzResponse, error)
 }
 
 type userCenterClient struct {
@@ -37,9 +37,9 @@ func NewUserCenterClient(cc grpc.ClientConnInterface) UserCenterClient {
 	return &userCenterClient{cc}
 }
 
-func (c *userCenterClient) Authorize(ctx context.Context, in *LoginRequest2, opts ...grpc.CallOption) (*LoginResponse2, error) {
+func (c *userCenterClient) Authorize(ctx context.Context, in *AuthzRequest, opts ...grpc.CallOption) (*AuthzResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(LoginResponse2)
+	out := new(AuthzResponse)
 	err := c.cc.Invoke(ctx, UserCenter_Authorize_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (c *userCenterClient) Authorize(ctx context.Context, in *LoginRequest2, opt
 // All implementations must embed UnimplementedUserCenterServer
 // for forward compatibility
 type UserCenterServer interface {
-	Authorize(context.Context, *LoginRequest2) (*LoginResponse2, error)
+	Authorize(context.Context, *AuthzRequest) (*AuthzResponse, error)
 	mustEmbedUnimplementedUserCenterServer()
 }
 
@@ -59,7 +59,7 @@ type UserCenterServer interface {
 type UnimplementedUserCenterServer struct {
 }
 
-func (UnimplementedUserCenterServer) Authorize(context.Context, *LoginRequest2) (*LoginResponse2, error) {
+func (UnimplementedUserCenterServer) Authorize(context.Context, *AuthzRequest) (*AuthzResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Authorize not implemented")
 }
 func (UnimplementedUserCenterServer) mustEmbedUnimplementedUserCenterServer() {}
@@ -76,7 +76,7 @@ func RegisterUserCenterServer(s grpc.ServiceRegistrar, srv UserCenterServer) {
 }
 
 func _UserCenter_Authorize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginRequest2)
+	in := new(AuthzRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func _UserCenter_Authorize_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: UserCenter_Authorize_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserCenterServer).Authorize(ctx, req.(*LoginRequest2))
+		return srv.(UserCenterServer).Authorize(ctx, req.(*AuthzRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

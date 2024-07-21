@@ -59,7 +59,6 @@ func (t *historyStore) List(ctx context.Context, templateCode string, opts ...me
 	if templateCode != "" {
 		options.Filters["template_code"] = templateCode
 	}
-	// todo 对比 ucenter
 	ans := t.db.
 		Where(options.Filters).
 		Offset(options.Offset).

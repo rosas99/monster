@@ -19,6 +19,4 @@ func (b *Controller) Send(c *gin.Context) {
 	}
 	core.WriteResponse(c, errno.AiliCloudSuccess, nil)
 
-	// todo log kpi
-
 }

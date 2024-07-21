@@ -23,7 +23,7 @@ func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportList
 					"other": 123,
 				}
 				log.C(ctx).Warnf("marshal history record fail %v", err)
-				b.logger.LogKpi(message) // todo
+				b.logger.LogKpi(message)
 				return err
 			}
 			history.Report = string(marshal)

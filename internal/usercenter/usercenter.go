@@ -3,12 +3,13 @@ package usercenter
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
+	"github.com/rosas99/monster/internal/pkg/known"
 	"github.com/rosas99/monster/internal/pkg/middleware/header"
 	"github.com/rosas99/monster/internal/pkg/middleware/trace"
 	"github.com/rosas99/monster/internal/usercenter/biz"
 	"github.com/rosas99/monster/internal/usercenter/middleware/validate"
 	"github.com/rosas99/monster/pkg/auth"
-
+	"github.com/rosas99/monster/pkg/token"
 	//"github.com/rosas99/monster/internal/usercenter/middleware/validate"
 	"github.com/rosas99/monster/internal/usercenter/service"
 	"github.com/rosas99/monster/internal/usercenter/store"
@@ -28,6 +29,7 @@ type Config struct {
 	KafkaOptions *genericoptions.KafkaOptions
 	Address      string
 	Accounts     map[string]string
+	JwtSecret    string
 }
 
 // Complete fills in any fields not set that are required to have valid data. It's mutating the receiver.
@@ -67,6 +69,9 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
+	// 设置 token 包的签发密钥，用于 token 包 token 的签发和解析
+	token.Init(c.JwtSecret, known.XUsernameKey)
+
 	biz := biz.NewBiz(ds, rds)
 	authz, err := auth.NewAuthz(ins)
 	srv := service.NewUserCenterService(biz, authz)
@@ -93,7 +98,6 @@ func (c completedConfig) New() (*SmsServer, error) {
 	}
 	// gin.Recovery() 中间件，用来捕获任何 panic，并恢复
 	mws := []gin.HandlerFunc{gin.Recovery(), header.NoCache, header.Cors, header.Secure,
-		// todo 这里传入rds ds
 		// 注意验证链路的顺序
 		trace.TraceID(), validate.Validation(ds)}
 	// 添加中间件

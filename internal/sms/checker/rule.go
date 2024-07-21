@@ -42,7 +42,6 @@ func (rf *RuleFactory) CheckRules(ctx context.Context, cfgList []*model.Configur
 	for _, cfg := range cfgList {
 		checker, err := rf.CreateChecker(cfg)
 		if err != nil {
-			// todo  log
 			log.C(ctx).Errorw(err, "Failed to list orders from storage")
 			return err
 

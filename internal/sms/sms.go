@@ -164,7 +164,6 @@ func (s *SmsServer) Run(stopCh <-chan struct{}) error {
 	s.mqsrv.GracefulStop()
 	s.mqsrv2.GracefulStop()
 	s.mqsrv3.GracefulStop()
-	// todo 简化 通用短信和验证码短信放在一个q 交互短信不用放到q，采用异步返回
 
 	return nil
 }

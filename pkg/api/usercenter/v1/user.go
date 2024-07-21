@@ -75,10 +75,8 @@ type ListUserResponse struct {
 
 // UpdateUserRequest 指定了 `PUT /v1/users/{name}` 接口的请求参数.
 type UpdateUserRequest struct {
-	// todo 删除
 	// 带星号表示可选类型
 	// 不带表示必填字段
-
 	Username string  `json:"username" valid:"stringlength(1|255)"`
 	Nickname *string `json:"nickname" valid:"stringlength(1|255)"`
 	Email    *string `json:"email" valid:"email"`

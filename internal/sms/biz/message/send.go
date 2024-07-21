@@ -92,7 +92,7 @@ func (b *messageBiz) getCfgList(ctx context.Context, templateCode string) []*mod
 	}
 
 	_, list, _ := b.ds.Configurations().List(ctx, templateCode)
-	if len(list) <= 0 { // todo gorm record not found
+	if len(list) <= 0 {
 		return nil
 	}
 

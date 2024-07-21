@@ -9,7 +9,6 @@ service UserCenter {
     }
 }
 
-// todo
 message AuthzRequest {
   string token = 1;
   string password = 2;

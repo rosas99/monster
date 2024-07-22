@@ -122,6 +122,6 @@ func (ms *MongoSink) collectionExists(name string) (bool, error) {
 }
 
 // In returns an input channel for receiving data.
-func (ks *MongoSink) In() chan<- any {
-	return ks.in
+func (ms *MongoSink) In() chan<- any {
+	return ms.in
 }

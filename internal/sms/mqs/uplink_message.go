@@ -7,10 +7,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/pkg/meta"
-	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/store"
 	"github.com/rosas99/monster/internal/sms/types"
+	"github.com/rosas99/monster/internal/sms/writer"
 	"github.com/segmentio/kafka-go"
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -18,11 +18,11 @@ import (
 type UplinkMessageConsumer struct {
 	ctx    context.Context
 	idt    *idempotent.Idempotent
-	logger *logger.Logger
+	logger *writer.Writer
 	ds     store.IStore
 }
 
-func NewUplinkMessageConsumer(ctx context.Context, ds store.IStore, idt *idempotent.Idempotent, logger *logger.Logger) *UplinkMessageConsumer {
+func NewUplinkMessageConsumer(ctx context.Context, ds store.IStore, idt *idempotent.Idempotent, logger *writer.Writer) *UplinkMessageConsumer {
 	return &UplinkMessageConsumer{
 		ctx:    ctx,
 		idt:    idt,

@@ -1,4 +1,4 @@
-package logger
+package writer
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 )
 
-// LogHistory adds a new secret record in the datastore.
-func (l *Logger) LogHistory(history *model.HistoryM) {
+// WriterHistory adds a new secret record in the datastore.
+func (l *Writer) WriterHistory(history *model.HistoryM) {
 	err := l.historyStore.Create(context.Background(), history)
 	if err != nil {
 		log.Errorw(err, "Failed to create history messages")

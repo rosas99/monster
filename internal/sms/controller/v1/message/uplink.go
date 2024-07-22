@@ -16,6 +16,7 @@ func (b *Controller) AILIYUNCallback(c *gin.Context) {
 	}
 	err := b.svc.AILIYUNUplink(c, &r)
 	if err != nil {
+
 		core.WriteResponse(c, err, nil)
 	}
 	core.WriteResponse(c, errno.AiliCloudSuccess, nil)

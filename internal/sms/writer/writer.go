@@ -1,4 +1,4 @@
-package logger
+package writer
 
 import (
 	"github.com/rosas99/monster/internal/sms/store"
@@ -6,8 +6,8 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-// Logger is a log.Logger implementation that writes log messages to Kafka.
-type Logger struct {
+// Writer is a log.Writer implementation that writes log messages to Kafka.
+type Writer struct {
 	// enabled is an atomic boolean indicating whether the logger is enabled.
 	enabled int32
 	// writer is the Kafka writer used to write log messages.
@@ -23,7 +23,7 @@ func NewLogger(commonOpts *genericoptions.KafkaOptions,
 	verifyOpts *genericoptions.KafkaOptions,
 	uplinkOpts *genericoptions.KafkaOptions,
 	monitorOpts *genericoptions.KafkaOptions,
-	historyStore store.HistoryStore) (*Logger, error) {
+	historyStore store.HistoryStore) (*Writer, error) {
 	commonWriter, err := commonOpts.Writer()
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func NewLogger(commonOpts *genericoptions.KafkaOptions,
 		return nil, err
 	}
 
-	logger := Logger{
+	logger := Writer{
 		commonWriter:  commonWriter,
 		verifyWriter:  verifyWriter,
 		uplinkWriter:  uplinkWriter,

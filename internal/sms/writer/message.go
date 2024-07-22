@@ -1,4 +1,4 @@
-package logger
+package writer
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 )
 
 // WriteMessage writes a log message for the common message.
-func (l *Logger) WriteMessage(ctx context.Context, msg *types.TemplateMsgRequest, messageType string) error {
+func (l *Writer) WriteMessage(ctx context.Context, msg *types.TemplateMsgRequest, messageType string) error {
 	out, _ := json.Marshal(msg)
 	if messageType == types.VerificationMessage {
 		return l.commonWriter.WriteMessages(ctx, kafka.Message{Value: out})
@@ -21,7 +21,7 @@ func (l *Logger) WriteMessage(ctx context.Context, msg *types.TemplateMsgRequest
 }
 
 // WriteUplinkMessage writes a log message for the uplink message.
-func (l *Logger) WriteUplinkMessage(ctx context.Context, msg *types.UplinkMsgRequest) {
+func (l *Writer) WriteUplinkMessage(ctx context.Context, msg *types.UplinkMsgRequest) {
 	out, _ := json.Marshal(msg)
 	fmt.Println(msg)
 	if err := l.uplinkWriter.WriteMessages(ctx, kafka.Message{Value: out}); err != nil {

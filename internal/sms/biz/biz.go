@@ -8,8 +8,8 @@ import (
 	"github.com/rosas99/monster/internal/sms/biz/interaction"
 	"github.com/rosas99/monster/internal/sms/biz/message"
 	"github.com/rosas99/monster/internal/sms/biz/template"
-	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/store"
+	"github.com/rosas99/monster/internal/sms/writer"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -24,7 +24,7 @@ type biz struct {
 	ds          store.IStore
 	rds         *redis.Client
 	idt         *idempotent.Idempotent
-	logger      *logger.Logger
+	logger      *writer.Writer
 	kafkaWriter *kafka.Writer
 }
 
@@ -32,7 +32,7 @@ type biz struct {
 var _ IBiz = (*biz)(nil)
 
 // NewBiz returns a pointer to a new instance of the biz struct.
-func NewBiz(ds store.IStore, rds *redis.Client, idt *idempotent.Idempotent, logger *logger.Logger) *biz {
+func NewBiz(ds store.IStore, rds *redis.Client, idt *idempotent.Idempotent, logger *writer.Writer) *biz {
 	return &biz{ds: ds, rds: rds, idt: idt, logger: logger}
 }
 

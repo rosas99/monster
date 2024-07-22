@@ -110,7 +110,7 @@ func (b *messageBiz) log(rq *v1.SendMessageRequest, err error, m *model.Template
 		Content:           m.Content,
 		MessageTemplateID: m.ID,
 	}
-	b.logger.LogHistory(&hm)
+	b.logger.WriterHistory(&hm)
 }
 
 func maskPhone(phone string) string {

@@ -13,12 +13,12 @@ func (b *interactionBiz) AILIYUNUplink(ctx context.Context, rq *v1.AILIYUNUplink
 		var msgRequest types.UplinkMsgRequest
 		err := copier.Copy(msgRequest, item)
 		if err != nil {
+
 			return err
 		}
 		b.logger.WriteUplinkMessage(ctx, &msgRequest)
 
 	}
-	// log kpi
 
 	return nil
 }

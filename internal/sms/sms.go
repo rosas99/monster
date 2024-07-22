@@ -4,12 +4,12 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
+	"github.com/rosas99/monster/internal/pkg/client/usercenter"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/pkg/middleware/header"
 	"github.com/rosas99/monster/internal/pkg/middleware/trace"
 	"github.com/rosas99/monster/internal/sms/biz"
 	"github.com/rosas99/monster/internal/sms/checker"
-	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/middleware/validate"
 	"github.com/rosas99/monster/internal/sms/mqs"
 	providerFactory "github.com/rosas99/monster/internal/sms/provider"
@@ -17,6 +17,7 @@ import (
 	"github.com/rosas99/monster/internal/sms/store"
 	"github.com/rosas99/monster/internal/sms/store/mysql"
 	"github.com/rosas99/monster/internal/sms/types"
+	"github.com/rosas99/monster/internal/sms/writer"
 	"github.com/rosas99/monster/pkg/db"
 	"github.com/rosas99/monster/pkg/log"
 	genericoptions "github.com/rosas99/monster/pkg/options"
@@ -85,7 +86,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 	factory.RegisterRule(types.TimeIntervalForMobilePerDay, checker.NewTimeIntervalForMobileRule(ds, rds))
 
 	// creates  a logger instance
-	l, err := logger.NewLogger(c.CommonKafkaOptions, c.VerifyKafkaOptions,
+	l, err := writer.NewLogger(c.CommonKafkaOptions, c.VerifyKafkaOptions,
 		c.UplinkMessageKqOptions, c.MonitorKafkaOptions, ds.Histories())
 	if err != nil {
 		return nil, err
@@ -109,7 +110,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 	// create a gin engine
 	g := gin.New()
 
-	//usercenter.NewUserCenterServer()
+	usercenter.NewUserCenterServer()
 
 	installRouters(g, srv)
 	mws := []gin.HandlerFunc{

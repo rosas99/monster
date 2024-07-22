@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
-	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/model"
 	factory "github.com/rosas99/monster/internal/sms/provider"
 	"github.com/rosas99/monster/internal/sms/types"
+	"github.com/rosas99/monster/internal/sms/writer"
 	"github.com/rosas99/monster/pkg/log"
 	"github.com/segmentio/kafka-go"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -17,11 +17,11 @@ import (
 type VerifyMessageConsumer struct {
 	ctx      context.Context
 	idt      *idempotent.Idempotent
-	logger   *logger.Logger
+	logger   *writer.Writer
 	provider *factory.ProviderFactory
 }
 
-func NewVerifyMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger *logger.Logger, provider *factory.ProviderFactory) *CommonMessageConsumer {
+func NewVerifyMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger *writer.Writer, provider *factory.ProviderFactory) *CommonMessageConsumer {
 	return &CommonMessageConsumer{
 		ctx:      ctx,
 		idt:      idt,
@@ -62,12 +62,12 @@ func (l *VerifyMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 		log.C(ctx).Errorw(err, "send fail")
 
 		if err != nil {
-			l.logger.LogHistory(&historyM)
+			l.logger.WriterHistory(&historyM)
 			continue
 		}
 
 		historyM.MessageID = ret.BizId
-		l.logger.LogHistory(&historyM)
+		l.logger.WriterHistory(&historyM)
 		break
 	}
 

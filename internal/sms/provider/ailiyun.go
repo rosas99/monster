@@ -5,21 +5,21 @@ import (
 	dysmsapi "github.com/alibabacloud-go/dysmsapi-20170525/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/redis/go-redis/v9"
-	"github.com/rosas99/monster/internal/sms/logger"
 	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/types"
+	"github.com/rosas99/monster/internal/sms/writer"
 	ailiyunoptions "github.com/rosas99/monster/pkg/sdk/ailiyun"
 )
 
 // AILIYUNProvider is a struct represents a sms provider.
 type AILIYUNProvider struct {
 	rds               *redis.Client
-	logger            *logger.Logger
+	logger            *writer.Writer
 	ailiyunSmsOptions *ailiyunoptions.SmsOptions
 }
 
 // NewAILIYUNProvider returns a new provider for aili cloud sms.
-func NewAILIYUNProvider(rds *redis.Client, logger *logger.Logger, ailiyunSmsOptions *ailiyunoptions.SmsOptions) *AILIYUNProvider {
+func NewAILIYUNProvider(rds *redis.Client, logger *writer.Writer, ailiyunSmsOptions *ailiyunoptions.SmsOptions) *AILIYUNProvider {
 	return &AILIYUNProvider{
 		rds:               rds,
 		logger:            logger,
@@ -54,7 +54,7 @@ func (p *AILIYUNProvider) Send(ctx context.Context, rq types.TemplateMsgRequest)
 	id := *sendResp.Body.BizId
 	var history model.HistoryM
 	history.MessageID = id
-	p.logger.LogHistory(&history)
+	p.logger.WriterHistory(&history)
 
 	response := TemplateMsgResponse{
 		Code:      *sendResp.Body.Code,

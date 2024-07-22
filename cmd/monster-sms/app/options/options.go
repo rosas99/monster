@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	// UserAgent is the userAgent name when starting onex-sms server.
+	// UserAgent is the userAgent name when starting monster-sms server.
 	UserAgent = "monster-sms"
 )
 

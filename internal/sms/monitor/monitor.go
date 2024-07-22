@@ -25,16 +25,17 @@ type Monitor struct {
 }
 
 // NewMonitor creates a new kafkaLogger instance.
-func NewMonitor(monitorOpts *genericoptions.KafkaOptions) *impl {
+func NewMonitor(monitorOpts *genericoptions.KafkaOptions) (*impl, error) {
 	writer, err := monitorOpts.Writer()
 	if err != nil {
-		log.Fatalw("create kafka writer fail", "err", err)
+		log.Fatalw("create monitor fail", "err", err)
+		return nil, err
 	}
 
 	once.Do(func() {
 		cli = &impl{writer: writer}
 	})
-	return cli
+	return cli, nil
 }
 
 // GetMonitor returns the globally initialized client.

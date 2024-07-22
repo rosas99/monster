@@ -11,6 +11,7 @@ import (
 	"github.com/rosas99/monster/internal/sms/biz"
 	"github.com/rosas99/monster/internal/sms/checker"
 	"github.com/rosas99/monster/internal/sms/middleware/validate"
+	"github.com/rosas99/monster/internal/sms/monitor"
 	"github.com/rosas99/monster/internal/sms/mqs"
 	providerFactory "github.com/rosas99/monster/internal/sms/provider"
 	"github.com/rosas99/monster/internal/sms/service"
@@ -86,8 +87,14 @@ func (c completedConfig) New() (*SmsServer, error) {
 	factory.RegisterRule(types.TimeIntervalForMobilePerDay, checker.NewTimeIntervalForMobileRule(ds, rds))
 
 	// creates  a logger instance
-	l, err := writer.NewLogger(c.CommonKafkaOptions, c.VerifyKafkaOptions,
-		c.UplinkMessageKqOptions, c.MonitorKafkaOptions, ds.Histories())
+	l, err := writer.NewWriter(c.CommonKafkaOptions, c.VerifyKafkaOptions,
+		c.UplinkMessageKqOptions, ds.Histories())
+	if err != nil {
+		return nil, err
+	}
+
+	// creates  a monitor instance
+	_, err = monitor.NewMonitor(c.MonitorKafkaOptions)
 	if err != nil {
 		return nil, err
 	}

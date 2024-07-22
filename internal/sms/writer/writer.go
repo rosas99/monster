@@ -18,11 +18,10 @@ type Writer struct {
 	historyStore  store.HistoryStore
 }
 
-// NewLogger creates a new kafkaLogger instance.
-func NewLogger(commonOpts *genericoptions.KafkaOptions,
+// NewWriter creates a new kafkaLogger instance.
+func NewWriter(commonOpts *genericoptions.KafkaOptions,
 	verifyOpts *genericoptions.KafkaOptions,
 	uplinkOpts *genericoptions.KafkaOptions,
-	monitorOpts *genericoptions.KafkaOptions,
 	historyStore store.HistoryStore) (*Writer, error) {
 	commonWriter, err := commonOpts.Writer()
 	if err != nil {
@@ -37,17 +36,11 @@ func NewLogger(commonOpts *genericoptions.KafkaOptions,
 		return nil, err
 	}
 
-	monitorWriter, err := monitorOpts.Writer()
-	if err != nil {
-		return nil, err
+	writer := Writer{
+		commonWriter: commonWriter,
+		verifyWriter: verifyWriter,
+		uplinkWriter: uplinkWriter,
+		historyStore: historyStore,
 	}
-
-	logger := Writer{
-		commonWriter:  commonWriter,
-		verifyWriter:  verifyWriter,
-		uplinkWriter:  uplinkWriter,
-		monitorWriter: monitorWriter,
-		historyStore:  historyStore,
-	}
-	return &logger, nil
+	return &writer, nil
 }

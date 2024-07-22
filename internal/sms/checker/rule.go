@@ -8,6 +8,7 @@ import (
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/log"
 	"sort"
+	"strconv"
 )
 
 type Rule interface {
@@ -47,8 +48,13 @@ func (rf *RuleFactory) CheckRules(ctx context.Context, cfgList []*model.Configur
 
 		}
 
-		var c types.Request
-		err = checker.isValid(ctx, &c)
+		val, err := strconv.ParseInt(cfg.ConfigValue, 10, 64)
+		request := &types.Request{
+			Mobile:       cfg.TemplateCode,
+			TemplateCode: cfg.TemplateCode,
+			LimitValue:   val,
+		}
+		err = checker.isValid(ctx, request)
 		if err != nil {
 			return err
 		}

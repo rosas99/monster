@@ -15,7 +15,6 @@ var (
 type Interface interface {
 	UserCenter() ucstore.IStore
 	Sms() smsstore.IStore
-	// 导入了store 以进行查询
 }
 
 type datastore struct {

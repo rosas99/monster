@@ -3,7 +3,7 @@ package usercenter
 const (
 	// User has submitted registration information, the account is in a pending.
 	// The user needs to complete email/phone number verification steps to transition to an active state.
-	// The OneX project does not currently use this.
+	// The Monster project does not currently use this.
 	UserStatusRegistered = "registered"
 	// The user has registered and been verified, and can use the system normally.
 	// Most user operations are performed in this state.

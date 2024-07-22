@@ -25,3 +25,14 @@ func (i *impl) LogKpi(kpiName, traceId, status, templateCode string, costTime in
 		log.Errorw(err, "Failed to write kafka messages")
 	}
 }
+
+func (i *impl) LogTemplateKpi(kpiName, traceId, status string, costTime int64) {
+
+	kpi := meta.NewKpiOptions(meta.WithAppName(AppName), meta.WithKpiName(kpiName), meta.WithTraceId(traceId),
+		meta.WithStatus(status), meta.WithCostTime(costTime)).Kpi
+
+	out, _ := json.Marshal(kpi)
+	if err := i.writer.WriteMessages(context.Background(), kafka.Message{Value: out}); err != nil {
+		log.Errorw(err, "Failed to write kafka messages")
+	}
+}

@@ -40,7 +40,7 @@ func (f *ProviderFactory) RegisterProvider(providerType types.ProviderType, prov
 func (f *ProviderFactory) GetSMSTemplateProvider(providerType types.ProviderType) (SMSTemplateProvider, error) {
 	provider, exists := f.providers[providerType]
 	if !exists {
-		return nil, fmt.Errorf("no provider match for type %d", providerType)
+		return nil, fmt.Errorf("no provider match for type %s", providerType)
 	}
 	return provider, nil
 }

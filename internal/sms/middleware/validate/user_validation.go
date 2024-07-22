@@ -7,9 +7,13 @@ package validate
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/rosas99/monster/internal/pkg/known"
+	"github.com/rosas99/monster/internal/sms/monitor"
 	"github.com/rosas99/monster/internal/sms/store"
+	"net/http"
 	"regexp"
 	"strconv"
+	"time"
 )
 
 // Validation make sure users have the right resource permission and operation.
@@ -17,11 +21,13 @@ func Validation(ds store.IStore) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		switch c.FullPath() {
 		case "/v1/template":
-			if c.Request.Method == "GET" {
+			if c.Request.Method == http.MethodGet {
+				start := time.Now().UnixMilli()
 				id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 				_, err := ds.Templates().Get(context.Background(), id)
 				if err != nil {
-					// log kpi
+					monitor.GetMonitor().LogTemplateKpi("template", c.Request.Header.Get(known.TraceIDKey),
+						"success", time.Now().UnixMilli()-start)
 					c.Abort()
 					return
 				}

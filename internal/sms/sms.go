@@ -102,6 +102,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 	// registers sms providers
 	provider := providerFactory.NewProviderFactory()
 	provider.RegisterProvider(types.ProviderTypeALIYUN, providerFactory.NewAILIYUNProvider(rds, l, c.AiliyunSmsOptions))
+	provider.RegisterProvider(types.ProviderTypeDummy, providerFactory.NewDummyProvider())
 
 	// creates an idempotent instance
 	idt, err := idempotent.NewIdempotent(rds)

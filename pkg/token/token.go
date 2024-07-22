@@ -90,3 +90,7 @@ func Sign(identityKey string) (tokenString string, err error) {
 
 	return
 }
+
+func GetConfigKey() string {
+	return config.key
+}

@@ -6,7 +6,7 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 )
 
-// WriterHistory adds a new secret record in the datastore.
+// WriterHistory adds a new history record in the datastore.
 func (l *Writer) WriterHistory(history *model.HistoryM) {
 	err := l.historyStore.Create(context.Background(), history)
 	if err != nil {

@@ -1,8 +1,8 @@
 package user
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/rosas99/monster/internal/pkg/core"
 	"github.com/rosas99/monster/internal/pkg/errno"
 	"github.com/rosas99/monster/pkg/api/usercenter/v1"
@@ -20,7 +20,9 @@ func (b *Controller) Create(c *gin.Context) {
 		return
 	}
 
-	if _, err := govalidator.ValidateStruct(r); err != nil {
+	validate := validator.New()
+	err := validate.Struct(r)
+	if err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 		return
 	}

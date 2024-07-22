@@ -15,6 +15,6 @@ message AuthzRequest {
 }
 
 message AuthzResponse {
-  string token = 1;
+  string userId = 1;
 }
 

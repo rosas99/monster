@@ -58,7 +58,7 @@ func (l *CommonMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 			continue
 		}
 
-		ret, err := templateProvider.Send(ctx, types.TemplateMsgRequest{})
+		ret, err := templateProvider.Send(ctx, msg)
 		log.C(ctx).Errorw(err, "send fail")
 
 		if err != nil {

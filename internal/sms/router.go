@@ -21,10 +21,10 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 	// register pprof handler
 	pprof.Register(g)
 
-	// creates a v1 router group and adds an auth middleware.
 	// get a grpc usercenter client
-	// todo 开启认证
-	v1 := g.Group("/v1", mw.BasicAuth(usercenter.GetClient()))
+	client := usercenter.GetClient()
+	// creates a v1 router group and adds an auth middleware.
+	v1 := g.Group("/v1", mw.BasicAuth(client))
 	//v1 := g.Group("/v1")
 	{
 		v1.Use()
@@ -46,7 +46,6 @@ func installRouters(g *gin.Engine, svc *service.SmsServerService) {
 			msgv1.POST("/send", ms.Send)
 			msgv1.POST("/verify", ms.CodeVerify)
 
-			// todo 需要支持公网ip
 			msgv1.POST("/report/ailiyun", ms.AiliReport)
 			msgv1.POST("/interaction/ailiyun", ms.AILIYUNCallback)
 

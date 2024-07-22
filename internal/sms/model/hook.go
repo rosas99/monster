@@ -14,7 +14,7 @@ func (t *TemplateM) BeforeCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
-//// AfterCreate
+// AfterCreate
 //func (t *TemplateM) AfterCreate(tx *gorm.DB) (err error) {
 //	return tx.Save(t).Error
 //}

@@ -19,7 +19,7 @@ func (b *Controller) AiliReport(c *gin.Context) {
 		core.WriteResponse(c, err, nil)
 
 	}
-	// 返回success，否则会自动重试
+	// returns success, otherwise it will be automatically retried
 	core.WriteResponse(c, errno.AiliCloudSuccess, nil)
 
 }

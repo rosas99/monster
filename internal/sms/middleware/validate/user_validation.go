@@ -5,58 +5,36 @@
 package validate
 
 import (
+	"context"
+	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/sms/store"
 	"regexp"
-
-	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 // Validation make sure users have the right resource permission and operation.
 func Validation(ds store.IStore) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 验证短信验证码前先验证模板码和短信验证码是否位6位：这个可以在valid验证
-
-		//switch c.FullPath() {
-		//// 参数非空 模板校验 手机号规则校验
-		//case "/v1/users":
-		//	_, err := ds.Templates().Get(context.Background(), "")
-		//	if err != nil {
-		//		// log kpi
-		//		// 返回错误码
-		//		c.Abort()
-		//		return
-		//	}
-		//	if !isMobileNo(c.GetString("mobile")) {
-		//		// log kpi
-		//		// 返回错误码
-		//		c.Abort()
-		//		return
-		//	}
-		//
-		//// 手机号白名单校验 修改为在mq消费前校验
-		//case "/v1/users/:name", "/v1/users/:name/change_password":
-		//	var r v1.CreateTemplateRequest
-		//	if err := c.ShouldBindJSON(&r); err != nil {
-		//		core.WriteResponse(c, err, nil)
-		//		/*
-		//			c.JSON(http.StatusBadRequest, gin.H{
-		//					"err": err.Error(),
-		//				})
-		//		*/
-		//	}
-		//
-		//default:
-		//}
+		switch c.FullPath() {
+		case "/v1/template":
+			if c.Request.Method == "GET" {
+				id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+				_, err := ds.Templates().Get(context.Background(), id)
+				if err != nil {
+					// log kpi
+					c.Abort()
+					return
+				}
+			}
+		default:
+		}
 
 		c.Next()
 	}
 }
 
 func isMobileNo(mobiles string) bool {
-	// 定义一个正则表达式，匹配6位数字
 	pattern := `^[0-9]{6}$`
-	// 编译正则表达式
 	re := regexp.MustCompile(pattern)
-	// 检查手机号码是否符合正则表达式
 	return re.MatchString(mobiles)
 }

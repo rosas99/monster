@@ -30,7 +30,6 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) error 
 	err := b.rule.CheckRules(ctx, cfgList)
 	if err != nil {
 		b.log(rq, err, tm)
-		// 记录错误码和错误类型
 		return err
 	}
 
@@ -49,13 +48,6 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) error 
 		b.log(rq, err, tm)
 		return err
 	}
-
-	message := map[string]any{
-		"test":  "value1",
-		"other": 123,
-	}
-
-	b.logger.LogKpi(message)
 
 	return nil
 }

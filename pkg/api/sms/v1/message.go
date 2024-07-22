@@ -16,7 +16,7 @@ type VerifyCodeRequest struct {
 	TemplateCode string `json:"templateCode" valid:"alphanum,required,stringlength(1|255)"`
 	Mobile       string `json:"mobile" valid:"required,stringlength(1|255)"`
 	Brand        string `json:"brand" valid:"required,stringlength(1|255)"`
-	Code         string `json:"code" valid:"required,stringlength(1|255)"`
+	Code         string `json:"code" valid:"required,isCode"`
 }
 
 type AILIYUNReportListRequest struct {

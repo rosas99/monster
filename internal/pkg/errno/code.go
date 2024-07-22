@@ -35,7 +35,7 @@ var (
 
 	ErrIdempotentTokenExpired = &Errno{HTTP: 400, Code: "IdempotentToken.Expired", Message: "idempotent token is invalid"}
 
-	ErrTemplateCount  = &Errno{HTTP: 401, Code: "TemplateCountFailure.ExceedLimit", Message: "Exceed limit for this template"}
-	ErrMobileCount    = &Errno{HTTP: 401, Code: "MobileCountFailure.ExceedLimit", Message: "Exceed limit for this phone"}
-	ErrTimestampCount = &Errno{HTTP: 401, Code: "TimestampCountFailure.TooFrequently", Message: "Sent message too frequently"}
+	ErrTemplateCount  = &Errno{HTTP: 400, Code: "TemplateCountFailure.ExceedLimit", Message: "Exceed limit for this template"}
+	ErrMobileCount    = &Errno{HTTP: 400, Code: "MobileCountFailure.ExceedLimit", Message: "Exceed limit for this phone"}
+	ErrTimestampCount = &Errno{HTTP: 400, Code: "TimestampCountFailure.TooFrequently", Message: "Sent message too frequently"}
 )

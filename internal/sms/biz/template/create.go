@@ -22,16 +22,19 @@ func (t *templateBiz) Create(ctx context.Context, rq *v1.CreateTemplateRequest) 
 			ConfigKey:    types.MessageCountForMobilePerDay,
 			ConfigValue:  rq.MobileCount,
 			TemplateCode: rq.TemplateCode,
-		},
-		{
-			ConfigKey:    types.MessageCountForTemplatePerDay,
-			ConfigValue:  rq.TemplateCount,
-			TemplateCode: rq.TemplateCode,
+			Order:        1,
 		},
 		{
 			ConfigKey:    types.TimeIntervalForMobilePerDay,
 			ConfigValue:  rq.TimeInterval,
 			TemplateCode: rq.TemplateCode,
+			Order:        2,
+		},
+		{
+			ConfigKey:    types.MessageCountForTemplatePerDay,
+			ConfigValue:  rq.TemplateCount,
+			TemplateCode: rq.TemplateCode,
+			Order:        3,
 		}}
 
 	if err := t.ds.Configurations().CreateBatch(ctx, configurationsM); err != nil {

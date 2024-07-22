@@ -8,7 +8,7 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 )
 
-// AILIYUNReport receives AILI cloud message reports and link them to their sending history.
+// AILIYUNReport receives Aliyun message reports and associating them to their sending history.
 func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) error {
 	for _, item := range rq.AILIYUNReportList {
 		filter := make(map[string]any)

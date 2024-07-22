@@ -21,9 +21,6 @@ func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) e
 	}
 	b.rds.Del(ctx, key)
 
-	message := map[string]any{"test": "value1", "other": 123}
-	b.logger.LogKpi(message)
-
 	return nil
 
 }

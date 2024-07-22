@@ -28,7 +28,7 @@ func NewAILIYUNProvider(rds *redis.Client, logger *writer.Writer, ailiyunSmsOpti
 }
 
 // Send creates a sms client and sends sms by aili cloud.
-func (p *AILIYUNProvider) Send(ctx context.Context, rq types.TemplateMsgRequest) (TemplateMsgResponse, error) {
+func (p *AILIYUNProvider) Send(ctx context.Context, rq *types.TemplateMsgRequest) (TemplateMsgResponse, error) {
 	client, err := p.ailiyunSmsOptions.NewSmsClient()
 	if err != nil {
 		return TemplateMsgResponse{}, err

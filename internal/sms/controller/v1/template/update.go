@@ -5,6 +5,8 @@ import (
 	"github.com/rosas99/monster/internal/pkg/core"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 	"strconv"
+	// custom gin validators.
+	_ "github.com/rosas99/monster/pkg/validator"
 )
 
 func (b *Controller) Update(c *gin.Context) {

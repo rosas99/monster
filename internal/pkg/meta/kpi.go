@@ -13,7 +13,7 @@ type KpiOptions struct {
 }
 
 func NewKpiOptions(opts ...KpiOption) KpiOptions {
-	los := KpiOptions{
+	kos := KpiOptions{
 		Kpi: map[string]any{
 			"appName": AppName,
 			"kpiName": KpiName,
@@ -23,10 +23,10 @@ func NewKpiOptions(opts ...KpiOption) KpiOptions {
 	}
 
 	for _, opt := range opts {
-		opt(&los)
+		opt(&kos)
 	}
 
-	return los
+	return kos
 }
 
 func WithAppName(appName string) KpiOption {

@@ -43,7 +43,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) error 
 		b.rds.Set(ctx, key, rq.Code, time.Hour*24)
 	}
 
-	var templateMsgRequest v1.TemplateMsgRequest
+	var templateMsgRequest types.TemplateMsgRequest
 	templateMsgRequest.RequestId = b.idt.Token(ctx)
 	_ = copier.Copy(&templateMsgRequest, rq)
 	err = b.logger.WriteMessage(ctx, &templateMsgRequest, tm.Type)

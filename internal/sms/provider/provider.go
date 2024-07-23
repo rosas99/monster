@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/rosas99/monster/internal/sms/types"
-	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
 // TemplateMsgResponse
@@ -17,7 +16,7 @@ type TemplateMsgResponse struct {
 
 // SMSTemplateProvider defines the SMS template sending interface.
 type SMSTemplateProvider interface {
-	Send(ctx context.Context, request *v1.TemplateMsgRequest) (TemplateMsgResponse, error)
+	Send(ctx context.Context, request *types.TemplateMsgRequest) (TemplateMsgResponse, error)
 }
 
 // ProviderFactory is a struct that acts as a factory for creating and managing instances

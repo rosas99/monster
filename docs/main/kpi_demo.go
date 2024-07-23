@@ -10,7 +10,7 @@ func main() {
 	extra := map[string]any{"template_code": "1asd"}
 
 	kpi := meta.NewKpiOptions(meta.WithAppName("AppName"), meta.WithKpiName("kpiName"), meta.WithTraceId("traceId"),
-		meta.WithStatus("status"), meta.WithCostTime(123), meta.WithExtra(extra)).Kpi
+		meta.WithStatus(true), meta.WithCostTime(123), meta.WithExtra(extra)).Kpi
 
 	marshal, _ := json.Marshal(kpi)
 

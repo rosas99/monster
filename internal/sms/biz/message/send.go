@@ -15,6 +15,10 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
+const (
+	VerificationMessage = "VERIFICATION_MESSAGE"
+)
+
 // Send checks the template configuration and send the message to kafka queue.
 func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) error {
 	tm := b.getTemplate(ctx, rq.TemplateCode)
@@ -33,13 +37,13 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) error 
 		return err
 	}
 
-	if tm.Type == types.VerificationMessage {
+	if tm.Type == VerificationMessage {
 		rq.Code = id.RandomNumeric(6)
 		key := wrapper.WrapperCode(rq.TemplateCode, rq.Code)
 		b.rds.Set(ctx, key, rq.Code, time.Hour*24)
 	}
 
-	var templateMsgRequest types.TemplateMsgRequest
+	var templateMsgRequest v1.TemplateMsgRequest
 	templateMsgRequest.RequestId = b.idt.Token(ctx)
 	_ = copier.Copy(&templateMsgRequest, rq)
 	err = b.logger.WriteMessage(ctx, &templateMsgRequest, tm.Type)
@@ -97,7 +101,7 @@ func (b *messageBiz) log(rq *v1.SendMessageRequest, err error, m *model.Template
 	hm := model.HistoryM{
 		Mobile:            maskPhone(rq.Mobile),
 		SendTime:          time.Now(),
-		Status:            types.ERROR_STATUS,
+		Status:            types.ErrorStatus,
 		Message:           err.Error(),
 		Content:           m.Content,
 		MessageTemplateID: m.ID,

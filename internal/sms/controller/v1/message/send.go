@@ -19,8 +19,13 @@ func (b *Controller) Send(c *gin.Context) {
 	}
 	err := b.svc.SendMessage(c, &r)
 	if err != nil {
-		monitor.GetMonitor().LogKpi("ailiyunUplink", c.Request.Header.Get(known.TraceIDKey),
-			"success", r.TemplateCode, time.Now().UnixMilli()-start)
+		monitor.GetMonitor().LogKpi(
+			"发送模板短信",
+			c.Request.Header.Get(known.TraceIDKey),
+			r.TemplateCode,
+			false,
+			time.Now().UnixMilli()-start,
+		)
 		core.WriteResponse(c, err, nil)
 	}
 	core.WriteResponse(c, errno.AiliCloudSuccess, nil)

@@ -27,7 +27,7 @@ func Validation(ds store.IStore) gin.HandlerFunc {
 				_, err := ds.Templates().Get(context.Background(), id)
 				if err != nil {
 					monitor.GetMonitor().LogTemplateKpi("template", c.Request.Header.Get(known.TraceIDKey),
-						"success", time.Now().UnixMilli()-start)
+						false, time.Now().UnixMilli()-start)
 					c.Abort()
 					return
 				}

@@ -3,7 +3,6 @@ package template
 import (
 	"context"
 	"github.com/rosas99/monster/internal/sms/model"
-	"github.com/rosas99/monster/internal/sms/types"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
@@ -49,17 +48,17 @@ func (t *templateBiz) Update(ctx context.Context, id int64, rq *v1.UpdateTemplat
 
 	configurationsM := []*model.ConfigurationM{
 		{
-			ConfigKey:    types.MessageCountForMobilePerDay,
+			ConfigKey:    MessageCountForMobilePerDay,
 			ConfigValue:  *rq.MobileCount,
 			TemplateCode: *rq.TemplateCode,
 		},
 		{
-			ConfigKey:    types.MessageCountForTemplatePerDay,
+			ConfigKey:    MessageCountForTemplatePerDay,
 			ConfigValue:  *rq.TemplateCount,
 			TemplateCode: *rq.TemplateCode,
 		},
 		{
-			ConfigKey:    types.TimeIntervalForMobilePerDay,
+			ConfigKey:    TimeIntervalForMobilePerDay,
 			ConfigValue:  *rq.TimeInterval,
 			TemplateCode: *rq.TemplateCode,
 		}}

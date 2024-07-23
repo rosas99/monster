@@ -22,7 +22,7 @@ func NewMessageCountForTemplateRule(DS store.IStore, RDS *redis.Client) *Message
 
 var _ Rule = (*MessageCountForTemplateRule)(nil)
 
-func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *types.Request) error {
+func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *Request) error {
 
 	start := time.Now().Unix()
 	key := factory.WrapperTemplateCount(rq.TemplateCode)

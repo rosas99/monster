@@ -53,7 +53,7 @@ func WithMessage(message string) KpiOption {
 	}
 }
 
-func WithStatus(status string) KpiOption {
+func WithStatus(status bool) KpiOption {
 	return func(o *KpiOptions) {
 		o.Kpi["status"] = status
 	}

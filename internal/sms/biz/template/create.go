@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/jinzhu/copier"
 	"github.com/rosas99/monster/internal/sms/model"
-	"github.com/rosas99/monster/internal/sms/types"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
@@ -19,19 +18,19 @@ func (t *templateBiz) Create(ctx context.Context, rq *v1.CreateTemplateRequest) 
 
 	configurationsM := []*model.ConfigurationM{
 		{
-			ConfigKey:    types.MessageCountForMobilePerDay,
+			ConfigKey:    MessageCountForMobilePerDay,
 			ConfigValue:  rq.MobileCount,
 			TemplateCode: rq.TemplateCode,
 			Order:        1,
 		},
 		{
-			ConfigKey:    types.TimeIntervalForMobilePerDay,
+			ConfigKey:    TimeIntervalForMobilePerDay,
 			ConfigValue:  rq.TimeInterval,
 			TemplateCode: rq.TemplateCode,
 			Order:        2,
 		},
 		{
-			ConfigKey:    types.MessageCountForTemplatePerDay,
+			ConfigKey:    MessageCountForTemplatePerDay,
 			ConfigValue:  rq.TemplateCount,
 			TemplateCode: rq.TemplateCode,
 			Order:        3,

@@ -5,14 +5,21 @@ import (
 	"errors"
 	"fmt"
 	"github.com/rosas99/monster/internal/sms/model"
-	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/log"
 	"sort"
 	"strconv"
 )
 
+// Request  模拟验证请求
+type Request struct {
+	Mobile       string
+	Id           int64
+	TemplateCode string
+	LimitValue   int64
+}
+
 type Rule interface {
-	isValid(ctx context.Context, rq *types.Request) error
+	isValid(ctx context.Context, rq *Request) error
 }
 
 type RuleFactory struct {
@@ -49,7 +56,7 @@ func (rf *RuleFactory) CheckRules(ctx context.Context, cfgList []*model.Configur
 		}
 
 		val, err := strconv.ParseInt(cfg.ConfigValue, 10, 64)
-		request := &types.Request{
+		request := &Request{
 			Mobile:       cfg.TemplateCode,
 			TemplateCode: cfg.TemplateCode,
 			LimitValue:   val,

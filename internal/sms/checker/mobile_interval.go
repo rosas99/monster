@@ -7,7 +7,6 @@ import (
 	"github.com/rosas99/monster/internal/pkg/errno"
 	"github.com/rosas99/monster/internal/sms/store"
 	factory "github.com/rosas99/monster/internal/sms/store/redis"
-	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/log"
 	"strconv"
 	"time"
@@ -24,7 +23,7 @@ func NewTimeIntervalForMobileRule(DS store.IStore, RDS *redis.Client) *TimeInter
 
 var _ Rule = (*TimeIntervalForMobileRule)(nil)
 
-func (m *TimeIntervalForMobileRule) isValid(ctx context.Context, rq *types.Request) error {
+func (m *TimeIntervalForMobileRule) isValid(ctx context.Context, rq *Request) error {
 	start := time.Now().UnixMilli()
 	key := factory.WrapperTimeInterval(rq.Mobile, rq.TemplateCode)
 

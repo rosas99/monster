@@ -9,6 +9,7 @@ import (
 	factory "github.com/rosas99/monster/internal/sms/provider"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/internal/sms/writer"
+	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 	"github.com/rosas99/monster/pkg/log"
 	"github.com/segmentio/kafka-go"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -33,7 +34,7 @@ func NewVerifyMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, l
 func (l *VerifyMessageConsumer) Consume(elem any) error {
 	val := elem.(kafka.Message)
 
-	var msg *types.TemplateMsgRequest
+	var msg *v1.TemplateMsgRequest
 	err := json.Unmarshal(val.Value, &msg)
 	if err != nil {
 		logx.Errorf("Consume val: %s error: %v", val, err)
@@ -43,7 +44,7 @@ func (l *VerifyMessageConsumer) Consume(elem any) error {
 
 }
 
-func (l *VerifyMessageConsumer) handleSmsRequest(ctx context.Context, msg *types.TemplateMsgRequest) error {
+func (l *VerifyMessageConsumer) handleSmsRequest(ctx context.Context, msg *v1.TemplateMsgRequest) error {
 
 	if !l.idt.Check(ctx, msg.RequestId) {
 		return errors.New("idempotent token is invalid")
@@ -58,7 +59,8 @@ func (l *VerifyMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 			continue
 		}
 
-		ret, err := templateProvider.Send(ctx, types.TemplateMsgRequest{})
+		request := v1.TemplateMsgRequest{}
+		ret, err := templateProvider.Send(ctx, &request)
 		log.C(ctx).Errorw(err, "send fail")
 
 		if err != nil {

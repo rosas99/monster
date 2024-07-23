@@ -14,7 +14,7 @@ const (
 )
 
 // LogKpi writes a log message for the api request.
-func (i *impl) LogKpi(kpiName, traceId, status, templateCode string, costTime int64) {
+func (i *impl) LogKpi(kpiName, traceId, templateCode string, status bool, costTime int64) {
 	extra := map[string]any{"template_code": templateCode}
 
 	kpi := meta.NewKpiOptions(meta.WithAppName(AppName), meta.WithKpiName(kpiName), meta.WithTraceId(traceId),
@@ -26,7 +26,7 @@ func (i *impl) LogKpi(kpiName, traceId, status, templateCode string, costTime in
 	}
 }
 
-func (i *impl) LogTemplateKpi(kpiName, traceId, status string, costTime int64) {
+func (i *impl) LogTemplateKpi(kpiName, traceId string, status bool, costTime int64) {
 
 	kpi := meta.NewKpiOptions(meta.WithAppName(AppName), meta.WithKpiName(kpiName), meta.WithTraceId(traceId),
 		meta.WithStatus(status), meta.WithCostTime(costTime)).Kpi

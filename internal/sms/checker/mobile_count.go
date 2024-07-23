@@ -22,7 +22,7 @@ func NewMessageCountForMobileRule(DS store.IStore, RDS *redis.Client) *MessageCo
 
 var _ Rule = (*MessageCountForMobileRule)(nil)
 
-func (m *MessageCountForMobileRule) isValid(ctx context.Context, rq *types.Request) error {
+func (m *MessageCountForMobileRule) isValid(ctx context.Context, rq *Request) error {
 	start := time.Now().Unix()
 	key := factory.WrapperMobileCount(rq.Mobile, rq.TemplateCode)
 

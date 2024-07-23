@@ -9,10 +9,14 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
+const (
+	VerificationMessage = "VERIFICATION_MESSAGE"
+)
+
 // WriteMessage writes a log message for the common message.
 func (l *Writer) WriteMessage(ctx context.Context, msg *types.TemplateMsgRequest, messageType string) error {
 	out, _ := json.Marshal(msg)
-	if messageType == types.VerificationMessage {
+	if messageType == VerificationMessage {
 		return l.commonWriter.WriteMessages(ctx, kafka.Message{Value: out})
 	} else {
 		return l.verifyWriter.WriteMessages(ctx, kafka.Message{Value: out})

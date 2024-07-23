@@ -24,3 +24,7 @@ log: # 使用默认值即可，不需要在 manifests/env.local 中配置
     disable-caller: true # 是否开启 caller，如果开启会在日志中显示调用日志所在的文件、函数和行号
     disable-stacktrace: false # 是否再 panic 及以上级别禁止打印堆栈信息
     output-paths: stdout # 多个输出，逗号分开。stdout：标准输出，
+health:
+  enable-http-profiler: false
+  check-path: /health
+  check-address: 0.0.0.0:55082

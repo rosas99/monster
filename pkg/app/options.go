@@ -48,7 +48,7 @@ func AddConfigFlag(fs *pflag.FlagSet, name string, watch bool) {
 	viper.SetEnvPrefix(strings.ReplaceAll(strings.ToUpper(name), "-", "_"))
 	// Set the replacement rules for environment variable keys. Use the
 	// strings.NewReplacer function to specify replacing periods and hyphens with underscores.
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_"))
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_")) //old/new,old/new
 
 	cobra.OnInitialize(func() {
 		if cfgFile != "" {

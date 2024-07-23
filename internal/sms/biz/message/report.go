@@ -11,8 +11,7 @@ import (
 // AILIYUNReport receives Aliyun message reports and associating them to their sending history.
 func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) error {
 	for _, item := range rq.AILIYUNReportList {
-		filter := make(map[string]any)
-		filter["message_id"] = item.BizId
+		filter := map[string]any{"message_id": item.BizId}
 		count, list, _ := b.ds.Histories().List(ctx, "", meta.WithFilter(filter))
 		if count > 0 {
 			history := list[0]

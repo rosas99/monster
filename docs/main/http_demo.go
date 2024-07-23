@@ -5,9 +5,6 @@ import (
 	"github.com/rosas99/monster/internal/pkg/client"
 )
 
-type AuthSuccess struct {
-}
-
 func main() {
 	url := "http://example.com/api"
 	request := client.NewRequest()

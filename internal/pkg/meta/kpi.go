@@ -1,11 +1,5 @@
 package meta
 
-const (
-	// AppName is the default argument to specify on a context when you want to list or filter resources across all scopes.
-	AppName = "default_app"
-	KpiName = "default_kpi"
-)
-
 type KpiOption func(*KpiOptions)
 
 type KpiOptions struct {
@@ -15,8 +9,6 @@ type KpiOptions struct {
 func NewKpiOptions(opts ...KpiOption) KpiOptions {
 	kos := KpiOptions{
 		Kpi: map[string]any{
-			"appName": AppName,
-			"kpiName": KpiName,
 			"code":    200,
 			"message": "success",
 		},

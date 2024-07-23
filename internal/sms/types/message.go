@@ -12,11 +12,9 @@ const (
 type ProviderType string
 
 // defines a group of constants for cloud service providers.
-
 const (
 	ProviderTypeALIYUN ProviderType = "AILIYUN"
-
-	ProviderTypeDummy ProviderType = "DUMMY"
+	ProviderTypeDummy  ProviderType = "DUMMY"
 )
 
 const (
@@ -25,6 +23,11 @@ const (
 
 const (
 	LimitLeftTime = time.Hour * 24
+)
+
+const (
+	VerificationMessage = "VERIFICATION_MESSAGE"
+	CommonMessage       = "COMMON_MESSAGE"
 )
 
 // TemplateMsgRequest defines a template message request for kafka queue.

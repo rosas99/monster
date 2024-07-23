@@ -43,7 +43,7 @@ func (m *MessageCountForMobileRule) isValid(ctx context.Context, rq *Request) er
 
 	isValid := sentCount <= rq.LimitValue
 	if !isValid {
-		log.Infow(":warning:", "key", key, "sentCount", sentCount, "isValid", isValid)
+		log.Errorf(":warning:", "key", key, "sentCount", sentCount, "isValid", isValid)
 		return errno.ErrMobileCount
 
 	}

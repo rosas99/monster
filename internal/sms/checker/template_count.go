@@ -42,7 +42,7 @@ func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *Request) 
 	log.Infof("TemplateAndMobileChecker-----checker time效验号码模板总时间----: %d", time.Now().Unix()-start)
 	isValid := sentCount <= rq.LimitValue
 	if !isValid {
-		log.Infow(":warning:", "key", key, "sentCount", sentCount, "isValid", isValid)
+		log.Errorf(":warning:", "key", key, "sentCount", sentCount, "isValid", isValid)
 		return errno.ErrTemplateCount
 	}
 	return nil

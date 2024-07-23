@@ -60,7 +60,7 @@ func (m *TimeIntervalForMobileRule) isValid(ctx context.Context, rq *Request) er
 	interval2 := time.Now().UnixMilli() - timeStampInt
 	isValid := interval2 >= rq.LimitValue
 	if !isValid {
-		log.Warnf("%s request too frequently!", rq.Mobile)
+		log.Errorf("%s request too frequently!", rq.Mobile)
 		return errno.ErrTimestampCount
 
 	}

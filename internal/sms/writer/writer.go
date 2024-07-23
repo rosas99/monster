@@ -11,11 +11,10 @@ type Writer struct {
 	// enabled is an atomic boolean indicating whether the logger is enabled.
 	enabled int32
 	// writer is the Kafka writer used to write log messages.
-	commonWriter  *kafka.Writer
-	verifyWriter  *kafka.Writer
-	uplinkWriter  *kafka.Writer
-	monitorWriter *kafka.Writer
-	historyStore  store.HistoryStore
+	commonWriter *kafka.Writer
+	verifyWriter *kafka.Writer
+	uplinkWriter *kafka.Writer
+	historyStore store.HistoryStore
 }
 
 // NewWriter creates a new kafkaLogger instance.

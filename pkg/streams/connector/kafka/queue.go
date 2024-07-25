@@ -49,10 +49,9 @@ func NewKQueue(KafkaOptions *genericoptions.KafkaOptions, handler ConsumeHandler
 		channel:          make(chan kafka.Message),
 		producerRoutines: new(sync.WaitGroup),
 		consumerRoutines: new(sync.WaitGroup),
-
-		forceCommit: KafkaOptions.ForceCommit,
-		processors:  KafkaOptions.Processors,
-		consumers:   KafkaOptions.Consumers,
+		forceCommit:      KafkaOptions.ForceCommit,
+		processors:       KafkaOptions.Processors,
+		consumers:        KafkaOptions.Consumers,
 	}
 
 	return sink, nil

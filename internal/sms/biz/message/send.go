@@ -53,10 +53,10 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) error 
 }
 
 func (b *messageBiz) getTemplate(ctx context.Context, templateCode string) *model.TemplateM {
-	tpCache, _ := b.rds.Get(ctx, wrapper.WrapperTemplate(templateCode)).Result()
-	if tpCache != "" {
+	cache, _ := b.rds.Get(ctx, wrapper.WrapperTemplate(templateCode)).Result()
+	if cache != "" {
 		tm := &model.TemplateM{}
-		if err := json.Unmarshal([]byte(tpCache), tm); err != nil {
+		if err := json.Unmarshal([]byte(cache), tm); err != nil {
 			return nil
 		}
 

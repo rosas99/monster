@@ -94,6 +94,7 @@ func (b *messageBiz) getCfgList(ctx context.Context, templateCode string) []*mod
 }
 
 func (b *messageBiz) log(rq *v1.SendMessageRequest, err error, m *model.TemplateM) {
+	// todo 使用option
 	hm := model.HistoryM{
 		Mobile:            maskPhone(rq.Mobile),
 		SendTime:          time.Now(),

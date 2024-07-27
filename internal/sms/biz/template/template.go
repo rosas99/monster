@@ -25,10 +25,3 @@ type templateBiz struct {
 func New(ds store.IStore, rds *redis.Client) *templateBiz {
 	return &templateBiz{ds: ds, rds: rds}
 }
-
-// defines a group of constants for message configuration.
-const (
-	MessageCountForTemplatePerDay = "MESSAGE_COUNT_FOR_TEMPLATE_PER_DAY"
-	MessageCountForMobilePerDay   = "MESSAGE_COUNT_FOR_MOBILE_PER_DAY"
-	TimeIntervalForMobilePerDay   = "TIME_INTERVAL_FOR_MOBILE_PER_DAY"
-)

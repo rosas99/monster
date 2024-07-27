@@ -2,12 +2,14 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	dysmsapi "github.com/alibabacloud-go/dysmsapi-20170525/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/internal/sms/writer"
+	"github.com/rosas99/monster/pkg/log"
 	ailiyunoptions "github.com/rosas99/monster/pkg/sdk/ailiyun"
 )
 
@@ -29,10 +31,13 @@ func NewAILIYUNProvider(rds *redis.Client, logger *writer.Writer, ailiyunSmsOpti
 
 // Send creates a sms client and sends sms by aili cloud.
 func (p *AILIYUNProvider) Send(ctx context.Context, rq *types.TemplateMsgRequest) (TemplateMsgResponse, error) {
+	log.C(ctx).Infof("Preparing to send SMS via AILIYUN for phone number: %v", rq.PhoneNumber)
+
 	client, err := p.ailiyunSmsOptions.NewSmsClient()
 	if err != nil {
 		return TemplateMsgResponse{}, err
 	}
+	log.C(ctx).Infof("Created AILIYUN SMS client, preparing request")
 
 	sendReq := &dysmsapi.SendSmsRequest{
 		PhoneNumbers:  tea.String(rq.PhoneNumber),
@@ -44,17 +49,25 @@ func (p *AILIYUNProvider) Send(ctx context.Context, rq *types.TemplateMsgRequest
 	sendResp, err := client.SendSms(sendReq)
 
 	if err != nil {
+		log.C(ctx).Errorf("Failed to send SMS via AILIYUN: %v", err)
 		return TemplateMsgResponse{}, err
 	}
+	log.C(ctx).Infof("Received response from AILIYUN, checking status code")
 
 	if tea.Int32Value(sendResp.StatusCode) != 200 {
-		return TemplateMsgResponse{}, err
+		log.C(ctx).Errorf("Non-200 status code received from AILIYUN: %v", sendResp.StatusCode)
+		return TemplateMsgResponse{}, fmt.Errorf("non-200 status code: %v", sendResp.StatusCode)
 	}
 
 	id := *sendResp.Body.BizId
 	var history model.HistoryM
 	history.MessageID = id
+
+	log.C(ctx).Infof("Recording history for message ID: %v", id)
+
 	p.logger.WriterHistory(&history)
+
+	log.C(ctx).Infof("SMS sent successfully via AILIYUN, preparing response")
 
 	response := TemplateMsgResponse{
 		Code:      *sendResp.Body.Code,
@@ -62,5 +75,7 @@ func (p *AILIYUNProvider) Send(ctx context.Context, rq *types.TemplateMsgRequest
 		BizId:     *sendResp.Body.BizId,
 		RequestId: *sendResp.Body.RequestId,
 	}
+	log.C(ctx).Infof("Returning response from AILIYUN: %v", response)
+
 	return response, nil
 }

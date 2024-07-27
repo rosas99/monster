@@ -18,13 +18,13 @@ func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportList
 			marshal, err := json.Marshal(history)
 			if err != nil {
 
-				log.C(ctx).Warnf("marshal history record fail %v", err)
+				log.C(ctx).Warnf("Failed to marshal history record: %v", err)
 				return err
 			}
 			history.Report = string(marshal)
 			err = b.ds.Histories().Update(ctx, history)
 			if err != nil {
-				log.C(ctx).Warnf("update histroy report fail %v", err)
+				log.C(ctx).Warnf("Failed to update history report: %v", err)
 			}
 		}
 	}

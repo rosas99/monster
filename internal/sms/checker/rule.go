@@ -10,6 +10,8 @@ import (
 	"strconv"
 )
 
+//todo 补充注释
+
 // Request  模拟验证请求
 type Request struct {
 	Mobile       string

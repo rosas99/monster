@@ -11,8 +11,8 @@ import (
 	"github.com/rosas99/monster/internal/sms/store"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/internal/sms/writer"
+	"github.com/rosas99/monster/pkg/log"
 	"github.com/segmentio/kafka-go"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UplinkMessageConsumer struct {
@@ -37,18 +37,21 @@ func (l *UplinkMessageConsumer) Consume(elem any) error {
 	var msg *types.UplinkMsgRequest
 	err := json.Unmarshal(val.Value, &msg)
 	if err != nil {
-		logx.Errorf("Consume val: %s error: %v", val, err)
+		log.C(l.ctx).Errorf("Failed to unmarshal message: %v, value: %s", err, string(val.Value))
 		return err
 	}
 
+	log.C(l.ctx).Infof("Uplink message consumed: %v", msg)
 	return l.handleSmsRequest(l.ctx, msg)
 }
 
 func (l *UplinkMessageConsumer) handleSmsRequest(ctx context.Context, msg *types.UplinkMsgRequest) error {
 
 	if !l.idt.Check(ctx, msg.RequestId) {
+		log.C(ctx).Errorf("Idempotent token check failed: %v", errors.New("idempotent token is invalid"))
 		return errors.New("idempotent token is invalid")
 	}
+	log.C(ctx).Infof("Checking for existing interaction records for mobile: %v", msg.PhoneNumber)
 
 	filter := make(map[string]any)
 	filter["mobile"] = msg.PhoneNumber
@@ -56,7 +59,7 @@ func (l *UplinkMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 	filter["receive_time"] = msg.SendTime
 	count, _, _ := l.ds.Interactions().List(ctx, "", meta.WithFilter(filter))
 	if count > 0 {
-		// log record has existed
+		log.C(ctx).Infof("Interaction record already exists for mobile: %v", msg.PhoneNumber)
 	}
 
 	var interactionM model.InteractionM
@@ -65,12 +68,14 @@ func (l *UplinkMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 	interactionM.Content = msg.Content
 	interactionM.Param = msg.DestCode
 	interactionM.Provider = "AILIYUN"
+	log.C(ctx).Infof("Creating new interaction record: %v", interactionM)
 
 	err := l.ds.Interactions().Create(ctx, &interactionM)
 	if err != nil {
-		// log
+		log.C(ctx).Errorf("Failed to create interaction record: %v", err)
 		return err
 	}
+	log.C(ctx).Infof("Interaction record created successfully: %v", interactionM.InteractionID)
 
 	// todo 具体交互内容
 	return nil

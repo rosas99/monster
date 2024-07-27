@@ -47,7 +47,6 @@ func (t *templateBiz) List(ctx context.Context, rq *v1.ListTemplateRequest) (*v1
 	// The following code block is used to maintain the consistency of query order.
 	templates := make([]*v1.TemplateReply, 0, len(list))
 	for _, item := range list {
-		// 从map加载组装后的数据
 		template, _ := m.Load(item.ID)
 		templates = append(templates, template.(*v1.TemplateReply))
 	}

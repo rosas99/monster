@@ -23,6 +23,7 @@ func NewTimeIntervalForMobileRule(DS store.IStore, RDS *redis.Client) *TimeInter
 
 var _ Rule = (*TimeIntervalForMobileRule)(nil)
 
+// isValid checks if the mobile device request exceeds the specified time interval limit.
 func (m *TimeIntervalForMobileRule) isValid(ctx context.Context, rq *Request) error {
 	start := time.Now().UnixMilli()
 	key := factory.WrapperTimeInterval(rq.Mobile, rq.TemplateCode)

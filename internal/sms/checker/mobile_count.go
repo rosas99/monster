@@ -22,6 +22,7 @@ func NewMessageCountForMobileRule(DS store.IStore, RDS *redis.Client) *MessageCo
 
 var _ Rule = (*MessageCountForMobileRule)(nil)
 
+// isValid validates if the message sending count for a specific mobile and template is within limits.
 func (m *MessageCountForMobileRule) isValid(ctx context.Context, rq *Request) error {
 	start := time.Now().Unix()
 	key := factory.WrapperMobileCount(rq.Mobile, rq.TemplateCode)

@@ -22,6 +22,7 @@ func NewMessageCountForTemplateRule(DS store.IStore, RDS *redis.Client) *Message
 
 var _ Rule = (*MessageCountForTemplateRule)(nil)
 
+// isValid verifies if the message count for a given template code is within the allowed limit.
 func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *Request) error {
 
 	start := time.Now().Unix()

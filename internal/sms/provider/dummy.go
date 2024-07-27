@@ -2,8 +2,8 @@ package provider
 
 import (
 	"context"
-	"fmt"
 	"github.com/rosas99/monster/internal/sms/types"
+	"github.com/rosas99/monster/pkg/log"
 )
 
 // DummyProvider is a struct represents a fake sms provider.
@@ -16,7 +16,9 @@ func NewDummyProvider() *DummyProvider {
 
 // Send do nothing
 func (p *DummyProvider) Send(ctx context.Context, request *types.TemplateMsgRequest) (TemplateMsgResponse, error) {
-	// 模拟发送短信的逻辑，不实际发送
-	fmt.Printf("Simulating message send via DummyProvider to %s\n", request.SendTime)
+	log.C(ctx).Infof("Simulating message send via DummyProvider to %s", request.PhoneNumber)
+
+	// Since this is a dummy provider, no real action is taken here.
+	// The response is returned as if the operation was successful.
 	return TemplateMsgResponse{}, nil
 }

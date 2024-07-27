@@ -16,6 +16,8 @@ import (
 	"time"
 )
 
+//todo 补充注释
+
 // Validation make sure users have the right resource permission and operation.
 func Validation(ds store.IStore) gin.HandlerFunc {
 	return func(c *gin.Context) {

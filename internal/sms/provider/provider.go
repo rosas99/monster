@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/rosas99/monster/internal/sms/types"
+	"github.com/rosas99/monster/pkg/log"
 )
 
 // TemplateMsgResponse
@@ -38,8 +39,11 @@ func (f *ProviderFactory) RegisterProvider(providerType types.ProviderType, prov
 
 // GetSMSTemplateProvider retrieves an SMS template provider based on the given provider type.
 func (f *ProviderFactory) GetSMSTemplateProvider(providerType types.ProviderType) (SMSTemplateProvider, error) {
+	log.Infof("Attempting to retrieve provider for type: %s", providerType)
+
 	provider, exists := f.providers[providerType]
 	if !exists {
+		log.Errorf("No provider match for type: %s", providerType)
 		return nil, fmt.Errorf("no provider match for type %s", providerType)
 	}
 	return provider, nil

@@ -9,7 +9,7 @@ type KpiOptions struct {
 func NewKpiOptions(opts ...KpiOption) KpiOptions {
 	kos := KpiOptions{
 		Kpi: map[string]any{
-			"code":    200,
+			"code":    200, // default value
 			"message": "success",
 		},
 	}

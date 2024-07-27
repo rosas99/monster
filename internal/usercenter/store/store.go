@@ -10,15 +10,14 @@ import (
 	"github.com/rosas99/monster/internal/usercenter/model"
 )
 
-// IStore 定义了 Store 层需要实现的方法.
+// IStore defines the methods that the Store layer needs to implement.
 type IStore interface {
 	Users() UserStore
 }
 
-// OrderStore 定义了 order 模块在 store 层所实现的方法.
-
+// UserStore defines the methods implemented by the store layer for the user module.
 type UserStore interface {
-	Create(ctx context.Context, order *model.UserM) error
+	Create(ctx context.Context, user *model.UserM) error
 	Get(ctx context.Context, username string) (*model.UserM, error)
 	Update(ctx context.Context, user *model.UserM) error
 	List(ctx context.Context, opts ...meta.ListOption) (count int64, ret []*model.UserM, err error)
@@ -27,7 +26,7 @@ type UserStore interface {
 
 var (
 	once sync.Once
-	// 全局变量，方便其它包直接调用已初始化好的 S 实例.
+	// S Global variable that allows other packages to directly call the already initialized S instance.
 	S IStore
 )
 

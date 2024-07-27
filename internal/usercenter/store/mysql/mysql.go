@@ -10,21 +10,21 @@ import (
 
 var (
 	once sync.Once
-	// 全局变量，保存已被初始化的 *Datastore 实例.
+	// Global variable that holds an already initialized *Datastore instance.
 	S *Datastore
 )
 
-// Datastore 是 IStore 的一个具体实现.
+// Datastore is a concrete implementation of the IStore interface.
 type Datastore struct {
 	db *gorm.DB
 }
 
-// 确保 Datastore 实现了 store.IStore 接口.
+// Ensures that Datastore implements the store.IStore interface.
 var _ store.IStore = (*Datastore)(nil)
 
-// NewStore 创建一个 store.IStore 类型的实例.
+// NewStore creates an instance of type store.IStore.
 func NewStore(db *gorm.DB) *Datastore {
-	// 确保 s 只被初始化一次
+	// Ensures that 'S' is only initialized once.
 	once.Do(func() {
 		S = &Datastore{db}
 	})
@@ -32,13 +32,12 @@ func NewStore(db *gorm.DB) *Datastore {
 	return S
 }
 
-// DB 返回存储在 datastore 中的 *gorm.DB.
+// DB returns the *gorm.DB stored within the datastore.
 func (ds *Datastore) DB() *gorm.DB {
 	return ds.db
 }
 
+// Users returns a store.UserStore instance wrapping the database operations for users.
 func (ds *Datastore) Users() store.UserStore {
 	return newUsers(ds.db)
 }
-
-// todo history

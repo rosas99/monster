@@ -5,6 +5,7 @@ import (
 	"github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
+// Update implements the 'Update' method of the IBiz interface, allowing modification of user data based on the provided update request.
 func (b *userBiz) Update(ctx context.Context, rq *v1.UpdateUserRequest) error {
 	userM, err := b.ds.Users().Get(ctx, rq.Username)
 	if err != nil {

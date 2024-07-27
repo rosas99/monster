@@ -11,6 +11,7 @@ import (
 	"github.com/rosas99/monster/internal/sms/writer"
 	"github.com/rosas99/monster/pkg/log"
 	"github.com/segmentio/kafka-go"
+	"time"
 )
 
 type CommonMessageConsumer struct {
@@ -59,7 +60,12 @@ func (l *CommonMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 		return errors.New("idempotent token is invalid")
 	}
 
-	historyM := model.HistoryM{}
+	historyM := model.HistoryM{
+		Mobile:   msg.PhoneNumber, // Assuming PhoneNumber is the correct field name
+		SendTime: time.Now(),      // Set current time as send time
+		Content:  msg.Content,     // Assuming Content is the correct field name
+		//MessageTemplateID: msg.TemplateCode,  // Assuming TemplateID is the correct field name
+	}
 
 	for _, provider := range msg.Providers {
 		log.C(ctx).Infof("Attempting to use provider: %s", provider)
@@ -74,16 +80,19 @@ func (l *CommonMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 
 		if err != nil {
 			log.C(ctx).Errorf("Failed to send SMS: %v", err)
-			l.logger.WriterHistory(&historyM)
-			continue
+			historyM.Status = "Failed"
+			historyM.Message = err.Error() // Record the error message
+		} else {
+			log.C(ctx).Infof("SMS sent successfully: bizId=%v", ret.BizId)
+			historyM.Status = "Success"
+			historyM.MessageID = ret.BizId
+			historyM.Code = ret.Code
+			historyM.Message = ret.Message
+			break
 		}
-
-		log.C(ctx).Infof("SMS sent successfully: bizId=%v", ret.BizId)
-
-		historyM.MessageID = ret.BizId
-		l.logger.WriterHistory(&historyM)
-		break
 	}
+
+	l.logger.WriterHistory(&historyM)
 
 	return nil
 }

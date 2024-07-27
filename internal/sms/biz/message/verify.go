@@ -8,9 +8,7 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 )
 
-// todo 补充注释
-
-// CodeVerify verifies a message code and clear cache if success.
+// CodeVerify is used to verify the verification code entered by the user.
 func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) error {
 
 	key := factory.WrapperCode(rq.Mobile, rq.TemplateCode)

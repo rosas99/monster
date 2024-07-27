@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Get implements the 'Get' method of the IBiz interface, which retrieves user information based on the provided request.
 func (b *userBiz) Get(ctx context.Context, rq *v1.GetUserRequest) (*v1.GetUserResponse, error) {
 	userM, err := b.ds.Users().Get(ctx, rq.Username)
 	if err != nil {

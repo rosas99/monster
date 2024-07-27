@@ -15,9 +15,7 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-// todo 补充注释
-
-// Send checks the template configuration and send the message to kafka queue.
+// Send is responsible for sending messages based on the request.
 func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) error {
 	log.C(ctx).Infof("Starting message send process for request: %v", rq)
 

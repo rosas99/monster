@@ -11,6 +11,7 @@ import (
 
 const defaultMethods = "(GET)|(POST)|(PUT)|(DELETE)"
 
+// Create handles the creation of a new user within the context of the Controller.
 func (b *Controller) Create(c *gin.Context) {
 	log.C(c).Infow("Create user function called")
 

@@ -17,7 +17,7 @@ func installRouters(g *gin.Engine, svc *service.UserCenterService) {
 		core.WriteResponse(c, errno.ErrPageNotFound, nil)
 	})
 
-	// 注册 pprof 路由
+	// Register pprof routes
 	pprof.Register(g)
 
 	authz, err := auth.NewAuthz(mysql.S.DB())

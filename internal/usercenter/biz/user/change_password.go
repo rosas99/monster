@@ -8,7 +8,7 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 )
 
-// ChangePassword 是 IBiz 接口中 `ChangePassword` 方法的实现.
+// ChangePassword implements the 'ChangePassword' method of the IBiz interface.
 func (b *userBiz) ChangePassword(ctx context.Context, username string, rq *v1.ChangePasswordRequest) error {
 	userM, err := b.ds.Users().Get(ctx, username)
 	if err != nil {

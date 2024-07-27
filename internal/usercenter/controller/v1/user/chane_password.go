@@ -9,6 +9,7 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 )
 
+// ChangePassword handles the change password request for a user within the context of the Controller.
 func (b *Controller) ChangePassword(c *gin.Context) {
 	log.C(c).Infow("Change password function called")
 

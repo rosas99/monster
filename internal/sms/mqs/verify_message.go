@@ -11,6 +11,7 @@ import (
 	"github.com/rosas99/monster/internal/sms/writer"
 	"github.com/rosas99/monster/pkg/log"
 	"github.com/segmentio/kafka-go"
+	"time"
 )
 
 type VerifyMessageConsumer struct {
@@ -50,7 +51,15 @@ func (l *VerifyMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 	}
 	log.C(ctx).Infof("Starting to process request: %v", msg.RequestId)
 
-	historyM := model.HistoryM{}
+	historyM := model.HistoryM{
+		Mobile:   msg.PhoneNumber, // Assuming PhoneNumber is the correct field name
+		SendTime: time.Now(),      // Set current time as send time
+		Content:  msg.Content,     // Assuming Content is the correct field name
+		//MessageTemplateID: msg.TemplateID,  // Assuming TemplateID is the correct field name
+		Status: "Pending", // Initial status before sending
+	}
+
+	successful := false
 
 	for _, provider := range msg.Providers {
 		log.C(ctx).Infof("Processing provider: %v", provider)
@@ -62,21 +71,30 @@ func (l *VerifyMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 		}
 		log.C(ctx).Infof("Sending message via provider: %v", provider)
 
-		request := types.TemplateMsgRequest{}
-		ret, err := templateProvider.Send(ctx, &request)
-		log.C(ctx).Errorw(err, "send fail")
+		ret, err := templateProvider.Send(ctx, msg)
 
 		if err != nil {
 			log.C(ctx).Errorf("Failed to send SMS via provider %v: %v", provider, err)
-			l.logger.WriterHistory(&historyM)
-			continue
+			historyM.Status = "Failed"
+			historyM.Message = err.Error()
+		} else {
+			log.C(ctx).Infof("Message sent successfully via provider %v: bizId=%v", provider, ret.BizId)
+			historyM.Status = "Success"
+			historyM.MessageID = ret.BizId
+			historyM.Code = ret.Code
+			historyM.Message = ret.Message
+			successful = true
+			break
 		}
-		log.C(ctx).Infof("Message sent successfully via provider %v: bizId=%v", provider, ret.BizId)
-
-		historyM.MessageID = ret.BizId
-		l.logger.WriterHistory(&historyM)
-		break
 	}
+
+	if successful {
+		historyM.Status = "Success"
+	} else {
+		historyM.Status = "Failed"
+	}
+
+	l.logger.WriterHistory(&historyM)
 	log.C(ctx).Infof("Finished processing request: %v", msg.RequestId)
 
 	return nil

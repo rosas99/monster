@@ -6,6 +6,7 @@ import (
 	"github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
+// List retrieves a list of users within the context of the Controller.
 func (b *Controller) List(c *gin.Context) {
 	var r v1.ListUserRequest
 	if err := c.ShouldBindQuery(&r); err != nil {

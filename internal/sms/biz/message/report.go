@@ -8,7 +8,7 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 )
 
-// AILIYUNReport receives Aliyun message reports and associating them to their sending history.
+// AILIYUNReport updates the message processing history reports for Aliyun.
 func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) error {
 	for _, item := range rq.AILIYUNReportList {
 		filter := map[string]any{"message_id": item.BizId}

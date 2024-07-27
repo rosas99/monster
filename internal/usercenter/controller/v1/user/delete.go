@@ -6,6 +6,7 @@ import (
 	"github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
+// Delete handles the deletion of a user within the context of the Controller.
 func (b *Controller) Delete(c *gin.Context) {
 	var r v1.DeleteUserRequest
 	if err := c.ShouldBindJSON(&r); err != nil {

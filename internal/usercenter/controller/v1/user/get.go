@@ -6,6 +6,7 @@ import (
 	"github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
+// Get retrieves user information within the context of the Controller.
 func (b *Controller) Get(c *gin.Context) {
 	var r v1.GetUserRequest
 	template, err := b.svc.Get(c, &r)

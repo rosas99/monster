@@ -26,6 +26,7 @@ func (w *historiesCleanWatcher) Run() {
 	}
 
 	for _, history := range histories {
+		// Check if the history is older than one year
 		// deletes all records that are older than one year.
 		if history.CreatedAt.Unix() < time.Now().AddDate(-1, 0, 0).Unix() {
 			err := w.store.Sms().Histories().Delete(context.TODO(), history.ID)

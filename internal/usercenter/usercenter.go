@@ -7,7 +7,6 @@ import (
 	"github.com/rosas99/monster/internal/pkg/middleware/header"
 	"github.com/rosas99/monster/internal/pkg/middleware/trace"
 	"github.com/rosas99/monster/internal/usercenter/biz"
-	"github.com/rosas99/monster/internal/usercenter/middleware/validate"
 	"github.com/rosas99/monster/pkg/auth"
 	"github.com/rosas99/monster/pkg/token"
 	//"github.com/rosas99/monster/internal/usercenter/middleware/validate"
@@ -49,62 +48,69 @@ type SmsServer struct {
 }
 
 // New returns a new instance of Server from the given config.
+// New initializes and returns a new SmsServer instance.
 func (c completedConfig) New() (*SmsServer, error) {
 	var ds store.IStore
 
+	// Copy MySQL options from the configuration.
 	var dbOptions db.MySQLOptions
 	_ = copier.Copy(&dbOptions, c.MySQLOptions)
 
+	// Initialize the MySQL database instance.
 	ins, err := db.NewMySQL(&dbOptions)
 	if err != nil {
 		return nil, err
 	}
 	ds = mysql.NewStore(ins)
 
+	// Copy Redis options from the configuration.
 	var redisOptions db.RedisOptions
 	value := &c.Config.RedisOptions
 	_ = copier.Copy(&redisOptions, value)
+
+	// Initialize the Redis database instance.
 	rds, err := db.NewRedis(&redisOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	// 设置 token 包的签发密钥，用于 token 包 token 的签发和解析
+	// Initialize the token package with the JWT secret key.
 	token.Init(c.JwtSecret, known.XUsernameKey)
 
+	// Create a business layer instance using the initialized data stores.
 	biz := biz.NewBiz(ds, rds)
 	authz, err := auth.NewAuthz(ins)
 	srv := service.NewUserCenterService(biz, authz)
 
-	// 设置 Gin 模式
+	// Set the Gin mode to release for production.
 	gin.SetMode(gin.ReleaseMode)
 
-	// 创建 Gin 引擎
+	// Create a new Gin engine.
 	g := gin.New()
 
-	// 并初始化路由
-	// 这里注册不同的路由可以分开，如是否使用人认证中间件，分别在use 认证中间件前后
+	// Initialize routes for the Gin engine.
 	installRouters(g, srv)
-	// 考虑在这里install consumer
 
+	// Initialize the HTTP server.
 	httpsrv, err := NewHTTPServer(c.HTTPOptions, c.TLSOptions, g)
 	if err != nil {
 		return nil, err
 	}
 
+	// Initialize the gRPC server.
 	grpcsrv, err := NewGRPCServer(c.GRPCOptions, c.TLSOptions, srv)
 	if err != nil {
 		return nil, err
 	}
-	// gin.Recovery() 中间件，用来捕获任何 panic，并恢复
-	mws := []gin.HandlerFunc{gin.Recovery(), header.NoCache, header.Cors, header.Secure,
-		// 注意验证链路的顺序
-		trace.TraceID(), validate.Validation(ds)}
-	// 添加中间件
+
+	// Define middleware for the Gin engine including recovery, no-cache, CORS, security, and trace ID.
+	mws := []gin.HandlerFunc{gin.Recovery(), header.NoCache, header.Cors, header.Secure, trace.TraceID()}
 	g.Use(mws...)
 
-	// Need start grpc server first. http server depends on grpc sever.
+	// Start the gRPC server before the HTTP server since the HTTP server might depend on it.
 	go grpcsrv.RunOrDie()
+
+	// Return the newly created SmsServer instance.
 	return &SmsServer{grpcsrv: grpcsrv, httpsrv: httpsrv, config: c}, nil
 }
 

@@ -8,6 +8,7 @@ import (
 	"github.com/rosas99/monster/pkg/token"
 )
 
+// Login implements the 'Login' method of the IBiz interface, handling user authentication based on the provided login request.
 func (b *userBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error) {
 	user, err := b.ds.Users().Get(ctx, r.Username)
 	if err != nil {

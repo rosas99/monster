@@ -10,13 +10,12 @@ import (
 	"github.com/rosas99/monster/internal/pkg/known"
 	"github.com/rosas99/monster/internal/sms/monitor"
 	"github.com/rosas99/monster/internal/sms/store"
+	"github.com/rosas99/monster/pkg/log"
 	"net/http"
 	"regexp"
 	"strconv"
 	"time"
 )
-
-//todo 补充注释
 
 // Validation make sure users have the right resource permission and operation.
 func Validation(ds store.IStore) gin.HandlerFunc {
@@ -28,13 +27,16 @@ func Validation(ds store.IStore) gin.HandlerFunc {
 				id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 				_, err := ds.Templates().Get(context.Background(), id)
 				if err != nil {
+					log.C(c).Errorf("Failed to get template by ID: %d. Error: %v", id, err)
 					monitor.GetMonitor().LogTemplateKpi("template", c.Request.Header.Get(known.TraceIDKey),
 						false, time.Now().UnixMilli()-start)
 					c.Abort()
 					return
 				}
+				log.C(c).Infof("Successfully validated template ID: %d", id)
 			}
 		default:
+			log.C(c).Infof("No validation required for path: %s", c.FullPath())
 		}
 
 		c.Next()

@@ -14,11 +14,14 @@ func (b *Controller) Send(c *gin.Context) {
 	start := time.Now().UnixMilli()
 	var r v1.SendMessageRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
-		core.WriteResponse(c, err, nil)
-
+		core.WriteResponse(c, errno.ErrBind, nil)
+		return
 	}
+
 	err := b.svc.SendMessage(c, &r)
 	if err != nil {
+		httpStatus, code, message := errno.Decode(err)
+
 		monitor.GetMonitor().LogKpi(
 			"发送模板短信",
 			c.Request.Header.Get(known.TraceIDKey),
@@ -26,7 +29,8 @@ func (b *Controller) Send(c *gin.Context) {
 			false,
 			time.Now().UnixMilli()-start,
 		)
-		core.WriteResponse(c, err, nil)
+		core.WriteResponse(c, &errno.Errno{HTTP: httpStatus, Code: code, Message: message}, nil)
+		return
 	}
 	core.WriteResponse(c, errno.AiliCloudSuccess, nil)
 

@@ -10,6 +10,7 @@ import (
 	"sync"
 )
 
+// List implements the 'List' method of the IBiz interface, which retrieves a list of users based on the provided request.
 func (b *userBiz) List(ctx context.Context, rq *v1.ListUserRequest) (*v1.ListUserResponse, error) {
 
 	count, list, err := b.ds.Users().List(ctx, meta.WithOffset(rq.Offset), meta.WithLimit(rq.Limit))
@@ -46,7 +47,6 @@ func (b *userBiz) List(ctx context.Context, rq *v1.ListUserRequest) (*v1.ListUse
 	// The following code block is used to maintain the consistency of query order.
 	users := make([]*v1.UserInfo, 0, len(list))
 	for _, item := range list {
-		// 从map加载组装后的数据
 		template, _ := m.Load(item.ID)
 		users = append(users, template.(*v1.UserInfo))
 	}

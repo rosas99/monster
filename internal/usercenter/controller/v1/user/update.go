@@ -8,6 +8,7 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/usercenter/v1"
 )
 
+// Update handles the updating of a user's information within the context of the Controller.
 func (b *Controller) Update(c *gin.Context) {
 	var r v1.UpdateUserRequest
 	if err := c.ShouldBindJSON(&r); err != nil {

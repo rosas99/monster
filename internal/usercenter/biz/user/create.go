@@ -9,6 +9,7 @@ import (
 	"regexp"
 )
 
+// Create implements the 'Create' method of the IBiz interface, responsible for creating a new user.
 func (b *userBiz) Create(ctx context.Context, rq *v1.CreateUserRequest) (*v1.CreateUserResponse, error) {
 
 	var userM model.UserM

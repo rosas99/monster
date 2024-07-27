@@ -9,27 +9,27 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-// IBiz 定义了 Biz 层需要实现的方法.
+// IBiz defines the methods that need to be implemented in the Biz layer.
 type IBiz interface {
 	Users() user.IBiz
 }
 
-// biz 是 IBiz 的一个具体实现.
+// Biz is a concrete implementation of the IBiz interface.
 type Biz struct {
 	ds          store.IStore
 	rds         *redis.Client
 	kafkaWriter *kafka.Writer
 }
 
-// 确保 biz 实现了 IBiz 接口.
+// Ensure that biz implements the IBiz interface.
 var _ IBiz = (*Biz)(nil)
 
-// NewBiz 创建一个 IBiz 类型的实例.
+// NewBiz creates an instance of type IBiz.
 func NewBiz(ds store.IStore, rds *redis.Client) *Biz {
 	return &Biz{ds: ds, rds: rds}
 }
 
-// Orders 返回一个实现了 OrderBiz 接口的实例.
+// Users returns an instance that implements the IBiz interface.
 func (b *Biz) Users() user.IBiz {
 	return user.New(b.ds, b.rds)
 }

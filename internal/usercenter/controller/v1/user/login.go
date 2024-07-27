@@ -13,7 +13,7 @@ import (
 	"github.com/rosas99/monster/pkg/log"
 )
 
-// Login 登录 monster 并返回一个 JWT Token.
+// Login handles the user login process within the context of the Controller.
 func (b *Controller) Login(c *gin.Context) {
 	log.C(c).Infow("Login function called")
 

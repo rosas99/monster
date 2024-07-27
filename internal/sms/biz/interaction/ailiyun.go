@@ -7,7 +7,7 @@ import (
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 )
 
-// AILIYUNUplink receives an uplink message and writes to kafka queue.
+// AILIYUNUplink processes uplink messages received from AILIYUN and logs them.
 func (b *interactionBiz) AILIYUNUplink(ctx context.Context, rq *v1.AILIYUNUplinkListRequest) error {
 	for _, item := range rq.AILIYUNCallbackList {
 		var msgRequest types.UplinkMsgRequest

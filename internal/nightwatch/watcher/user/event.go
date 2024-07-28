@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	UserEventAfterEvent = "after_event"
+	UserEventAfterEvent = "after_event" // fsm default event.
 )
 
 func NewActiveUserCallback(store store.Interface) fsm.Callback {

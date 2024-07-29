@@ -3,7 +3,6 @@ package writer
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/log"
 	"github.com/segmentio/kafka-go"
@@ -27,7 +26,6 @@ func (l *Writer) WriteMessage(ctx context.Context, msg *types.TemplateMsgRequest
 // WriteUplinkMessage writes a log message for the uplink message.
 func (l *Writer) WriteUplinkMessage(ctx context.Context, msg *types.UplinkMsgRequest) {
 	out, _ := json.Marshal(msg)
-	fmt.Println(msg)
 	if err := l.uplinkWriter.WriteMessages(ctx, kafka.Message{Value: out}); err != nil {
 		log.Errorw(err, "Failed to write kafka messages")
 	}

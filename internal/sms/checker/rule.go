@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/pkg/log"
-	"sort"
 	"strconv"
 )
 
@@ -45,10 +44,6 @@ func (rf *RuleFactory) CheckRules(ctx context.Context, cfgList []*model.Configur
 		return errors.New("no configuration")
 	}
 
-	// 升序排序
-	sort.SliceStable(cfgList, func(i, j int) bool {
-		return cfgList[i].Order < cfgList[j].Order
-	})
 	for _, cfg := range cfgList {
 		checker, err := rf.CreateChecker(cfg)
 		if err != nil {

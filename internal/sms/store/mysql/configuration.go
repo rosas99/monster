@@ -7,6 +7,7 @@ import (
 	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/store"
 	"gorm.io/gorm"
+	"sort"
 )
 
 type configurationStore struct {
@@ -69,6 +70,12 @@ func (t *configurationStore) List(ctx context.Context, templateCode string, opts
 		Find(&ret).
 		Limit(-1).
 		Count(&count)
+
+	// 升序排序
+	sort.Sort(ByOrder(ret))
+	//sort.SliceStable(cfgList, func(i, j int) bool {
+	//	return cfgList[i].Order < cfgList[j].Order
+	//})
 
 	return count, ret, ans.Error
 }

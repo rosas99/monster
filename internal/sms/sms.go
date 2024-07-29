@@ -37,7 +37,6 @@ type Config struct {
 	MonitorKafkaOptions    *genericoptions.KafkaOptions
 	Address                string
 	Accounts               map[string]string
-	AiliyunUrl             string
 	AiliyunSmsOptions      *ailiyunoptions.SmsOptions
 }
 

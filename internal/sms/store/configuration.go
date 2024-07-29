@@ -20,15 +20,15 @@ import (
 // UserStore defines the interface for managing user data storage.
 type ConfigurationStore interface {
 	// Create adds a new user record to the database.
-	Create(ctx context.Context, user *model.ConfigurationM) error
+	Create(ctx context.Context, cfg *model.ConfigurationM) error
 	// CreateBatch adds new users record to the database.
-	CreateBatch(ctx context.Context, user []*model.ConfigurationM) error
+	CreateBatch(ctx context.Context, cfgs []*model.ConfigurationM) error
 	// List returns a slice of user records based on the specified query conditions.
 	List(ctx context.Context, templateCode string, opts ...meta.ListOption) (int64, []*model.ConfigurationM, error)
 	// Get retrieves a user record by userID and username.
 	Get(ctx context.Context, userID string, username string) (*model.ConfigurationM, error)
 	// Update modifies an existing user record.
-	Update(ctx context.Context, user *model.ConfigurationM) error
+	Update(ctx context.Context, cfg *model.ConfigurationM) error
 	// Delete removes a user record using the provided filters.
 	Delete(ctx context.Context, filters map[string]any) error
 
@@ -56,13 +56,13 @@ func (d *configurationStore) db(ctx context.Context) *gorm.DB {
 }
 
 // Create adds a new user record to the database.
-func (d *configurationStore) Create(ctx context.Context, user *model.ConfigurationM) error {
-	return d.db(ctx).Create(&user).Error
+func (d *configurationStore) Create(ctx context.Context, cfg *model.ConfigurationM) error {
+	return d.db(ctx).Create(&cfg).Error
 }
 
 // Create adds new users record to the database.
-func (d *configurationStore) CreateBatch(ctx context.Context, user []*model.ConfigurationM) error {
-	return d.db(ctx).Create(&user).Error
+func (d *configurationStore) CreateBatch(ctx context.Context, cfgs []*model.ConfigurationM) error {
+	return d.db(ctx).Create(&cfgs).Error
 }
 
 // List returns a slice of user records based on the specified query conditions
@@ -115,8 +115,8 @@ func (d *configurationStore) GetByUsername(ctx context.Context, username string)
 }
 
 // Update modifies an existing user record in the database.
-func (d *configurationStore) Update(ctx context.Context, user *model.ConfigurationM) error {
-	return d.db(ctx).Save(user).Error
+func (d *configurationStore) Update(ctx context.Context, cfg *model.ConfigurationM) error {
+	return d.db(ctx).Save(cfg).Error
 }
 
 // Delete removes a user record from the database using the provided filters.

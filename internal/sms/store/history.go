@@ -19,13 +19,13 @@ import (
 // UserStore defines the interface for managing user data storage.
 type HistoryStore interface {
 	// Create adds a new user record to the database.
-	Create(ctx context.Context, user *model.HistoryM) error
+	Create(ctx context.Context, history *model.HistoryM) error
 	// List returns a slice of user records based on the specified query conditions.
 	List(ctx context.Context, opts ...meta.ListOption) (int64, []*model.HistoryM, error)
 	// Get retrieves a user record by userID and username.
 	Get(ctx context.Context, userID string, username string) (*model.HistoryM, error)
 	// Update modifies an existing user record.
-	Update(ctx context.Context, user *model.HistoryM) error
+	Update(ctx context.Context, history *model.HistoryM) error
 	// Delete removes a user record using the provided filters.
 	Delete(ctx context.Context, filters map[string]any) error
 
@@ -53,8 +53,8 @@ func (d *historyStore) db(ctx context.Context) *gorm.DB {
 }
 
 // Create adds a new user record to the database.
-func (d *historyStore) Create(ctx context.Context, user *model.HistoryM) error {
-	return d.db(ctx).Create(&user).Error
+func (d *historyStore) Create(ctx context.Context, history *model.HistoryM) error {
+	return d.db(ctx).Create(&history).Error
 }
 
 // List returns a slice of user records based on the specified query conditions
@@ -96,8 +96,8 @@ func (d *historyStore) GetByUsername(ctx context.Context, username string) (*mod
 }
 
 // Update modifies an existing user record in the database.
-func (d *historyStore) Update(ctx context.Context, user *model.HistoryM) error {
-	return d.db(ctx).Save(user).Error
+func (d *historyStore) Update(ctx context.Context, history *model.HistoryM) error {
+	return d.db(ctx).Save(history).Error
 }
 
 // Delete removes a user record from the database using the provided filters.

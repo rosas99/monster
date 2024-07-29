@@ -16,7 +16,6 @@ import (
 	providerFactory "github.com/rosas99/monster/internal/sms/provider"
 	"github.com/rosas99/monster/internal/sms/service"
 	"github.com/rosas99/monster/internal/sms/store"
-	"github.com/rosas99/monster/internal/sms/store/mysql"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/internal/sms/writer"
 	"github.com/rosas99/monster/pkg/db"
@@ -70,7 +69,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	ds = mysql.NewStore(ins)
+	ds = store.NewStore(ins)
 
 	var redisOptions db.RedisOptions
 	value := &c.Config.RedisOptions

@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/jinzhu/copier"
+	wrapper "github.com/rosas99/monster/internal/sms"
 	"github.com/rosas99/monster/internal/sms/model"
-	wrapper "github.com/rosas99/monster/internal/sms/store/redis"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/id"
 	"github.com/rosas99/monster/pkg/log"
@@ -75,7 +75,8 @@ func (b *messageBiz) getTemplate(ctx context.Context, templateCode string) *mode
 		return tm
 	}
 
-	tm, _ := b.ds.Templates().GetByTemplateCode(ctx, templateCode)
+	filters := map[string]any{"template_code": templateCode}
+	tm, _ := b.ds.Templates().Fetch(ctx, filters)
 	if tm != nil {
 		marshal, _ := json.Marshal(tm)
 		b.rds.Set(ctx, wrapper.WrapperTemplate(tm.TemplateCode), marshal, time.Hour*24)

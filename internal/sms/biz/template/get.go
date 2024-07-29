@@ -12,7 +12,8 @@ import (
 
 // Get retrieves a single template from the database.
 func (t *templateBiz) Get(ctx context.Context, id int64) (*v1.TemplateReply, error) {
-	templateM, err := t.ds.Templates().Get(ctx, id)
+	filters := map[string]any{"id": id}
+	templateM, err := t.ds.Templates().Fetch(ctx, filters)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errno.ErrPageNotFound

@@ -1,12 +1,32 @@
-package store
+// Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/superproj/onex.
+//
 
-//go:generate mockgen -destination mock_store.go -package store github.com/rosas99/monster/internal/fakeserver/store IStore,OrderStore
+package store
 
 import (
 	"context"
-	"github.com/rosas99/monster/internal/pkg/meta"
-	"github.com/rosas99/monster/internal/sms/model"
+	"sync"
+
+	"github.com/google/wire"
+	"gorm.io/gorm"
 )
+
+// ProviderSet is a Wire provider set that initializes new datastore instances
+// and binds the IStore interface to the actual datastore type.
+var ProviderSet = wire.NewSet(NewStore, wire.Bind(new(IStore), new(*datastore)))
+
+// Singleton instance variables.
+var (
+	once sync.Once
+	S    *datastore
+)
+
+// transactionKey is an unique key used in context to store
+// transaction instances to be shared between multiple operations.
+type transactionKey struct{}
 
 // IStore is an interface that represents methods
 // required to be implemented by a Store implementation.
@@ -18,40 +38,73 @@ type IStore interface {
 	Interactions() InteractionStore
 }
 
-// TemplateStore defines the interface for managing template data storage.
-type TemplateStore interface {
-	Create(ctx context.Context, order *model.TemplateM) error
-	Get(ctx context.Context, id int64) (*model.TemplateM, error)
-	GetByTemplateCode(ctx context.Context, templateCode string) (*model.TemplateM, error)
-	Update(ctx context.Context, order *model.TemplateM) error
-	List(ctx context.Context, templateCode string, opts ...meta.ListOption) (int64, []*model.TemplateM, error)
-	Delete(ctx context.Context, id int64) error
+// datastore is an implementation of IStore that provides methods
+// to perform operations on a database using gorm library.
+type datastore struct {
+	// core is the main database instance.
+	// The `core` name indicates this is the main database.
+	core *gorm.DB
+
+	// Additional database instances can be added as needed.
+	// In the example below, a fake database instance is added:
+	// fake *gorm.DB
 }
 
-// ConfigurationStore defines the interface for managing template configuration data storage.
-type ConfigurationStore interface {
-	Create(ctx context.Context, order *model.ConfigurationM) error
-	CreateBatch(ctx context.Context, orders []*model.ConfigurationM) error
-	Get(ctx context.Context, orderID string) (*model.ConfigurationM, error)
-	Update(ctx context.Context, order *model.ConfigurationM) error
-	List(ctx context.Context, templateCode string, opts ...meta.ListOption) (int64, []*model.ConfigurationM, error)
-	Delete(ctx context.Context, id int64) error
+// Ensure datastore implements IStore.
+var _ IStore = (*datastore)(nil)
+
+// NewStore initializes a new datastore instance using the provided DB gorm instance.
+// It also creates a singleton instance for the datastore.
+func NewStore(db *gorm.DB) *datastore {
+	once.Do(func() {
+		S = &datastore{db}
+	})
+
+	return S
 }
 
-// HistoryStore defines the interface for managing message send history data storage.
-type HistoryStore interface {
-	Create(ctx context.Context, order *model.HistoryM) error
-	Get(ctx context.Context, orderID string) (*model.HistoryM, error)
-	Update(ctx context.Context, order *model.HistoryM) error
-	List(ctx context.Context, templateCode string, opts ...meta.ListOption) (int64, []*model.HistoryM, error)
-	Delete(ctx context.Context, id int64) error
+// Core retrieves the current transactional DB instance if it exists
+// in context or falls back to the main database.
+func (ds *datastore) Core(ctx context.Context) *gorm.DB {
+	tx, ok := ctx.Value(transactionKey{}).(*gorm.DB)
+	if ok {
+		return tx
+	}
+
+	return ds.core
 }
 
-// InteractionStore defines the interface for managing uplink message data storage.
-type InteractionStore interface {
-	Create(ctx context.Context, order *model.InteractionM) error
-	Get(ctx context.Context, orderID string) (*model.InteractionM, error)
-	Update(ctx context.Context, order *model.InteractionM) error
-	List(ctx context.Context, templateCode string, opts ...meta.ListOption) (int64, []*model.InteractionM, error)
-	Delete(ctx context.Context, id int64) error
+// FakeDB is an empty method to demonstrate how to handle multiple database instances.
+// This method should be implemented to return an actual fake DB instance.
+func (ds *datastore) FakeDB(ctx context.Context) *gorm.DB { return nil }
+
+// TX starts a transaction using the main DB context
+// and passes the transactional context to the provided function.
+func (ds *datastore) TX(ctx context.Context, fn func(ctx context.Context) error) error {
+	return ds.core.WithContext(ctx).Transaction(
+		func(tx *gorm.DB) error {
+			ctx = context.WithValue(ctx, transactionKey{}, tx)
+			return fn(ctx)
+		},
+	)
+}
+
+// Users returns an initialized instance of UserStore.
+func (ds *datastore) Templates() TemplateStore {
+	return newTemplateStore(ds)
+}
+
+// Users returns an initialized instance of UserStore.
+func (ds *datastore) Configurations() ConfigurationStore {
+	return newConfigurationStore(ds)
+}
+
+// Users returns an initialized instance of UserStore.
+func (ds *datastore) Histories() HistoryStore {
+	return newHistoryStore(ds)
+}
+
+// Users returns an initialized instance of UserStore.
+func (ds *datastore) Interactions() InteractionStore {
+	return newInteractionStore(ds)
 }

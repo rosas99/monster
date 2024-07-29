@@ -12,7 +12,7 @@ import (
 func (b *messageBiz) AILIYUNReport(ctx context.Context, rq *v1.AILIYUNReportListRequest) error {
 	for _, item := range rq.AILIYUNReportList {
 		filter := map[string]any{"message_id": item.BizId}
-		count, list, _ := b.ds.Histories().List(ctx, "", meta.WithFilter(filter))
+		count, list, _ := b.ds.Histories().List(ctx, meta.WithFilter(filter))
 		if count > 0 {
 			history := list[0]
 			marshal, err := json.Marshal(history)

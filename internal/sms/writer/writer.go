@@ -1,7 +1,6 @@
 package writer
 
 import (
-	"github.com/rosas99/monster/internal/sms/store"
 	genericoptions "github.com/rosas99/monster/pkg/options"
 	"github.com/segmentio/kafka-go"
 )

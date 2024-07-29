@@ -10,7 +10,8 @@ import (
 // Update updates a template's information in the database.
 func (t *templateBiz) Update(ctx context.Context, id int64, rq *v1.UpdateTemplateRequest) error {
 	var err error
-	orderM, err := t.ds.Templates().Get(ctx, id)
+	filters := map[string]any{"id": id}
+	orderM, err := t.ds.Templates().Fetch(ctx, filters)
 	if err != nil {
 		return err
 	}

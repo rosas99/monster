@@ -25,7 +25,8 @@ func Validation(ds store.IStore) gin.HandlerFunc {
 			if c.Request.Method == http.MethodGet {
 				start := time.Now().UnixMilli()
 				id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-				_, err := ds.Templates().Get(context.Background(), id)
+				filters := map[string]any{"id": id}
+				_, err := ds.Templates().Fetch(context.Background(), filters)
 				if err != nil {
 					log.C(c).Errorf("Failed to get template by ID: %d. Error: %v", id, err)
 					monitor.GetMonitor().LogTemplateKpi("template", c.Request.Header.Get(known.TraceIDKey),

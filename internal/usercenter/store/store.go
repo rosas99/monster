@@ -1,39 +1,92 @@
-package store
+// Copyright 2022 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/superproj/onex.
+//
 
-//go:generate mockgen -destination mock_store.go -package store github.com/rosas99/monster/internal/fakeserver/store IStore,OrderStore
+package store
 
 import (
 	"context"
 	"sync"
 
-	"github.com/rosas99/monster/internal/pkg/meta"
-	"github.com/rosas99/monster/internal/usercenter/model"
+	"github.com/google/wire"
+	"gorm.io/gorm"
 )
 
-// IStore defines the methods that the Store layer needs to implement.
+// ProviderSet is a Wire provider set that initializes new datastore instances
+// and binds the IStore interface to the actual datastore type.
+var ProviderSet = wire.NewSet(NewStore, wire.Bind(new(IStore), new(*datastore)))
+
+// Singleton instance variables.
+var (
+	once sync.Once
+	S    *datastore
+)
+
+// transactionKey is an unique key used in context to store
+// transaction instances to be shared between multiple operations.
+type transactionKey struct{}
+
+// IStore is an interface that represents methods
+// required to be implemented by a Store implementation.
 type IStore interface {
+	TX(context.Context, func(ctx context.Context) error) error
 	Users() UserStore
 }
 
-// UserStore defines the methods implemented by the store layer for the user module.
-type UserStore interface {
-	Create(ctx context.Context, user *model.UserM) error
-	Get(ctx context.Context, username string) (*model.UserM, error)
-	Update(ctx context.Context, user *model.UserM) error
-	List(ctx context.Context, opts ...meta.ListOption) (count int64, ret []*model.UserM, err error)
-	Delete(ctx context.Context, id int64) error
+// datastore is an implementation of IStore that provides methods
+// to perform operations on a database using gorm library.
+type datastore struct {
+	// core is the main database instance.
+	// The `core` name indicates this is the main database.
+	core *gorm.DB
+
+	// Additional database instances can be added as needed.
+	// In the example below, a fake database instance is added:
+	// fake *gorm.DB
 }
 
-var (
-	once sync.Once
-	// S Global variable that allows other packages to directly call the already initialized S instance.
-	S IStore
-)
+// Ensure datastore implements IStore.
+var _ IStore = (*datastore)(nil)
 
-// SetStore set the onex-fakeserver store instance in a global variable `S`.
-// Direct use the global `S` is not recommended as this may make dependencies and calls unclear.
-func SetStore(store IStore) {
+// NewStore initializes a new datastore instance using the provided DB gorm instance.
+// It also creates a singleton instance for the datastore.
+func NewStore(db *gorm.DB) *datastore {
 	once.Do(func() {
-		S = store
+		S = &datastore{db}
 	})
+
+	return S
+}
+
+// Core retrieves the current transactional DB instance if it exists
+// in context or falls back to the main database.
+func (ds *datastore) Core(ctx context.Context) *gorm.DB {
+	tx, ok := ctx.Value(transactionKey{}).(*gorm.DB)
+	if ok {
+		return tx
+	}
+
+	return ds.core
+}
+
+// FakeDB is an empty method to demonstrate how to handle multiple database instances.
+// This method should be implemented to return an actual fake DB instance.
+func (ds *datastore) FakeDB(ctx context.Context) *gorm.DB { return nil }
+
+// TX starts a transaction using the main DB context
+// and passes the transactional context to the provided function.
+func (ds *datastore) TX(ctx context.Context, fn func(ctx context.Context) error) error {
+	return ds.core.WithContext(ctx).Transaction(
+		func(tx *gorm.DB) error {
+			ctx = context.WithValue(ctx, transactionKey{}, tx)
+			return fn(ctx)
+		},
+	)
+}
+
+// Users returns an initialized instance of UserStore.
+func (ds *datastore) Users() UserStore {
+	return newUserStore(ds)
 }

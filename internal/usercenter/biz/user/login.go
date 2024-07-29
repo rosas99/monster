@@ -9,18 +9,20 @@ import (
 )
 
 // Login implements the 'Login' method of the IBiz interface, handling user authentication based on the provided login request.
-func (b *userBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error) {
-	user, err := b.ds.Users().Get(ctx, r.Username)
+func (b *userBiz) Login(ctx context.Context, rq *v1.LoginRequest) (*v1.LoginResponse, error) {
+	filters := map[string]any{"user_name": rq.Username}
+	user, err := b.ds.Users().Fetch(ctx, filters)
+
 	if err != nil {
 		return nil, errors.New("old password is invalid")
 
 	}
 
-	if err := auth.Compare(user.Password, r.Password); err != nil {
+	if err := auth.Compare(user.Password, rq.Password); err != nil {
 		return nil, errors.New("old password is invalid")
 	}
 
-	t, err := token.Sign(r.Username)
+	t, err := token.Sign(rq.Username)
 	if err != nil {
 		return nil, errors.New("old password is invalid")
 	}

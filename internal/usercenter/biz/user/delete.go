@@ -7,7 +7,8 @@ import (
 
 // Delete implements the 'Delete' method of the OrderBiz interface.
 func (b *userBiz) Delete(ctx context.Context, rq *v1.DeleteUserRequest) error {
-	if err := b.ds.Users().Delete(ctx, rq.Username); err != nil {
+	filters := map[string]any{"user_name": rq.Username}
+	if err := b.ds.Users().Delete(ctx, filters); err != nil {
 		return err
 	}
 

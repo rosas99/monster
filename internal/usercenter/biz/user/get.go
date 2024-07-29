@@ -10,7 +10,8 @@ import (
 
 // Get implements the 'Get' method of the IBiz interface, which retrieves user information based on the provided request.
 func (b *userBiz) Get(ctx context.Context, rq *v1.GetUserRequest) (*v1.GetUserResponse, error) {
-	userM, err := b.ds.Users().Get(ctx, rq.Username)
+	filters := map[string]any{"user_name": rq.Username}
+	userM, err := b.ds.Users().Fetch(ctx, filters)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil

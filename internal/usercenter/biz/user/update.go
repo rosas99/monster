@@ -7,7 +7,8 @@ import (
 
 // Update implements the 'Update' method of the IBiz interface, allowing modification of user data based on the provided update request.
 func (b *userBiz) Update(ctx context.Context, rq *v1.UpdateUserRequest) error {
-	userM, err := b.ds.Users().Get(ctx, rq.Username)
+	filters := map[string]any{"user_name": rq.Username}
+	userM, err := b.ds.Users().Fetch(ctx, filters)
 	if err != nil {
 		return err
 	}

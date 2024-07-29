@@ -10,7 +10,8 @@ import (
 
 // ChangePassword implements the 'ChangePassword' method of the IBiz interface.
 func (b *userBiz) ChangePassword(ctx context.Context, username string, rq *v1.ChangePasswordRequest) error {
-	userM, err := b.ds.Users().Get(ctx, username)
+	filters := map[string]any{"user_name": username}
+	userM, err := b.ds.Users().Fetch(ctx, filters)
 	if err != nil {
 		return err
 	}

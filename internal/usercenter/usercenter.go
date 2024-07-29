@@ -12,7 +12,6 @@ import (
 	//"github.com/rosas99/monster/internal/usercenter/middleware/validate"
 	"github.com/rosas99/monster/internal/usercenter/service"
 	"github.com/rosas99/monster/internal/usercenter/store"
-	"github.com/rosas99/monster/internal/usercenter/store/mysql"
 	"github.com/rosas99/monster/pkg/db"
 	"github.com/rosas99/monster/pkg/log"
 	genericoptions "github.com/rosas99/monster/pkg/options"
@@ -61,7 +60,7 @@ func (c completedConfig) New() (*SmsServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	ds = mysql.NewStore(ins)
+	ds = store.NewStore(ins)
 
 	// Copy Redis options from the configuration.
 	var redisOptions db.RedisOptions

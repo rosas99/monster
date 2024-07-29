@@ -1,6 +1,7 @@
 package usercenter
 
 import (
+	"context"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/rosas99/monster/internal/pkg/core"
@@ -8,7 +9,7 @@ import (
 	mwauth "github.com/rosas99/monster/internal/pkg/middleware/auth"
 	"github.com/rosas99/monster/internal/usercenter/controller/v1/user"
 	"github.com/rosas99/monster/internal/usercenter/service"
-	"github.com/rosas99/monster/internal/usercenter/store/mysql"
+	"github.com/rosas99/monster/internal/usercenter/store"
 	"github.com/rosas99/monster/pkg/auth"
 )
 
@@ -20,7 +21,7 @@ func installRouters(g *gin.Engine, svc *service.UserCenterService) {
 	// Register pprof routes
 	pprof.Register(g)
 
-	authz, err := auth.NewAuthz(mysql.S.DB())
+	authz, err := auth.NewAuthz(store.S.Core(context.Background()))
 	if err != nil {
 		return
 	}

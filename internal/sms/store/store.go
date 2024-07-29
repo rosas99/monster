@@ -11,6 +11,7 @@ import (
 // IStore is an interface that represents methods
 // required to be implemented by a Store implementation.
 type IStore interface {
+	TX(context.Context, func(ctx context.Context) error) error
 	Templates() TemplateStore
 	Configurations() ConfigurationStore
 	Histories() HistoryStore

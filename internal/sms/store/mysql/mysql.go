@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"context"
 	"sync"
 
 	"gorm.io/gorm"
@@ -50,4 +51,30 @@ func (ds *Datastore) Histories() store.HistoryStore {
 // Interactions returns an initialized instance of InteractionStore.
 func (ds *Datastore) Interactions() store.InteractionStore {
 	return newInteractions(ds.db)
+}
+
+// transactionKey is an unique key used in context to store
+// transaction instances to be shared between multiple operations.
+type transactionKey struct{}
+
+// Core retrieves the current transactional DB instance if it exists
+// in context or falls back to the main database.
+func (ds *Datastore) Core(ctx context.Context) *gorm.DB {
+	tx, ok := ctx.Value(transactionKey{}).(*gorm.DB)
+	if ok {
+		return tx
+	}
+
+	return ds.db
+}
+
+// TX starts a transaction using the main DB context
+// and passes the transactional context to the provided function.
+func (ds *Datastore) TX(ctx context.Context, fn func(ctx context.Context) error) error {
+	return ds.db.WithContext(ctx).Transaction(
+		func(tx *gorm.DB) error {
+			ctx = context.WithValue(ctx, transactionKey{}, tx)
+			return fn(ctx)
+		},
+	)
 }

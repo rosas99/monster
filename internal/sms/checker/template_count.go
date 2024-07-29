@@ -37,7 +37,7 @@ func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *Request) 
 		err = m.RDS.Expire(ctx, key, types.LimitLeftTime).Err()
 		if err != nil {
 			// 处理错误
-			log.Fatalf("Error setting expiration for key: %v", err)
+			log.Errorf("Error setting expiration for key: %v", err)
 		}
 	}
 	log.Infof("TemplateAndMobileChecker-----checker time效验号码模板总时间----: %d", time.Now().Unix()-start)

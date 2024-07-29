@@ -9,6 +9,7 @@ package store
 import (
 	"context"
 	"errors"
+	"sort"
 
 	"gorm.io/gorm"
 
@@ -83,6 +84,12 @@ func (d *configurationStore) List(ctx context.Context, templateCode string, opts
 		Offset(-1).
 		Limit(-1).
 		Count(&count)
+
+	// 升序排序
+	sort.Sort(ByOrder(ret))
+	//sort.SliceStable(cfgList, func(i, j int) bool {
+	//	return cfgList[i].Order < cfgList[j].Order
+	//})
 
 	return count, ret, ans.Error
 }

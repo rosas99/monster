@@ -23,7 +23,7 @@ func (b *Controller) CodeVerify(c *gin.Context) {
 	err := b.svc.CodeVerify(c, &r)
 	if err != nil {
 		monitor.GetMonitor().LogKpi(
-			"发送模板短信",
+			"VerifyCode Message",
 			c.Request.Header.Get(known.TraceIDKey),
 			r.TemplateCode,
 			false,

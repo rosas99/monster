@@ -23,7 +23,7 @@ func (b *Controller) Send(c *gin.Context) {
 		httpStatus, code, message := errno.Decode(err)
 
 		monitor.GetMonitor().LogKpi(
-			"发送模板短信",
+			"Template Message",
 			c.Request.Header.Get(known.TraceIDKey),
 			r.TemplateCode,
 			false,

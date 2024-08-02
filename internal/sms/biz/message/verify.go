@@ -3,7 +3,7 @@ package message
 import (
 	"context"
 	"github.com/rosas99/monster/internal/pkg/errno"
-	wrapper "github.com/rosas99/monster/internal/sms"
+	"github.com/rosas99/monster/internal/sms/types"
 	v1 "github.com/rosas99/monster/pkg/api/sms/v1"
 	"github.com/rosas99/monster/pkg/log"
 )
@@ -11,7 +11,7 @@ import (
 // CodeVerify is used to verify the verification code entered by the user.
 func (b *messageBiz) CodeVerify(ctx context.Context, rq *v1.VerifyCodeRequest) error {
 
-	key := wrapper.WrapperCode(rq.Mobile, rq.TemplateCode)
+	key := types.WrapperCode(rq.Mobile, rq.TemplateCode)
 	log.C(ctx).Infof("Retrieving verification code for mobile: %s with template code: %s", rq.Mobile, rq.TemplateCode)
 
 	code, err := b.rds.Get(ctx, key).Result()

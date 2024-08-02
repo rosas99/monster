@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/pkg/errno"
-	wrapper "github.com/rosas99/monster/internal/sms"
 	"github.com/rosas99/monster/internal/sms/store"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/log"
@@ -25,7 +24,7 @@ var _ Rule = (*MessageCountForMobileRule)(nil)
 // isValid validates if the message sending count for a specific mobile and template is within limits.
 func (m *MessageCountForMobileRule) isValid(ctx context.Context, rq *Request) error {
 	start := time.Now().Unix()
-	key := wrapper.WrapperMobileCount(rq.Mobile, rq.TemplateCode)
+	key := types.WrapperMobileCount(rq.Mobile, rq.TemplateCode)
 
 	sentCount, err := m.RDS.Incr(ctx, key).Result()
 	if err != nil {

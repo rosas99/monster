@@ -5,8 +5,8 @@ import (
 	"errors"
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/pkg/errno"
-	wrapper "github.com/rosas99/monster/internal/sms"
 	"github.com/rosas99/monster/internal/sms/store"
+	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/log"
 	"strconv"
 	"time"
@@ -26,7 +26,7 @@ var _ Rule = (*TimeIntervalForMobileRule)(nil)
 // isValid checks if the mobile device request exceeds the specified time interval limit.
 func (m *TimeIntervalForMobileRule) isValid(ctx context.Context, rq *Request) error {
 	start := time.Now().UnixMilli()
-	key := wrapper.WrapperTimeInterval(rq.Mobile, rq.TemplateCode)
+	key := types.WrapperTimeInterval(rq.Mobile, rq.TemplateCode)
 
 	timeStampStr, err := m.RDS.Get(ctx, key).Result()
 	if err != nil && !errors.Is(err, redis.Nil) {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/pkg/errno"
-	wrapper "github.com/rosas99/monster/internal/sms"
 	"github.com/rosas99/monster/internal/sms/store"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/log"
@@ -26,7 +25,7 @@ var _ Rule = (*MessageCountForTemplateRule)(nil)
 func (m *MessageCountForTemplateRule) isValid(ctx context.Context, rq *Request) error {
 
 	start := time.Now().Unix()
-	key := wrapper.WrapperTemplateCount(rq.TemplateCode)
+	key := types.WrapperTemplateCount(rq.TemplateCode)
 	sentCount, err := m.RDS.Incr(ctx, key).Result()
 	if err != nil {
 		log.Errorf("Failed to increment count for key: %s, error: %v", key, err)

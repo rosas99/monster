@@ -7,11 +7,19 @@ import (
 )
 
 // DummyProvider is a struct represents a fake sms provider.
-type DummyProvider struct{}
+type DummyProvider struct {
+	typ ProviderType
+}
 
 // NewDummyProvider returns a new provider for fake action.
-func NewDummyProvider() *DummyProvider {
-	return &DummyProvider{}
+func NewDummyProvider(typ ProviderType) *DummyProvider {
+	return &DummyProvider{
+		typ: typ,
+	}
+}
+
+func (p *DummyProvider) Type() ProviderType {
+	return p.typ
 }
 
 // Send do nothing

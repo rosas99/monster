@@ -3,11 +3,8 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/sms/types"
-	"github.com/rosas99/monster/internal/sms/writer"
 	"github.com/rosas99/monster/pkg/log"
-	ailiyunoptions "github.com/rosas99/monster/pkg/sdk/ailiyun"
 )
 
 type ProviderType string
@@ -32,25 +29,6 @@ type Provider interface {
 	Send(ctx context.Context, rq *types.TemplateMsgRequest) (TemplateMsgResponse, error)
 }
 
-// todo 修改为sms options
-func NewProvider(typ ProviderType, rds *redis.Client, logger *writer.Writer, ailiyunSmsOptions *ailiyunoptions.SmsOptions) Provider {
-	switch typ {
-	case ProviderTypeAliyun:
-		return NewAILIYUNProvider(typ, rds, logger, ailiyunSmsOptions)
-	case ProviderTypeDummy:
-		return NewDummyProvider(typ)
-	default:
-		panic("unknown provider")
-	}
-	return nil
-}
-
-// SMSTemplateProvider defines the SMS template sending interface.
-//
-//	type SMSTemplateProvider interface {
-//		Send(ctx context.Context, request *types.TemplateMsgRequest) (TemplateMsgResponse, error)
-//	}
-//
 // ProviderFactory is a struct that acts as a factory for creating and managing instances
 type ProviderFactory struct {
 	providers map[types.ProviderType]Provider

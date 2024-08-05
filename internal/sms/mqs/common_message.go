@@ -18,7 +18,7 @@ type CommonMessageConsumer struct {
 	ctx       context.Context
 	idt       *idempotent.Idempotent
 	logger    *writer.Writer
-	providers factory.ProviderFactory
+	providers *factory.ProviderFactory
 }
 
 func NewCommonMessageConsumer(ctx context.Context, providers *factory.ProviderFactory, idt *idempotent.Idempotent, logger *writer.Writer) *CommonMessageConsumer {

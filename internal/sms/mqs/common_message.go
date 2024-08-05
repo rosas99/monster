@@ -4,33 +4,30 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/sms/model"
 	factory "github.com/rosas99/monster/internal/sms/provider"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/internal/sms/writer"
 	"github.com/rosas99/monster/pkg/log"
-	ailiyunoptions "github.com/rosas99/monster/pkg/sdk/ailiyun"
 	"github.com/segmentio/kafka-go"
 	"time"
 )
 
 type CommonMessageConsumer struct {
-	ctx               context.Context
-	idt               *idempotent.Idempotent
-	logger            *writer.Writer
-	rds               *redis.Client
-	ailiyunSmsOptions *ailiyunoptions.SmsOptions
+	ctx       context.Context
+	idt       *idempotent.Idempotent
+	logger    *writer.Writer
+	providers map[string]factory.Provider
 }
 
-func NewCommonMessageConsumer(ctx context.Context, rds *redis.Client, idt *idempotent.Idempotent, logger *writer.Writer, ailiyunSmsOptions *ailiyunoptions.SmsOptions) *CommonMessageConsumer {
+func NewCommonMessageConsumer(ctx context.Context, providers map[string]factory.Provider, idt *idempotent.Idempotent, logger *writer.Writer) *CommonMessageConsumer {
+
 	return &CommonMessageConsumer{
-		ctx:               ctx,
-		idt:               idt,
-		logger:            logger,
-		rds:               rds,
-		ailiyunSmsOptions: ailiyunSmsOptions,
+		ctx:       ctx,
+		idt:       idt,
+		logger:    logger,
+		providers: providers,
 	}
 }
 
@@ -71,17 +68,15 @@ func (l *CommonMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 		//MessageTemplateID: msg.TemplateCode,  // Assuming TemplateID is the correct field name
 	}
 
+	successful := false
+
 	for _, provider := range msg.Providers {
 		log.C(ctx).Infof("Attempting to use provider: %s", provider)
-
-		//templateProvider, err := l.provider.GetSMSTemplateProvider(types.ProviderType(provider))
-		//if err != nil {
-		//	log.C(ctx).Errorf("Failed to get SMS template provider: %v", err)
-		//	continue
-		//}
-		pins := factory.NewProvider(factory.ProviderTypeAliyun, l.rds, l.logger, l.ailiyunSmsOptions)
-
-		ret, err := pins.Send(ctx, msg)
+		providerIns, ok := l.providers[provider]
+		if !ok {
+			continue
+		}
+		ret, err := providerIns.Send(ctx, msg)
 
 		if err != nil {
 			log.C(ctx).Errorf("Failed to send SMS: %v", err)
@@ -93,8 +88,15 @@ func (l *CommonMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 			historyM.MessageID = ret.BizId
 			historyM.Code = ret.Code
 			historyM.Message = ret.Message
+			successful = true
 			break
 		}
+	}
+
+	if successful {
+		historyM.Status = "Success"
+	} else {
+		historyM.Status = "Failed"
 	}
 
 	l.logger.WriterHistory(&historyM)

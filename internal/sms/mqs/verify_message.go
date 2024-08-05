@@ -4,33 +4,29 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/sms/model"
 	factory "github.com/rosas99/monster/internal/sms/provider"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/internal/sms/writer"
 	"github.com/rosas99/monster/pkg/log"
-	ailiyunoptions "github.com/rosas99/monster/pkg/sdk/ailiyun"
 	"github.com/segmentio/kafka-go"
 	"time"
 )
 
 type VerifyMessageConsumer struct {
-	ctx               context.Context
-	idt               *idempotent.Idempotent
-	logger            *writer.Writer
-	rds               *redis.Client
-	ailiyunSmsOptions *ailiyunoptions.SmsOptions
+	ctx       context.Context
+	idt       *idempotent.Idempotent
+	logger    *writer.Writer
+	providers map[string]factory.Provider
 }
 
-func NewVerifyMessageConsumer(ctx context.Context, rds *redis.Client, idt *idempotent.Idempotent, logger *writer.Writer, ailiyunSmsOptions *ailiyunoptions.SmsOptions) *CommonMessageConsumer {
-	return &CommonMessageConsumer{
-		ctx:               ctx,
-		idt:               idt,
-		logger:            logger,
-		rds:               rds,
-		ailiyunSmsOptions: ailiyunSmsOptions,
+func NewVerifyMessageConsumer(ctx context.Context, providers map[string]factory.Provider, idt *idempotent.Idempotent, logger *writer.Writer) *VerifyMessageConsumer {
+	return &VerifyMessageConsumer{
+		ctx:       ctx,
+		idt:       idt,
+		logger:    logger,
+		providers: providers,
 	}
 }
 
@@ -68,9 +64,11 @@ func (l *VerifyMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 	for _, provider := range msg.Providers {
 		log.C(ctx).Infof("Processing provider: %v", provider)
 
-		pins := factory.NewProvider(factory.ProviderTypeAliyun, l.rds, l.logger, l.ailiyunSmsOptions)
-
-		ret, err := pins.Send(ctx, msg)
+		providerIns, ok := l.providers[provider]
+		if !ok {
+			continue
+		}
+		ret, err := providerIns.Send(ctx, msg)
 
 		if err != nil {
 			log.C(ctx).Errorf("Failed to send SMS via provider %v: %v", provider, err)

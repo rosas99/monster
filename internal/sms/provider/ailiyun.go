@@ -15,27 +15,23 @@ import (
 
 // AILIYUNProvider is a struct represents a sms provider.
 type AILIYUNProvider struct {
-	typ               ProviderType
-	rds               *redis.Client
-	logger            *writer.Writer
-	ailiyunSmsOptions *ailiyunoptions.SmsOptions
-	client            *dysmsapi.Client
+	typ    ProviderType
+	rds    *redis.Client
+	logger *writer.Writer
+	client *dysmsapi.Client
 }
 
 // NewAILIYUNProvider returns a new provider for aili cloud sms.
 func NewAILIYUNProvider(typ ProviderType, rds *redis.Client, logger *writer.Writer, ailiyunSmsOptions *ailiyunoptions.SmsOptions) *AILIYUNProvider {
-	// todo 使用单例
-
 	client, err := ailiyunSmsOptions.NewSmsClient()
 	if err != nil {
 		panic("unknown provider")
 	}
 	return &AILIYUNProvider{
-		typ:               typ,
-		rds:               rds,
-		logger:            logger,
-		ailiyunSmsOptions: ailiyunSmsOptions,
-		client:            client,
+		typ:    typ,
+		rds:    rds,
+		logger: logger,
+		client: client,
 	}
 }
 

@@ -18,10 +18,10 @@ type CommonMessageConsumer struct {
 	ctx       context.Context
 	idt       *idempotent.Idempotent
 	logger    *writer.Writer
-	providers map[string]factory.Provider
+	providers factory.ProviderFactory
 }
 
-func NewCommonMessageConsumer(ctx context.Context, providers map[string]factory.Provider, idt *idempotent.Idempotent, logger *writer.Writer) *CommonMessageConsumer {
+func NewCommonMessageConsumer(ctx context.Context, providers *factory.ProviderFactory, idt *idempotent.Idempotent, logger *writer.Writer) *CommonMessageConsumer {
 
 	return &CommonMessageConsumer{
 		ctx:       ctx,
@@ -72,8 +72,8 @@ func (l *CommonMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 
 	for _, provider := range msg.Providers {
 		log.C(ctx).Infof("Attempting to use provider: %s", provider)
-		providerIns, ok := l.providers[provider]
-		if !ok {
+		providerIns, err := l.providers.GetSMSTemplateProvider(types.ProviderType(provider))
+		if err != nil {
 			continue
 		}
 		ret, err := providerIns.Send(ctx, msg)

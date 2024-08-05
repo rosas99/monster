@@ -18,10 +18,10 @@ type VerifyMessageConsumer struct {
 	ctx       context.Context
 	idt       *idempotent.Idempotent
 	logger    *writer.Writer
-	providers map[string]factory.Provider
+	providers factory.ProviderFactory
 }
 
-func NewVerifyMessageConsumer(ctx context.Context, providers map[string]factory.Provider, idt *idempotent.Idempotent, logger *writer.Writer) *VerifyMessageConsumer {
+func NewVerifyMessageConsumer(ctx context.Context, providers *factory.ProviderFactory, idt *idempotent.Idempotent, logger *writer.Writer) *VerifyMessageConsumer {
 	return &VerifyMessageConsumer{
 		ctx:       ctx,
 		idt:       idt,
@@ -64,8 +64,8 @@ func (l *VerifyMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 	for _, provider := range msg.Providers {
 		log.C(ctx).Infof("Processing provider: %v", provider)
 
-		providerIns, ok := l.providers[provider]
-		if !ok {
+		providerIns, err := l.providers.GetSMSTemplateProvider(types.ProviderType(provider))
+		if err != nil {
 			continue
 		}
 		ret, err := providerIns.Send(ctx, msg)

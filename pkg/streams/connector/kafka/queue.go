@@ -5,10 +5,10 @@ import (
 	"errors"
 	"github.com/rosas99/monster/pkg/log"
 	genericoptions "github.com/rosas99/monster/pkg/options"
+	util "github.com/rosas99/monster/pkg/util/waitgroup"
 	"github.com/segmentio/kafka-go"
 	"github.com/zeromicro/go-zero/core/logx"
 	"io"
-	"sync"
 )
 
 type ConsumeHandler interface {
@@ -18,8 +18,8 @@ type ConsumeHandler interface {
 type KQueue struct {
 	consumer         *kafka.Reader
 	handler          ConsumeHandler
-	producerRoutines *sync.WaitGroup
-	consumerRoutines *sync.WaitGroup
+	producerRoutines util.WaitGroupWrapper
+	consumerRoutines util.WaitGroupWrapper
 	forceCommit      bool
 	channel          chan kafka.Message
 	processors       int
@@ -44,14 +44,12 @@ func NewKQueue(KafkaOptions *genericoptions.KafkaOptions, handler ConsumeHandler
 	}
 
 	sink := &KQueue{
-		consumer:         kafka.NewReader(r),
-		handler:          handler,
-		channel:          make(chan kafka.Message),
-		producerRoutines: new(sync.WaitGroup),
-		consumerRoutines: new(sync.WaitGroup),
-		forceCommit:      KafkaOptions.ForceCommit,
-		processors:       KafkaOptions.Processors,
-		consumers:        KafkaOptions.Consumers,
+		consumer:    kafka.NewReader(r),
+		handler:     handler,
+		channel:     make(chan kafka.Message),
+		forceCommit: KafkaOptions.ForceCommit,
+		processors:  KafkaOptions.Processors,
+		consumers:   KafkaOptions.Consumers,
 	}
 
 	return sink, nil
@@ -71,9 +69,7 @@ func (c *KQueue) Stop() {
 }
 func (c *KQueue) startProducers() {
 	for i := 0; i < c.consumers; i++ {
-		c.producerRoutines.Add(1)
-		go func() {
-			defer c.producerRoutines.Done()
+		c.producerRoutines.Wrap(func() {
 			for {
 				msg, err := c.consumer.FetchMessage(context.Background())
 				// io.EOF means consumer closed
@@ -89,14 +85,13 @@ func (c *KQueue) startProducers() {
 				}
 				c.channel <- msg
 			}
-		}()
+		})
 	}
 }
 
 func (c *KQueue) startConsumers() {
 	for i := 0; i < c.processors; i++ {
-		c.consumerRoutines.Add(1)
-		go func() {
+		c.consumerRoutines.Wrap(func() {
 			defer c.consumerRoutines.Done()
 			for msg := range c.channel {
 				if err := c.handler.Consume(msg); err != nil {
@@ -110,7 +105,6 @@ func (c *KQueue) startConsumers() {
 					log.Errorf("commit failed, error: %v", err)
 				}
 			}
-		}()
-
+		})
 	}
 }

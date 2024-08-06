@@ -97,11 +97,6 @@ func (c completedConfig) New() (*SmsServer, error) {
 		return nil, err
 	}
 
-	// registers sms providers
-	provider := providerFactory.NewProviderFactory()
-	provider.RegisterProvider(types.ProviderTypeALIYUN, providerFactory.NewAILIYUNProvider(rds, l, c.AiliyunSmsOptions))
-	provider.RegisterProvider(types.ProviderTypeDummy, providerFactory.NewDummyProvider())
-
 	// creates an idempotent instance
 	idt, err := idempotent.NewIdempotent(rds)
 	if err != nil {
@@ -130,14 +125,17 @@ func (c completedConfig) New() (*SmsServer, error) {
 	if err != nil {
 		return nil, err
 	}
+	providers := providerFactory.NewProviderFactory()
+	providers.RegisterProvider(types.ProviderType(providerFactory.ProviderTypeAliyun), providerFactory.NewAILIYUNProvider(providerFactory.ProviderTypeAliyun, rds, l, c.AiliyunSmsOptions))
+	providers.RegisterProvider(types.ProviderType(providerFactory.ProviderTypeAliyun), providerFactory.NewDummyProvider(providerFactory.ProviderTypeAliyun))
 
-	handler1 := mqs.NewCommonMessageConsumer(context.Background(), idt, l, provider)
+	handler1 := mqs.NewCommonMessageConsumer(context.Background(), providers, idt, l)
 	mqsrv, err := NewMqServer(c.CommonKafkaOptions, handler1)
 	if err != nil {
 		return nil, err
 	}
 
-	handler2 := mqs.NewVerifyMessageConsumer(context.Background(), idt, l, provider)
+	handler2 := mqs.NewVerifyMessageConsumer(context.Background(), providers, idt, l)
 	mqsrv2, err := NewMqServer(c.VerifyKafkaOptions, handler2)
 	if err != nil {
 		return nil, err

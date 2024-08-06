@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/jinzhu/copier"
-	wrapper "github.com/rosas99/monster/internal/sms"
 	"github.com/rosas99/monster/internal/sms/model"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/pkg/id"
@@ -41,7 +40,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) error 
 	log.C(ctx).Infof("Rules checked successfully")
 	if tm.Type == types.VerificationMessage {
 		rq.Code = id.RandomNumeric(6)
-		key := wrapper.WrapperCode(rq.TemplateCode, rq.Code)
+		key := types.WrapperCode(rq.TemplateCode, rq.Code)
 		b.rds.Set(ctx, key, rq.Code, time.Hour*24)
 		log.C(ctx).Infof("Verification code set: %s", key)
 	}
@@ -63,7 +62,7 @@ func (b *messageBiz) Send(ctx context.Context, rq *v1.SendMessageRequest) error 
 func (b *messageBiz) getTemplate(ctx context.Context, templateCode string) *model.TemplateM {
 	log.C(ctx).Infof("Fetching template for templateCode: %s", templateCode)
 
-	cache, _ := b.rds.Get(ctx, wrapper.WrapperTemplate(templateCode)).Result()
+	cache, _ := b.rds.Get(ctx, types.WrapperTemplate(templateCode)).Result()
 	if cache != "" {
 		tm := &model.TemplateM{}
 		if err := json.Unmarshal([]byte(cache), tm); err != nil {
@@ -79,7 +78,7 @@ func (b *messageBiz) getTemplate(ctx context.Context, templateCode string) *mode
 	tm, _ := b.ds.Templates().Fetch(ctx, filters)
 	if tm != nil {
 		marshal, _ := json.Marshal(tm)
-		b.rds.Set(ctx, wrapper.WrapperTemplate(tm.TemplateCode), marshal, time.Hour*24)
+		b.rds.Set(ctx, types.WrapperTemplate(tm.TemplateCode), marshal, time.Hour*24)
 		log.C(ctx).Infof("Template fetched from database and cached for templateCode: %s", templateCode)
 		return tm
 	}
@@ -91,7 +90,7 @@ func (b *messageBiz) getTemplate(ctx context.Context, templateCode string) *mode
 func (b *messageBiz) getCfgList(ctx context.Context, templateCode string) []*model.ConfigurationM {
 	log.C(ctx).Infof("Fetching configurations for template code: %s", templateCode)
 
-	cache, _ := b.rds.Get(ctx, wrapper.WrapperTemplateCfg(templateCode)).Result()
+	cache, _ := b.rds.Get(ctx, types.WrapperTemplateCfg(templateCode)).Result()
 	if cache != "" {
 		var cfgList []*model.ConfigurationM
 		if err := json.Unmarshal([]byte(cache), &cfgList); err != nil {
@@ -110,7 +109,7 @@ func (b *messageBiz) getCfgList(ctx context.Context, templateCode string) []*mod
 	}
 
 	marshal, _ := json.Marshal(list)
-	b.rds.Set(ctx, wrapper.WrapperTemplateCfg(templateCode), marshal, time.Hour*24)
+	b.rds.Set(ctx, types.WrapperTemplateCfg(templateCode), marshal, time.Hour*24)
 	log.C(ctx).Infof("Configurations fetched from database and cached for template code: %s", templateCode)
 	return list
 }

@@ -1,6 +1,9 @@
 package types
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 const (
 	MessageCountForTemplatePerDay = "MESSAGE_COUNT_FOR_TEMPLATE_PER_DAY"
@@ -52,4 +55,51 @@ type UplinkMsgRequest struct {
 	DestCode    string `json:"destCode"`
 	SequenceId  int64  `json:"sequenceId"`
 	RequestId   string `json:"requestId"`
+}
+
+// WrapperTemplateCount  is used to build the key name in Redis.
+func WrapperTemplateCount(templateCode string) string {
+	return fmt.Sprintf("%s%s%s", MobileCount, DELIMITER, templateCode)
+}
+
+// WrapperTemplate  is used to build the key name in Redis.
+func WrapperTemplate(templateCode string) string {
+	return fmt.Sprintf("%s%s%s", TemplateM, DELIMITER, templateCode)
+}
+
+const (
+	TimeInterval = "TIME_INTERVAL"
+
+	TemplateCfg = "TEMPLATE_CONFIGURATION"
+
+	TemplateCount = "TEMPLATE_COUNT"
+
+	TemplateTypeVerificationCode = "TEMPLATE_TYPE_VERIFICATION_CODE"
+)
+
+const (
+	MobileCount = "MOBILE_COUNT"
+
+	DELIMITER = ":"
+
+	TemplateM = "TEMPLATE_M"
+)
+
+// WrapperMobileCount  is used to build the key name in Redis.
+func WrapperMobileCount(templateCode, mobile string) string {
+	return fmt.Sprintf("%s%s%s%s%s", TemplateCount, DELIMITER, templateCode, DELIMITER, mobile)
+}
+
+// WrapperTimeInterval  is used to build the key name in Redis.
+func WrapperTimeInterval(templateCode, mobile string) string {
+	return fmt.Sprintf("%s%s%s%s%s", TimeInterval, DELIMITER, templateCode, DELIMITER, mobile)
+}
+
+func WrapperTemplateCfg(templateCode string) string {
+	return fmt.Sprintf("%s%s%s", TemplateCfg, DELIMITER, templateCode)
+}
+
+// WrapperCode  is used to build the key name in Redis.
+func WrapperCode(templateCode, mobile string) string {
+	return fmt.Sprintf("%s%s%s%s%s", TemplateTypeVerificationCode, DELIMITER, templateCode, DELIMITER, mobile)
 }

@@ -15,18 +15,18 @@ import (
 )
 
 type VerifyMessageConsumer struct {
-	ctx      context.Context
-	idt      *idempotent.Idempotent
-	logger   *writer.Writer
-	provider *factory.ProviderFactory
+	ctx       context.Context
+	idt       *idempotent.Idempotent
+	logger    *writer.Writer
+	providers factory.ProviderFactory
 }
 
-func NewVerifyMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger *writer.Writer, provider *factory.ProviderFactory) *CommonMessageConsumer {
-	return &CommonMessageConsumer{
-		ctx:      ctx,
-		idt:      idt,
-		logger:   logger,
-		provider: provider,
+func NewVerifyMessageConsumer(ctx context.Context, providers *factory.ProviderFactory, idt *idempotent.Idempotent, logger *writer.Writer) *VerifyMessageConsumer {
+	return &VerifyMessageConsumer{
+		ctx:       ctx,
+		idt:       idt,
+		logger:    logger,
+		providers: providers,
 	}
 }
 
@@ -64,14 +64,11 @@ func (l *VerifyMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 	for _, provider := range msg.Providers {
 		log.C(ctx).Infof("Processing provider: %v", provider)
 
-		templateProvider, err := l.provider.GetSMSTemplateProvider(types.ProviderType(provider))
+		providerIns, err := l.providers.GetSMSTemplateProvider(types.ProviderType(provider))
 		if err != nil {
-			log.C(ctx).Errorf("Failed to get SMS template provider: %v", err)
 			continue
 		}
-		log.C(ctx).Infof("Sending message via provider: %v", provider)
-
-		ret, err := templateProvider.Send(ctx, msg)
+		ret, err := providerIns.Send(ctx, msg)
 
 		if err != nil {
 			log.C(ctx).Errorf("Failed to send SMS via provider %v: %v", provider, err)

@@ -22,3 +22,4 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
 COPY monster-usercenter /opt/monster/bin/
 
 ENTRYPOINT ["/opt/monsetr/bin/monster-usercenter"]
+CMD ["-c", "/etc/monster/monster-usercenter.yaml"]

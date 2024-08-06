@@ -8,6 +8,7 @@ import (
 	"github.com/rosas99/monster/internal/pkg/idempotent"
 	"github.com/rosas99/monster/internal/pkg/meta"
 	"github.com/rosas99/monster/internal/sms/model"
+	"github.com/rosas99/monster/internal/sms/store"
 	"github.com/rosas99/monster/internal/sms/types"
 	"github.com/rosas99/monster/internal/sms/writer"
 	"github.com/rosas99/monster/pkg/log"
@@ -56,7 +57,7 @@ func (l *UplinkMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 	filter["mobile"] = msg.PhoneNumber
 	filter["content"] = msg.Content
 	filter["receive_time"] = msg.SendTime
-	count, _, _ := l.ds.Interactions().List(ctx, "", meta.WithFilter(filter))
+	count, _, _ := l.ds.Interactions().List(ctx, meta.WithFilter(filter))
 	if count > 0 {
 		log.C(ctx).Infof("Interaction record already exists for mobile: %v", msg.PhoneNumber)
 	}

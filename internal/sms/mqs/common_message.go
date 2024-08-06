@@ -15,18 +15,19 @@ import (
 )
 
 type CommonMessageConsumer struct {
-	ctx      context.Context
-	idt      *idempotent.Idempotent
-	logger   *writer.Writer
-	provider *factory.ProviderFactory
+	ctx       context.Context
+	idt       *idempotent.Idempotent
+	logger    *writer.Writer
+	providers *factory.ProviderFactory
 }
 
-func NewCommonMessageConsumer(ctx context.Context, idt *idempotent.Idempotent, logger *writer.Writer, provider *factory.ProviderFactory) *CommonMessageConsumer {
+func NewCommonMessageConsumer(ctx context.Context, providers *factory.ProviderFactory, idt *idempotent.Idempotent, logger *writer.Writer) *CommonMessageConsumer {
+
 	return &CommonMessageConsumer{
-		ctx:      ctx,
-		idt:      idt,
-		logger:   logger,
-		provider: provider,
+		ctx:       ctx,
+		idt:       idt,
+		logger:    logger,
+		providers: providers,
 	}
 }
 
@@ -67,16 +68,15 @@ func (l *CommonMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 		//MessageTemplateID: msg.TemplateCode,  // Assuming TemplateID is the correct field name
 	}
 
+	successful := false
+
 	for _, provider := range msg.Providers {
 		log.C(ctx).Infof("Attempting to use provider: %s", provider)
-
-		templateProvider, err := l.provider.GetSMSTemplateProvider(types.ProviderType(provider))
+		providerIns, err := l.providers.GetSMSTemplateProvider(types.ProviderType(provider))
 		if err != nil {
-			log.C(ctx).Errorf("Failed to get SMS template provider: %v", err)
 			continue
 		}
-
-		ret, err := templateProvider.Send(ctx, msg)
+		ret, err := providerIns.Send(ctx, msg)
 
 		if err != nil {
 			log.C(ctx).Errorf("Failed to send SMS: %v", err)
@@ -88,8 +88,15 @@ func (l *CommonMessageConsumer) handleSmsRequest(ctx context.Context, msg *types
 			historyM.MessageID = ret.BizId
 			historyM.Code = ret.Code
 			historyM.Message = ret.Message
+			successful = true
 			break
 		}
+	}
+
+	if successful {
+		historyM.Status = "Success"
+	} else {
+		historyM.Status = "Failed"
 	}
 
 	l.logger.WriterHistory(&historyM)

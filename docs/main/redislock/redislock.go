@@ -2,10 +2,12 @@ package redislock
 
 import (
 	"context"
-	"encoding/base64"
+	rands "crypto/rand"
+	"encoding/hex"
 	"errors"
 	"github.com/redis/go-redis/v9"
 	"github.com/rosas99/monster/pkg/log"
+	"io"
 	"math/rand"
 	"sync/atomic"
 	"time"
@@ -47,34 +49,21 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func genValue() (string, error) {
-	b := make([]byte, 16)
-	_, err := rand.Read(b)
-	if err != nil {
-		return "", err
-	}
-	return base64.StdEncoding.EncodeToString(b), nil
-}
-
-func Randn(n int) string {
-	randomBytes, err := genValue()
-	if err != nil {
-		// 处理错误，可能需要记录日志或采取其他措施
+func genValue(n int) string {
+	randomBytes := make([]byte, (n*3+1)/2)
+	if _, err := io.ReadFull(rands.Reader, randomBytes); err != nil {
 		log.Errorf("Error generating random value: %v", err)
 		return ""
 	}
-
-	if len(randomBytes) > n {
-		randomBytes = randomBytes[:n]
-	}
-	return randomBytes
+	hexStr := hex.EncodeToString(randomBytes)
+	return hexStr[0:n]
 }
 
 func NewRedisLock(store *redis.Client, key string) *RedisLock {
 	return &RedisLock{
 		store:   store,
 		key:     key,
-		id:      Randn(randomLen),
+		id:      genValue(randomLen),
 		seconds: 30,
 	}
 }
